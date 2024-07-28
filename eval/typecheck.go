@@ -237,6 +237,10 @@ func (check typecheck) binaryExpr(n *node) error {
 		return n.cfgErrorf("cannot use _ as value")
 	}
 
+	if check.operator(n) {
+		return nil
+	}
+
 	a := n.action
 	if isAssignAction(a) {
 		a--
