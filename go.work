@@ -3,3 +3,5 @@ go 1.22.5
 use ./eval
 use ./hook
 use ./mat
+use ./gioui
+use ./sdk
