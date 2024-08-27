@@ -23,15 +23,15 @@ import (
 	"gioui/cpu"
 	"gioui/gpu/internal/driver"
 	"gioui/internal/byteslice"
-	"gioui/internal/f32"
-	"gioui/internal/f32color"
 	"gioui/internal/ops"
 	"gioui/internal/scene"
-	"gioui/layout"
+	"gioui/mat/f32"
+	"gioui/mat/f32color"
 	"gioui/op"
 	"gioui/shader"
 	"gioui/shader/gio"
 	"gioui/shader/piet"
+	"gioui/widget/layout"
 )
 
 type compute struct {

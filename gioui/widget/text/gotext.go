@@ -22,11 +22,11 @@ import (
 	"sdk/typesetting/opentype/api/metadata"
 	"sdk/typesetting/shaping"
 
-	"gioui/f32"
 	giofont "gioui/font"
 	"gioui/font/opentype"
 	"gioui/internal/debug"
 	"gioui/io/system"
+	"gioui/mat/f32"
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/op/paint"

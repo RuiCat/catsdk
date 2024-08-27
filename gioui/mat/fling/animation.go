@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"time"
 
-	"gioui/unit"
+	"gioui/mat/unit"
 )
 
 type Animation struct {

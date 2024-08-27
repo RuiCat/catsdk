@@ -6,9 +6,9 @@ package key
 import (
 	"strings"
 
-	"gioui/f32"
 	"gioui/internal/ops"
 	"gioui/io/event"
+	"gioui/mat/f32"
 	"gioui/op"
 )
 

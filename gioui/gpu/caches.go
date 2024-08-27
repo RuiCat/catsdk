@@ -5,7 +5,7 @@ package gpu
 import (
 	"fmt"
 
-	"gioui/internal/f32"
+	"gioui/mat/f32"
 )
 
 type textureCacheKey struct {

@@ -4,15 +4,15 @@ import (
 	"image"
 	"image/color"
 
-	"gioui/f32"
 	"gioui/io/semantic"
 	"gioui/io/system"
-	"gioui/layout"
+	"gioui/mat/f32"
+	"gioui/mat/unit"
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/op/paint"
-	"gioui/unit"
 	"gioui/widget"
+	"gioui/widget/layout"
 )
 
 // DecorationsStyle provides the style elements for Decorations.

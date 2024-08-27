@@ -15,14 +15,14 @@ import (
 	"runtime"
 	"time"
 
-	"gioui/f32"
-	"gioui/internal/fling"
 	"gioui/io/event"
 	"gioui/io/input"
 	"gioui/io/key"
 	"gioui/io/pointer"
+	"gioui/mat/f32"
+	"gioui/mat/fling"
+	"gioui/mat/unit"
 	"gioui/op"
-	"gioui/unit"
 )
 
 // The duration is somewhat arbitrary.

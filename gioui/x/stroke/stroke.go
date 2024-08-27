@@ -6,7 +6,7 @@ package stroke
 import (
 	"math"
 
-	"gioui/f32"
+	"gioui/mat/f32"
 	"gioui/op"
 	"gioui/op/clip"
 

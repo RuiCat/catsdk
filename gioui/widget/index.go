@@ -9,7 +9,7 @@ import (
 	"math"
 	"sort"
 
-	"gioui/text"
+	"gioui/widget/text"
 
 	"sdk/x/image/math/fixed"
 

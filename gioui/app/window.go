@@ -12,7 +12,6 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"gioui/f32"
 	"gioui/font/gofont"
 	"gioui/gpu"
 	"gioui/internal/debug"
@@ -22,12 +21,13 @@ import (
 	"gioui/io/key"
 	"gioui/io/pointer"
 	"gioui/io/system"
-	"gioui/layout"
+	"gioui/mat/f32"
+	"gioui/mat/unit"
 	"gioui/op"
-	"gioui/text"
-	"gioui/unit"
 	"gioui/widget"
+	"gioui/widget/layout"
 	"gioui/widget/material"
+	"gioui/widget/text"
 )
 
 // Option configures a window.

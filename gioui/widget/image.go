@@ -5,12 +5,12 @@ package widget
 import (
 	"image"
 
-	"gioui/f32"
-	"gioui/layout"
+	"gioui/mat/f32"
+	"gioui/mat/unit"
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/op/paint"
-	"gioui/unit"
+	"gioui/widget/layout"
 )
 
 // Image is a widget that displays an image.

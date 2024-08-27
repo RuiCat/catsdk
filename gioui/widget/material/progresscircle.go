@@ -7,9 +7,9 @@ import (
 	"image/color"
 	"math"
 
-	"gioui/layout"
 	"gioui/op"
 	"gioui/op/paint"
+	"gioui/widget/layout"
 )
 
 type ProgressCircleStyle struct {

@@ -7,11 +7,11 @@ import (
 	"image/color"
 	"image/draw"
 
-	"gioui/internal/f32color"
-	"gioui/layout"
+	"gioui/mat/f32color"
+	"gioui/mat/unit"
 	"gioui/op/clip"
 	"gioui/op/paint"
-	"gioui/unit"
+	"gioui/widget/layout"
 
 	"sdk/x/exp/shiny/iconvg"
 )

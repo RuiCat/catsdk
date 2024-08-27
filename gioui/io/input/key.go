@@ -6,9 +6,9 @@ import (
 	"image"
 	"sort"
 
-	"gioui/f32"
 	"gioui/io/event"
 	"gioui/io/key"
+	"gioui/mat/f32"
 )
 
 // EditorState represents the state of an editor needed by input handlers.

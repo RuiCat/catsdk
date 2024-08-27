@@ -13,16 +13,16 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"gioui/internal/f32color"
+	"gioui/mat/f32color"
 	"gioui/op"
 
-	"gioui/f32"
 	"gioui/io/event"
 	"gioui/io/key"
 	"gioui/io/pointer"
 	"gioui/io/system"
 	"gioui/io/transfer"
-	"gioui/unit"
+	"gioui/mat/f32"
+	"gioui/mat/unit"
 )
 
 type JSViewEvent struct {

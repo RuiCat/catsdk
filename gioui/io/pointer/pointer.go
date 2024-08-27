@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"gioui/f32"
 	"gioui/internal/ops"
 	"gioui/io/event"
 	"gioui/io/key"
+	"gioui/mat/f32"
 	"gioui/op"
 )
 

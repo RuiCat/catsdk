@@ -1,16 +1,15 @@
 package widget
 
 import (
-	"io"
-
-	"gioui/f32"
-	"gioui/gesture"
 	"gioui/io/event"
 	"gioui/io/pointer"
 	"gioui/io/transfer"
-	"gioui/layout"
+	"gioui/mat/f32"
 	"gioui/op"
 	"gioui/op/clip"
+	"gioui/widget/gesture"
+	"gioui/widget/layout"
+	"io"
 )
 
 // Draggable makes a widget draggable.

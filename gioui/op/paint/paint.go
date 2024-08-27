@@ -9,8 +9,8 @@ import (
 	"image/draw"
 	"math"
 
-	"gioui/f32"
 	"gioui/internal/ops"
+	"gioui/mat/f32"
 	"gioui/op"
 	"gioui/op/clip"
 )

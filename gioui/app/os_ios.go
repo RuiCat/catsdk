@@ -91,14 +91,14 @@ import (
 	"unicode/utf16"
 	"unsafe"
 
-	"gioui/f32"
 	"gioui/io/event"
 	"gioui/io/key"
 	"gioui/io/pointer"
 	"gioui/io/system"
 	"gioui/io/transfer"
+	"gioui/mat/f32"
+	"gioui/mat/unit"
 	"gioui/op"
-	"gioui/unit"
 )
 
 type UIKitViewEvent struct {

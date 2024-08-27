@@ -3,13 +3,12 @@
 package widget
 
 import (
-	"image"
-
-	"gioui/gesture"
 	"gioui/io/key"
 	"gioui/io/pointer"
-	"gioui/layout"
 	"gioui/op"
+	"gioui/widget/gesture"
+	"gioui/widget/layout"
+	"image"
 )
 
 // Scrollbar holds the persistent state for an area that can

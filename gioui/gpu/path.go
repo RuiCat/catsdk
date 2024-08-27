@@ -13,8 +13,8 @@ import (
 
 	"gioui/gpu/internal/driver"
 	"gioui/internal/byteslice"
-	"gioui/internal/f32"
-	"gioui/internal/f32color"
+	"gioui/mat/f32"
+	"gioui/mat/f32color"
 	"gioui/shader"
 	"gioui/shader/gio"
 )

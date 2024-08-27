@@ -6,9 +6,9 @@ import (
 	"image"
 	"math"
 
-	"gioui/f32"
-	f32internal "gioui/internal/f32"
 	"gioui/internal/ops"
+	"gioui/mat/f32"
+	f32internal "gioui/mat/f32"
 	"gioui/op"
 )
 

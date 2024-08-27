@@ -1,23 +1,22 @@
 package widget
 
 import (
-	"image"
-	"io"
-	"math"
-	"strings"
-
 	"gioui/font"
-	"gioui/gesture"
 	"gioui/io/clipboard"
 	"gioui/io/event"
 	"gioui/io/key"
 	"gioui/io/pointer"
 	"gioui/io/system"
-	"gioui/layout"
+	"gioui/mat/unit"
 	"gioui/op"
 	"gioui/op/clip"
-	"gioui/text"
-	"gioui/unit"
+	"gioui/widget/gesture"
+	"gioui/widget/layout"
+	"gioui/widget/text"
+	"image"
+	"io"
+	"math"
+	"strings"
 )
 
 // stringSource is an immutable textSource with a fixed string

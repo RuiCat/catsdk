@@ -7,7 +7,7 @@ import (
 	"image"
 	"time"
 
-	"gioui/internal/f32color"
+	"gioui/mat/f32color"
 	"gioui/shader"
 )
 

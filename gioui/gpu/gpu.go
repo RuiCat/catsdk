@@ -20,15 +20,15 @@ import (
 
 	"gioui/gpu/internal/driver"
 	"gioui/internal/byteslice"
-	"gioui/internal/f32"
-	"gioui/internal/f32color"
 	"gioui/internal/ops"
 	"gioui/internal/scene"
 	"gioui/internal/stroke"
-	"gioui/layout"
+	"gioui/mat/f32"
+	"gioui/mat/f32color"
 	"gioui/op"
 	"gioui/shader"
 	"gioui/shader/gio"
+	"gioui/widget/layout"
 
 	// Register backends.
 	_ "gioui/gpu/internal/d3d11"

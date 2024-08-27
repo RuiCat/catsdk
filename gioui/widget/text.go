@@ -9,14 +9,14 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"gioui/f32"
 	"gioui/font"
-	"gioui/layout"
+	"gioui/mat/f32"
+	"gioui/mat/unit"
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/op/paint"
-	"gioui/text"
-	"gioui/unit"
+	"gioui/widget/layout"
+	"gioui/widget/text"
 
 	"sdk/x/exp/slices"
 	"sdk/x/image/math/fixed"

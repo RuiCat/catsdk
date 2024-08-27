@@ -24,15 +24,16 @@ import (
 	syscall "sdk/x/sys/unix"
 
 	"gioui/app/internal/xkb"
-	"gioui/f32"
-	"gioui/internal/fling"
+	"gioui/mat/f32"
+
 	"gioui/io/event"
 	"gioui/io/key"
 	"gioui/io/pointer"
 	"gioui/io/system"
 	"gioui/io/transfer"
+	"gioui/mat/fling"
+	"gioui/mat/unit"
 	"gioui/op"
-	"gioui/unit"
 )
 
 // Use wayland-scanner to generate glue code for the xdg-shell and xdg-decoration extensions.

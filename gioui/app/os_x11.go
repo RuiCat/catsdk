@@ -37,14 +37,14 @@ import (
 	"time"
 	"unsafe"
 
-	"gioui/f32"
 	"gioui/io/event"
 	"gioui/io/key"
 	"gioui/io/pointer"
 	"gioui/io/system"
 	"gioui/io/transfer"
+	"gioui/mat/f32"
+	"gioui/mat/unit"
 	"gioui/op"
-	"gioui/unit"
 
 	syscall "sdk/x/sys/unix"
 

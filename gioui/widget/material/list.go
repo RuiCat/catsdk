@@ -8,12 +8,12 @@ import (
 	"math"
 
 	"gioui/io/pointer"
-	"gioui/layout"
+	"gioui/mat/unit"
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/op/paint"
-	"gioui/unit"
 	"gioui/widget"
+	"gioui/widget/layout"
 )
 
 // fromListPosition converts a layout.Position into two floats representing

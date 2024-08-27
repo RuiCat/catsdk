@@ -6,14 +6,14 @@ import (
 	"image"
 	"io"
 
-	"gioui/f32"
-	f32internal "gioui/internal/f32"
 	"gioui/internal/ops"
 	"gioui/io/event"
 	"gioui/io/pointer"
 	"gioui/io/semantic"
 	"gioui/io/system"
 	"gioui/io/transfer"
+	"gioui/mat/f32"
+	f32internal "gioui/mat/f32"
 )
 
 type pointerQueue struct {

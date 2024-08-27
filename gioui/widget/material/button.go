@@ -8,15 +8,16 @@ import (
 	"math"
 
 	"gioui/font"
-	"gioui/internal/f32color"
 	"gioui/io/semantic"
-	"gioui/layout"
+	"gioui/mat/f32color"
+	"gioui/mat/unit"
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/op/paint"
-	"gioui/text"
-	"gioui/unit"
 	"gioui/widget"
+
+	"gioui/widget/layout"
+	"gioui/widget/text"
 )
 
 type ButtonStyle struct {

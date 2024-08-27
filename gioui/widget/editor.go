@@ -4,17 +4,7 @@ package widget
 
 import (
 	"bufio"
-	"image"
-	"io"
-	"math"
-	"strings"
-	"time"
-	"unicode"
-	"unicode/utf8"
-
-	"gioui/f32"
 	"gioui/font"
-	"gioui/gesture"
 	"gioui/io/clipboard"
 	"gioui/io/event"
 	"gioui/io/key"
@@ -22,11 +12,20 @@ import (
 	"gioui/io/semantic"
 	"gioui/io/system"
 	"gioui/io/transfer"
-	"gioui/layout"
+	"gioui/mat/f32"
+	"gioui/mat/unit"
 	"gioui/op"
 	"gioui/op/clip"
-	"gioui/text"
-	"gioui/unit"
+	"gioui/widget/gesture"
+	"gioui/widget/layout"
+	"gioui/widget/text"
+	"image"
+	"io"
+	"math"
+	"strings"
+	"time"
+	"unicode"
+	"unicode/utf8"
 )
 
 // Editor implements an editable and scrollable text area.

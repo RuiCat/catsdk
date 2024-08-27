@@ -6,13 +6,13 @@ import (
 	"image"
 	"image/color"
 
-	"gioui/internal/f32color"
 	"gioui/io/semantic"
-	"gioui/layout"
+	"gioui/mat/f32color"
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/op/paint"
 	"gioui/widget"
+	"gioui/widget/layout"
 )
 
 type SwitchStyle struct {

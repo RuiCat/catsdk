@@ -8,11 +8,11 @@ import (
 	"math"
 	"time"
 
-	"gioui/f32"
-	"gioui/layout"
+	"gioui/mat/f32"
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/op/paint"
+	"gioui/widget/layout"
 )
 
 type LoaderStyle struct {

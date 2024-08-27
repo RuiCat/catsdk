@@ -29,9 +29,9 @@ import (
 	"encoding/binary"
 	"math"
 
-	"gioui/internal/f32"
 	"gioui/internal/ops"
 	"gioui/internal/scene"
+	"gioui/mat/f32"
 )
 
 // The following are copies of types from op/clip to avoid a circular import of

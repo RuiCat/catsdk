@@ -13,11 +13,11 @@ import (
 	"gioui/font/gofont"
 	"gioui/io/input"
 	"gioui/io/key"
-	"gioui/layout"
+	"gioui/mat/unit"
 	"gioui/op"
-	"gioui/text"
-	"gioui/unit"
 	"gioui/widget"
+	"gioui/widget/layout"
+	"gioui/widget/text"
 )
 
 func FuzzIME(f *testing.F) {

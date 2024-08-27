@@ -11,7 +11,7 @@ import (
 	"math"
 	"unsafe"
 
-	"gioui/internal/f32"
+	"gioui/mat/f32"
 )
 
 type Op uint32

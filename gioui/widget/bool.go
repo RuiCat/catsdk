@@ -4,7 +4,7 @@ package widget
 
 import (
 	"gioui/io/semantic"
-	"gioui/layout"
+	"gioui/widget/layout"
 )
 
 type Bool struct {

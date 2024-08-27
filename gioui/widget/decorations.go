@@ -5,8 +5,8 @@ import (
 	"math/bits"
 
 	"gioui/io/system"
-	"gioui/layout"
 	"gioui/op/clip"
+	"gioui/widget/layout"
 )
 
 // Decorations handles the states of window decorations.

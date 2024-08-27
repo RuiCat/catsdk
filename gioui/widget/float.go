@@ -3,13 +3,12 @@
 package widget
 
 import (
-	"image"
-
-	"gioui/gesture"
 	"gioui/io/pointer"
-	"gioui/layout"
+	"gioui/mat/unit"
 	"gioui/op/clip"
-	"gioui/unit"
+	"gioui/widget/gesture"
+	"gioui/widget/layout"
+	"image"
 )
 
 // Float is for selecting a value in a range.

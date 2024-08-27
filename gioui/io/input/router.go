@@ -8,8 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"gioui/f32"
-	f32internal "gioui/internal/f32"
 	"gioui/internal/ops"
 	"gioui/io/clipboard"
 	"gioui/io/event"
@@ -18,6 +16,8 @@ import (
 	"gioui/io/semantic"
 	"gioui/io/system"
 	"gioui/io/transfer"
+	"gioui/mat/f32"
+	f32internal "gioui/mat/f32"
 	"gioui/op"
 )
 

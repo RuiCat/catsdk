@@ -4,8 +4,8 @@ import (
 	"encoding/binary"
 	"math"
 
-	"gioui/internal/f32"
 	"gioui/internal/stroke"
+	"gioui/mat/f32"
 )
 
 type quadSplitter struct {
