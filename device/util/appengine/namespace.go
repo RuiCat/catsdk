@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"regexp"
 
-	"boltdb/util/net/context"
+	"device/util/net/context"
 
-	"boltdb/util/appengine/internal"
+	"device/util/appengine/internal"
 )
 
 // Namespace returns a replacement context that operates within the given namespace.

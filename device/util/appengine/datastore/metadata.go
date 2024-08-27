@@ -4,7 +4,7 @@
 
 package datastore
 
-import "boltdb/util/net/context"
+import "device/util/net/context"
 
 // Datastore kinds for the metadata entities.
 const (

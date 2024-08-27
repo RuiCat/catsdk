@@ -17,7 +17,7 @@
 //
 // The canonical, C++ implementation is at https://github.com/google/snappy and
 // it only implements the block format.
-package snappy // import "boltdb/util/snappy"
+package snappy // import "device/util/snappy"
 
 import (
 	"hash/crc32"

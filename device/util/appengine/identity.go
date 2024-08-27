@@ -7,11 +7,11 @@ package appengine
 import (
 	"time"
 
-	"boltdb/util/net/context"
+	"device/util/net/context"
 
-	"boltdb/util/appengine/internal"
-	pb "boltdb/util/appengine/internal/app_identity"
-	modpb "boltdb/util/appengine/internal/modules"
+	"device/util/appengine/internal"
+	pb "device/util/appengine/internal/app_identity"
+	modpb "device/util/appengine/internal/modules"
 )
 
 // AppID returns the application ID for the current application.

@@ -3,7 +3,7 @@
 
 package remote_api
 
-import proto "boltdb/util/protobuf/proto"
+import proto "device/util/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
@@ -319,7 +319,7 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("boltdb/util/appengine/internal/remote_api/remote_api.proto", fileDescriptor_remote_api_1978114ec33a273d)
+	proto.RegisterFile("device/util/appengine/internal/remote_api/remote_api.proto", fileDescriptor_remote_api_1978114ec33a273d)
 }
 
 var fileDescriptor_remote_api_1978114ec33a273d = []byte{

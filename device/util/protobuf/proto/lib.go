@@ -99,7 +99,7 @@ The resulting file, test.pb.go, is:
 
 	package example
 
-	import proto "boltdb/util/protobuf/proto"
+	import proto "device/util/protobuf/proto"
 	import math "math"
 
 	type FOO int32
@@ -226,7 +226,7 @@ To create and play with a Test object:
 	import (
 		"log"
 
-		"boltdb/util/protobuf/proto"
+		"device/util/protobuf/proto"
 		pb "./example.pb"
 	)
 

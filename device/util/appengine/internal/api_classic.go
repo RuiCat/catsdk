@@ -17,9 +17,9 @@ import (
 	"appengine_internal"
 	basepb "appengine_internal/base"
 
-	netcontext "boltdb/util/net/context"
+	netcontext "device/util/net/context"
 
-	"boltdb/util/protobuf/proto"
+	"device/util/protobuf/proto"
 )
 
 var contextKey = "holds an appengine.Context"

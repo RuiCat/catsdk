@@ -8,9 +8,9 @@ import (
 	"errors"
 	"os"
 
-	netcontext "boltdb/util/net/context"
+	netcontext "device/util/net/context"
 
-	"boltdb/util/protobuf/proto"
+	"device/util/protobuf/proto"
 )
 
 var errNotAppEngineContext = errors.New("not an App Engine context")

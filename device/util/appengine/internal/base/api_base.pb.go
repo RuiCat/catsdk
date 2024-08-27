@@ -3,7 +3,7 @@
 
 package base
 
-import proto "boltdb/util/protobuf/proto"
+import proto "device/util/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
@@ -287,7 +287,7 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("boltdb/util/appengine/internal/base/api_base.proto", fileDescriptor_api_base_9d49f8792e0c1140)
+	proto.RegisterFile("device/util/appengine/internal/base/api_base.proto", fileDescriptor_api_base_9d49f8792e0c1140)
 }
 
 var fileDescriptor_api_base_9d49f8792e0c1140 = []byte{

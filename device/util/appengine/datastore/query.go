@@ -12,12 +12,12 @@ import (
 	"reflect"
 	"strings"
 
-	"boltdb/util/net/context"
+	"device/util/net/context"
 
-	"boltdb/util/protobuf/proto"
+	"device/util/protobuf/proto"
 
-	"boltdb/util/appengine/internal"
-	pb "boltdb/util/appengine/internal/datastore"
+	"device/util/appengine/internal"
+	pb "device/util/appengine/internal/datastore"
 )
 
 type operator int

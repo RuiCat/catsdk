@@ -7,10 +7,10 @@ package datastore
 import (
 	"sync"
 
-	"boltdb/util/net/context"
+	"device/util/net/context"
 
-	"boltdb/util/appengine/datastore/internal/cloudkey"
-	"boltdb/util/appengine/internal"
+	"device/util/appengine/datastore/internal/cloudkey"
+	"device/util/appengine/internal"
 )
 
 var keyConversion struct {

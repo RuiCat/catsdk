@@ -3,7 +3,7 @@
 
 package modules
 
-import proto "boltdb/util/protobuf/proto"
+import proto "device/util/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
@@ -749,7 +749,7 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("boltdb/util/appengine/internal/modules/modules_service.proto", fileDescriptor_modules_service_9cd3bffe4e91c59a)
+	proto.RegisterFile("device/util/appengine/internal/modules/modules_service.proto", fileDescriptor_modules_service_9cd3bffe4e91c59a)
 }
 
 var fileDescriptor_modules_service_9cd3bffe4e91c59a = []byte{

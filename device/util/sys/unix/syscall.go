@@ -23,7 +23,7 @@
 // These calls return err == nil to indicate success; otherwise
 // err represents an operating system error describing the failure and
 // holds a value of type syscall.Errno.
-package unix // import "boltdb/util/sysunix"
+package unix // import "device/util/sysunix"
 
 import "strings"
 

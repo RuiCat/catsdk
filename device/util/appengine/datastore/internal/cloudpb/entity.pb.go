@@ -10,7 +10,7 @@ package cloudpb
 import (
 	"fmt"
 
-	"boltdb/util/protobuf/proto"
+	"device/util/protobuf/proto"
 )
 
 // A partition ID identifies a grouping of entities. The grouping is always

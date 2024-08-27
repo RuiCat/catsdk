@@ -3,7 +3,7 @@
 
 package app_identity
 
-import proto "boltdb/util/protobuf/proto"
+import proto "device/util/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
@@ -560,7 +560,7 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("boltdb/util/appengine/internal/app_identity/app_identity_service.proto", fileDescriptor_app_identity_service_08a6e3f74b04cfa4)
+	proto.RegisterFile("device/util/appengine/internal/app_identity/app_identity_service.proto", fileDescriptor_app_identity_service_08a6e3f74b04cfa4)
 }
 
 var fileDescriptor_app_identity_service_08a6e3f74b04cfa4 = []byte{

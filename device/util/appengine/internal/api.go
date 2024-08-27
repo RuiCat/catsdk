@@ -24,13 +24,13 @@ import (
 	"sync/atomic"
 	"time"
 
-	netcontext "boltdb/util/net/context"
+	netcontext "device/util/net/context"
 
-	"boltdb/util/protobuf/proto"
+	"device/util/protobuf/proto"
 
-	basepb "boltdb/util/appengine/internal/base"
-	logpb "boltdb/util/appengine/internal/log"
-	remotepb "boltdb/util/appengine/internal/remote_api"
+	basepb "device/util/appengine/internal/base"
+	logpb "device/util/appengine/internal/log"
+	remotepb "device/util/appengine/internal/remote_api"
 )
 
 const (

@@ -6,16 +6,16 @@
 //
 // For more information on how to write Go apps for Google App Engine, see:
 // https://cloud.google.com/appengine/docs/go/
-package appengine // import "boltdb/util/appengine"
+package appengine // import "device/util/appengine"
 
 import (
 	"net/http"
 
-	"boltdb/util/net/context"
+	"device/util/net/context"
 
-	"boltdb/util/protobuf/proto"
+	"device/util/protobuf/proto"
 
-	"boltdb/util/appengine/internal"
+	"device/util/appengine/internal"
 )
 
 // The gophers party all night; the rabbits provide the beats.
@@ -39,7 +39,7 @@ import (
 //	package main
 //
 //	import (
-//	        "boltdb/util/appengine"
+//	        "device/util/appengine"
 //
 //	        _ "myapp/package0"
 //	        _ "myapp/package1"

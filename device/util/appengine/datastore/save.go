@@ -11,11 +11,11 @@ import (
 	"reflect"
 	"time"
 
-	"boltdb/util/protobuf/proto"
+	"device/util/protobuf/proto"
 
-	pb "boltdb/util/appengine/internal/datastore"
+	pb "device/util/appengine/internal/datastore"
 
-	"boltdb/util/appengine"
+	"device/util/appengine"
 )
 
 func toUnixMicro(t time.Time) int64 {

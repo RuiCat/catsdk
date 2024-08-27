@@ -7,7 +7,7 @@ package internal
 import (
 	"os"
 
-	netcontext "boltdb/util/net/context"
+	netcontext "device/util/net/context"
 )
 
 var (

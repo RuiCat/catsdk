@@ -6,7 +6,7 @@ import (
 	"time"
 	"unsafe"
 
-	"boltdb/util/sys/unix"
+	"device/util/sys/unix"
 )
 
 // flock acquires an advisory lock on a file descriptor.

@@ -10,7 +10,7 @@ package internal
 import (
 	"appengine"
 
-	netcontext "boltdb/util/net/context"
+	netcontext "device/util/net/context"
 )
 
 func init() {

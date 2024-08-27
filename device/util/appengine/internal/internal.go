@@ -11,9 +11,9 @@ package internal
 import (
 	"fmt"
 
-	"boltdb/util/protobuf/proto"
+	"device/util/protobuf/proto"
 
-	remotepb "boltdb/util/appengine/internal/remote_api"
+	remotepb "device/util/appengine/internal/remote_api"
 )
 
 // errorCodeMaps is a map of service name to the error code map for the service.

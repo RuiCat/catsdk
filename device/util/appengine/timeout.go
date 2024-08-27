@@ -4,7 +4,7 @@
 
 package appengine
 
-import "boltdb/util/net/context"
+import "device/util/net/context"
 
 // IsTimeoutError reports whether err is a timeout error.
 func IsTimeoutError(err error) bool {

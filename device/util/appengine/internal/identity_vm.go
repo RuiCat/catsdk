@@ -13,7 +13,7 @@ import (
 	"os"
 	"strings"
 
-	netcontext "boltdb/util/net/context"
+	netcontext "device/util/net/context"
 )
 
 // These functions are implementations of the wrapper functions

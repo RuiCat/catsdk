@@ -7,10 +7,10 @@ package datastore
 import (
 	"errors"
 
-	"boltdb/util/net/context"
+	"device/util/net/context"
 
-	"boltdb/util/appengine/internal"
-	pb "boltdb/util/appengine/internal/datastore"
+	"device/util/appengine/internal"
+	pb "device/util/appengine/internal/datastore"
 )
 
 func init() {

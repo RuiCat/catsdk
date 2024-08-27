@@ -4,7 +4,7 @@
 package sereal
 
 import (
-	"boltdb/util/zstd"
+	"device/util/zstd"
 )
 
 func zstdEncode(buf []byte, level int) ([]byte, error) {

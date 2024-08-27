@@ -8,7 +8,7 @@ import (
 	"context"
 	"net"
 
-	"device/util/net/internal/socks"
+	"device/util/net/socks"
 )
 
 // SOCKS5 returns a Dialer that makes SOCKSv5 connections to the given

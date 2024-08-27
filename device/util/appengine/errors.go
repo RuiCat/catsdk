@@ -9,7 +9,7 @@ package appengine
 import (
 	"fmt"
 
-	"boltdb/util/appengine/internal"
+	"device/util/appengine/internal"
 )
 
 // IsOverQuota reports whether err represents an API call failure

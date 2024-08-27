@@ -3,7 +3,7 @@
 
 package log
 
-import proto "boltdb/util/protobuf/proto"
+import proto "device/util/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
@@ -1207,7 +1207,7 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("boltdb/util/appengine/internal/log/log_service.proto", fileDescriptor_log_service_f054fd4b5012319d)
+	proto.RegisterFile("device/util/appengine/internal/log/log_service.proto", fileDescriptor_log_service_f054fd4b5012319d)
 }
 
 var fileDescriptor_log_service_f054fd4b5012319d = []byte{

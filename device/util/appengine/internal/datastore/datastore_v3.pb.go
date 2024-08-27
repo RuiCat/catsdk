@@ -3,7 +3,7 @@
 
 package datastore
 
-import proto "boltdb/util/protobuf/proto"
+import proto "device/util/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
@@ -4099,7 +4099,7 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("boltdb/util/appengine/internal/datastore/datastore_v3.proto", fileDescriptor_datastore_v3_83b17b80c34f6179)
+	proto.RegisterFile("device/util/appengine/internal/datastore/datastore_v3.proto", fileDescriptor_datastore_v3_83b17b80c34f6179)
 }
 
 var fileDescriptor_datastore_v3_83b17b80c34f6179 = []byte{

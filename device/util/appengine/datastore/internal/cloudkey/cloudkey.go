@@ -12,9 +12,9 @@ import (
 	"errors"
 	"strings"
 
-	cloudpb "boltdb/util/appengine/datastore/internal/cloudpb"
+	cloudpb "device/util/appengine/datastore/internal/cloudpb"
 
-	"boltdb/util/protobuf/proto"
+	"device/util/protobuf/proto"
 )
 
 /////////////////////////////////////////////////////////////////////

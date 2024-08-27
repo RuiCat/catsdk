@@ -10,11 +10,11 @@ import (
 	"strings"
 	"time"
 
-	pb "boltdb/util/appengine/internal/datastore"
+	pb "device/util/appengine/internal/datastore"
 
-	"boltdb/util/protobuf/proto"
+	"device/util/protobuf/proto"
 
-	"boltdb/util/appengine"
+	"device/util/appengine"
 )
 
 var (

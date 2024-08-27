@@ -351,4 +351,4 @@ Example code:
 		}
 	}
 */
-package datastore // import "boltdb/util/appengine/datastore"
+package datastore // import "device/util/appengine/datastore"

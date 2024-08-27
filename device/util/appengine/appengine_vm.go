@@ -8,9 +8,9 @@
 package appengine
 
 import (
-	"boltdb/util/net/context"
+	"device/util/net/context"
 
-	"boltdb/util/appengine/internal"
+	"device/util/appengine/internal"
 )
 
 // BackgroundContext returns a context not associated with a request.

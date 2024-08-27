@@ -10,12 +10,12 @@ import (
 	"errors"
 	"reflect"
 
-	netcontext "boltdb/util/net/context"
+	netcontext "device/util/net/context"
 
-	"boltdb/util/protobuf/proto"
+	"device/util/protobuf/proto"
 
-	basepb "boltdb/util/appengine/internal/base"
-	pb "boltdb/util/appengine/internal/datastore"
+	basepb "device/util/appengine/internal/base"
+	pb "device/util/appengine/internal/datastore"
 )
 
 var transactionSetters = make(map[reflect.Type]reflect.Value)
