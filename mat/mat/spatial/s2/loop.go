@@ -260,7 +260,7 @@ func (l *Loop) findValidationErrorNoIndex() error {
 		}
 
 		// Antipodal vertices are not allowed.
-		if other := (Point{l.Vertex(i + 1).Mul(-1)}); v == other {
+		if other := (Point{l.Vertex(i + 1).MulScalar(-1)}); v == other {
 			return fmt.Errorf("vertices %d and %d are antipodal", i,
 				(i+1)%len(l.vertices))
 		}

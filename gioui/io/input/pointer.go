@@ -12,8 +12,8 @@ import (
 	"gioui/io/semantic"
 	"gioui/io/system"
 	"gioui/io/transfer"
-	"gioui/mat/f32"
-	f32internal "gioui/mat/f32"
+	"mat/mat/spatial/f32"
+	f32internal "mat/mat/spatial/f32"
 )
 
 type pointerQueue struct {

@@ -118,7 +118,7 @@ func ClipToPaddedFace(a, b Point, f int, padding float64) (aUV, bUV r2.Point, in
 	// loss of precision can occur in Normalize causing underflow. When PointCross
 	// is updated to work around this, this can be removed.
 	if math.Max(math.Abs(normUVW.X), math.Max(math.Abs(normUVW.Y), math.Abs(normUVW.Z))) < math.Ldexp(1, -511) {
-		normUVW = pointUVW{normUVW.Mul(math.Ldexp(1, 563))}
+		normUVW = pointUVW{normUVW.MulScalar(math.Ldexp(1, 563))}
 	}
 
 	normUVW = pointUVW{normUVW.Normalize()}
@@ -128,7 +128,7 @@ func ClipToPaddedFace(a, b Point, f int, padding float64) (aUV, bUV r2.Point, in
 
 	// As described in clipDestination, if the sum of the scores from clipping the two
 	// endpoints is 3 or more, then the segment does not intersect this face.
-	aUV, aScore := clipDestination(bUVW, aUVW, pointUVW{scaledN.Mul(-1)}, bTan, aTan, scaleUV)
+	aUV, aScore := clipDestination(bUVW, aUVW, pointUVW{scaledN.MulScalar(-1)}, bTan, aTan, scaleUV)
 	bUV, bScore := clipDestination(aUVW, bUVW, scaledN, aTan, bTan, scaleUV)
 
 	return aUV, bUV, aScore+bScore < 3
@@ -539,7 +539,7 @@ func FaceSegments(a, b Point) []FaceSegment {
 	ab := a.PointCross(b)
 
 	aFace, segment.a = moveOriginToValidFace(aFace, a, ab, segment.a)
-	bFace, segment.b = moveOriginToValidFace(bFace, b, Point{ab.Mul(-1)}, segment.b)
+	bFace, segment.b = moveOriginToValidFace(bFace, b, Point{ab.MulScalar(-1)}, segment.b)
 
 	// Now we simply follow AB from face to face until we reach B.
 	var segments []FaceSegment

@@ -225,8 +225,8 @@ func singlePointLoop(p Point) *Loop {
 	d1 := p.Cross(d0)
 	vertices := []Point{
 		p,
-		{p.Add(d0.Mul(offset)).Normalize()},
-		{p.Add(d1.Mul(offset)).Normalize()},
+		{p.Add(d0.MulScalar(offset)).Normalize()},
+		{p.Add(d1.MulScalar(offset)).Normalize()},
 	}
 	return LoopFromPoints(vertices)
 }

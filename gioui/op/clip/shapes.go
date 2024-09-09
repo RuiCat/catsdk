@@ -7,9 +7,9 @@ import (
 	"math"
 
 	"gioui/internal/ops"
-	"gioui/mat/f32"
-	f32internal "gioui/mat/f32"
 	"gioui/op"
+	"mat/mat/spatial/f32"
+	f32internal "mat/mat/spatial/f32"
 )
 
 // Rect represents the clip area of a pixel-aligned rectangle.

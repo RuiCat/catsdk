@@ -26,10 +26,10 @@ import (
 	"gioui/font/opentype"
 	"gioui/internal/debug"
 	"gioui/io/system"
-	"gioui/mat/f32"
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/op/paint"
+	"mat/mat/spatial/f32"
 )
 
 // document holds a collection of shaped lines and alignment information for

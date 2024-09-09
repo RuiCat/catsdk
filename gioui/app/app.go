@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"gioui/io/input"
-	"gioui/mat/unit"
 	"gioui/op"
 	"gioui/widget/layout"
+	"mat/mat/spatial/unit"
 )
 
 // extraArgs contains extra arguments to append to

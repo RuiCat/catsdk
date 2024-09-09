@@ -269,7 +269,7 @@ func NewMinDistanceToShapeIndexTarget(index *ShapeIndex) *MinDistanceToShapeInde
 
 func (m *MinDistanceToShapeIndexTarget) capBound() Cap {
 	c := m.index.Region().CapBound()
-	return CapFromCenterAngle(Point{c.Center().Mul(-1)}, c.Radius())
+	return CapFromCenterAngle(Point{c.Center().MulScalar(-1)}, c.Radius())
 }
 
 func (m *MinDistanceToShapeIndexTarget) updateDistanceToPoint(p Point, dist distance) (distance, bool) {

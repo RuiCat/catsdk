@@ -7,9 +7,9 @@ package vggio // import "mat/plot/vg/vggio"
 import (
 	"image/color"
 
-	"gioui/mat/f32"
 	"gioui/op"
 
+	"mat/mat/spatial/f32"
 	"mat/plot/vg"
 )
 

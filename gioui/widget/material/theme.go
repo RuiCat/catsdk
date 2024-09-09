@@ -8,9 +8,9 @@ import (
 	"sdk/x/exp/shiny/materialdesign/icons"
 
 	"gioui/font"
-	"gioui/mat/unit"
 	"gioui/widget"
 	"gioui/widget/text"
+	"mat/mat/spatial/unit"
 )
 
 // Palette contains the minimal set of colors that a widget may need to

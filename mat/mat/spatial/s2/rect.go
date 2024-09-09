@@ -306,7 +306,7 @@ func intersectsLatEdge(a, b Point, lat s1.Angle, lng s1.Interval) bool {
 	// First, compute the normal to the plane AB that points vaguely north.
 	z := Point{a.PointCross(b).Normalize()}
 	if z.Z < 0 {
-		z = Point{z.Mul(-1)}
+		z = Point{z.MulScalar(-1)}
 	}
 
 	// Extend this to an orthonormal frame (x,y,z) where x is the direction
@@ -338,7 +338,7 @@ func intersectsLatEdge(a, b Point, lat s1.Angle, lng s1.Interval) bool {
 
 	if abTheta.Contains(theta) {
 		// Check if the intersection point is also in the given lng interval.
-		isect := x.Mul(cosTheta).Add(y.Mul(sinTheta))
+		isect := x.MulScalar(cosTheta).Add(y.MulScalar(sinTheta))
 		if lng.Contains(math.Atan2(isect.Y, isect.X)) {
 			return true
 		}
@@ -346,7 +346,7 @@ func intersectsLatEdge(a, b Point, lat s1.Angle, lng s1.Interval) bool {
 
 	if abTheta.Contains(-theta) {
 		// Check if the other intersection point is also in the given lng interval.
-		isect := x.Mul(cosTheta).Sub(y.Mul(sinTheta))
+		isect := x.MulScalar(cosTheta).Sub(y.MulScalar(sinTheta))
 		if lng.Contains(math.Atan2(isect.Y, isect.X)) {
 			return true
 		}

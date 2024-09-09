@@ -31,7 +31,7 @@ import (
 
 	"gioui/internal/ops"
 	"gioui/internal/scene"
-	"gioui/mat/f32"
+	"mat/mat/spatial/f32"
 )
 
 // The following are copies of types from op/clip to avoid a circular import of

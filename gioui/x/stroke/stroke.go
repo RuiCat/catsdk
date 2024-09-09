@@ -6,9 +6,9 @@ package stroke
 import (
 	"math"
 
-	"gioui/mat/f32"
 	"gioui/op"
 	"gioui/op/clip"
+	"mat/mat/spatial/f32"
 
 	"sdk/stroke"
 )

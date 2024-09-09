@@ -19,10 +19,10 @@ import (
 	"gioui/io/input"
 	"gioui/io/key"
 	"gioui/io/pointer"
-	"gioui/mat/f32"
-	"gioui/mat/fling"
-	"gioui/mat/unit"
 	"gioui/op"
+	"mat/mat/spatial/f32"
+	"mat/mat/spatial/fling"
+	"mat/mat/spatial/unit"
 )
 
 // The duration is somewhat arbitrary.

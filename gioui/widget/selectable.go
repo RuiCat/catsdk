@@ -7,7 +7,6 @@ import (
 	"gioui/io/key"
 	"gioui/io/pointer"
 	"gioui/io/system"
-	"gioui/mat/unit"
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/widget/gesture"
@@ -15,6 +14,7 @@ import (
 	"gioui/widget/text"
 	"image"
 	"io"
+	"mat/mat/spatial/unit"
 	"math"
 	"strings"
 )

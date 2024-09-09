@@ -6,13 +6,13 @@ import (
 	"image/color"
 
 	"gioui/font"
-	"gioui/mat/f32color"
-	"gioui/mat/unit"
 	"gioui/op"
 	"gioui/op/paint"
 	"gioui/widget"
 	"gioui/widget/layout"
 	"gioui/widget/text"
+	"mat/mat/spatial/f32color"
+	"mat/mat/spatial/unit"
 )
 
 type EditorStyle struct {

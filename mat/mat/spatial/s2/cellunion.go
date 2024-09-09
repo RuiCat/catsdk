@@ -315,7 +315,7 @@ func (cu *CellUnion) CapBound() Cap {
 
 	for _, ci := range *cu {
 		area := AvgAreaMetric.Value(ci.Level())
-		centroid = Point{centroid.Add(ci.Point().Mul(area))}
+		centroid = Point{centroid.Add(ci.Point().MulScalar(area))}
 	}
 
 	if zero := (Point{}); centroid == zero {

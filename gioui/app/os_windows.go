@@ -21,15 +21,15 @@ import (
 	gowindows "sdk/x/sys/windows"
 
 	"gioui/app/internal/windows"
-	"gioui/mat/unit"
 	"gioui/op"
+	"mat/mat/spatial/unit"
 
 	"gioui/io/event"
 	"gioui/io/key"
 	"gioui/io/pointer"
 	"gioui/io/system"
 	"gioui/io/transfer"
-	"gioui/mat/f32"
+	"mat/mat/spatial/f32"
 )
 
 type Win32ViewEvent struct {

@@ -9,12 +9,12 @@ import (
 
 	"gioui/font"
 	"gioui/io/semantic"
-	"gioui/mat/f32color"
-	"gioui/mat/unit"
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/op/paint"
 	"gioui/widget"
+	"mat/mat/spatial/f32color"
+	"mat/mat/spatial/unit"
 
 	"gioui/widget/layout"
 	"gioui/widget/text"

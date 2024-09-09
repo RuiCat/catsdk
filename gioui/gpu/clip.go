@@ -5,7 +5,7 @@ import (
 	"math"
 
 	"gioui/internal/stroke"
-	"gioui/mat/f32"
+	"mat/mat/spatial/f32"
 )
 
 type quadSplitter struct {

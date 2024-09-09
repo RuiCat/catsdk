@@ -7,8 +7,8 @@ import (
 	"image"
 	"time"
 
-	"gioui/mat/f32color"
 	"gioui/shader"
+	"mat/mat/spatial/f32color"
 )
 
 // Device represents the abstraction of underlying GPU

@@ -11,9 +11,9 @@ import (
 	"gioui/internal/ops"
 	"gioui/internal/scene"
 	"gioui/internal/stroke"
-	"gioui/mat/f32"
-	f32internal "gioui/mat/f32"
 	"gioui/op"
+	"mat/mat/spatial/f32"
+	f32internal "mat/mat/spatial/f32"
 )
 
 // Op represents a clip area. Op intersects the current clip area with

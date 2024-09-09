@@ -8,8 +8,8 @@ import (
 
 	"gioui/internal/ops"
 	"gioui/io/event"
-	"gioui/mat/f32"
 	"gioui/op"
+	"mat/mat/spatial/f32"
 )
 
 // Filter matches any [Event] that matches the parameters.

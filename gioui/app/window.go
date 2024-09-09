@@ -21,13 +21,13 @@ import (
 	"gioui/io/key"
 	"gioui/io/pointer"
 	"gioui/io/system"
-	"gioui/mat/f32"
-	"gioui/mat/unit"
 	"gioui/op"
 	"gioui/widget"
 	"gioui/widget/layout"
 	"gioui/widget/material"
 	"gioui/widget/text"
+	"mat/mat/spatial/f32"
+	"mat/mat/spatial/unit"
 )
 
 // Option configures a window.

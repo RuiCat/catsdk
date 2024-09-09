@@ -197,7 +197,7 @@ func Intersection(a0, a1, b0, b1 Point) Point {
 	// intersection point.  We use the sum of all vertices to make sure that the
 	// result is unchanged when the edges are swapped or reversed.
 	if pt.Dot((a0.Add(a1.Vec)).Add(b0.Add(b1.Vec))) < 0 {
-		pt = Point{pt.Mul(-1)}
+		pt = Point{pt.MulScalar(-1)}
 	}
 
 	return pt
@@ -215,7 +215,7 @@ func robustNormalWithLength(x, y r3.Vec) (r3.Vec, float64) {
 	tmp := x.Sub(y).Cross(x.Add(y))
 	length := tmp.Norm()
 	if length != 0 {
-		pt = tmp.Mul(1 / length)
+		pt = tmp.MulScalar(1 / length)
 	}
 	return pt, 0.5 * length // Since tmp == 2 * (x.Cross(y))
 }
@@ -333,7 +333,7 @@ func intersectionStableSorted(a0, a1, b0, b1 Point) (Point, bool) {
 		return pt, false // Error is unbounded in this case.
 	}
 
-	x := b1.Mul(b0Dist).Sub(b0.Mul(b1Dist))
+	x := b1.MulScalar(b0Dist).Sub(b0.MulScalar(b1Dist))
 	err := bLen*math.Abs(b0Dist*b1Error-b1Dist*b0Error)/
 		(distSum-errorSum) + 2*distSum*epsilon
 
@@ -345,7 +345,7 @@ func intersectionStableSorted(a0, a1, b0, b1 Point) (Point, bool) {
 		return pt, false
 	}
 
-	return Point{x.Mul(1 / xLen)}, true
+	return Point{x.MulScalar(1 / xLen)}, true
 }
 
 // intersectionExact returns the intersection point of (a0, a1) and (b0, b1)

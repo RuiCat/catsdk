@@ -14,7 +14,7 @@ to a ui/app.Window's Update method.
 
 Drawing a colored square:
 
-	import "gioui/mat/unit"
+	import "mat/mat/spatial/unit"
 	import "gioui/app"
 	import "gioui/op/paint"
 
@@ -69,7 +69,7 @@ import (
 	"time"
 
 	"gioui/internal/ops"
-	"gioui/mat/f32"
+	"mat/mat/spatial/f32"
 )
 
 // Ops holds a list of operations. Operations are stored in

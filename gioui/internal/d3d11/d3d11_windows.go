@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"unsafe"
 
-	"gioui/mat/f32color"
+	"mat/mat/spatial/f32color"
 
 	"sdk/x/sys/windows"
 )

@@ -42,9 +42,9 @@ import (
 	"gioui/io/pointer"
 	"gioui/io/system"
 	"gioui/io/transfer"
-	"gioui/mat/f32"
-	"gioui/mat/unit"
 	"gioui/op"
+	"mat/mat/spatial/f32"
+	"mat/mat/spatial/unit"
 
 	syscall "sdk/x/sys/unix"
 

@@ -6,13 +6,13 @@ import (
 
 	"gioui/io/semantic"
 	"gioui/io/system"
-	"gioui/mat/f32"
-	"gioui/mat/unit"
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/op/paint"
 	"gioui/widget"
 	"gioui/widget/layout"
+	"mat/mat/spatial/f32"
+	"mat/mat/spatial/unit"
 )
 
 // DecorationsStyle provides the style elements for Decorations.

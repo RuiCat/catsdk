@@ -17,6 +17,7 @@ package r2
 import (
 	"fmt"
 	"math"
+	"sdk/x/image/math/fixed"
 
 	"mat/mat/spatial/r1"
 )
@@ -24,6 +25,20 @@ import (
 // Point represents a point in ℝ².
 type Point struct {
 	X, Y float64
+}
+
+func (a Point) Fixed() fixed.Point26_6 {
+	return fixed.Point26_6{X: fixed.Int26_6(math.Round(a.X * 64)), Y: fixed.Int26_6(math.Round(a.Y * 64))}
+}
+
+func (a Point) Distance(b Point) float64 {
+	return math.Hypot(a.X-b.X, a.Y-b.Y)
+}
+
+func (a Point) Interpolate(b Point, t float64) Point {
+	x := a.X + (b.X-a.X)*t
+	y := a.Y + (b.Y-a.Y)*t
+	return Point{x, y}
 }
 
 // Add returns the sum of p and op.

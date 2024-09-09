@@ -62,7 +62,7 @@ func UpdateMinDistance(x, a, b Point, minDist s1.ChordAngle) (s1.ChordAngle, boo
 func UpdateMaxDistance(x, a, b Point, maxDist s1.ChordAngle) (s1.ChordAngle, bool) {
 	dist := maxChordAngle(ChordAngleBetweenPoints(x, a), ChordAngleBetweenPoints(x, b))
 	if dist > s1.RightChordAngle {
-		dist, _ = updateMinDistance(Point{x.Mul(-1)}, a, b, dist, true)
+		dist, _ = updateMinDistance(Point{x.MulScalar(-1)}, a, b, dist, true)
 		dist = s1.StraightChordAngle - dist
 	}
 	if maxDist < dist {
@@ -96,7 +96,7 @@ func UpdateMinInteriorDistance(x, a, b Point, minDist s1.ChordAngle) (s1.ChordAn
 func Project(x, a, b Point) Point {
 	aXb := a.PointCross(b)
 	// Find the closest point to X along the great circle through AB.
-	p := x.Sub(aXb.Mul(x.Dot(aXb.Vec) / aXb.Vec.Norm2()))
+	p := x.Sub(aXb.MulScalar(x.Dot(aXb.Vec) / aXb.Vec.Norm2()))
 
 	// If this point is on the edge AB, then it's the closest point.
 	if Sign(aXb, a, Point{p}) && Sign(Point{p}, b, aXb) {
@@ -153,7 +153,7 @@ func InterpolateAtDistance(ax s1.Angle, a, b Point) Point {
 	// normalize it anyway to ensure that the error is within acceptable bounds.
 	// (Otherwise errors can build up when the result of one interpolation is
 	// fed into another interpolation.)
-	return Point{(a.Mul(math.Cos(aRad)).Add(tangent.Mul(math.Sin(aRad) / tangent.Norm()))).Normalize()}
+	return Point{(a.MulScalar(math.Cos(aRad)).Add(tangent.MulScalar(math.Sin(aRad) / tangent.Norm()))).Normalize()}
 }
 
 // minUpdateDistanceMaxError returns the maximum error in the result of
@@ -351,7 +351,7 @@ func updateEdgePairMaxDistance(a0, a1, b0, b1 Point, maxDist s1.ChordAngle) (s1.
 	if maxDist == s1.StraightChordAngle {
 		return s1.StraightChordAngle, false
 	}
-	if CrossingSign(a0, a1, Point{b0.Mul(-1)}, Point{b1.Mul(-1)}) == Cross {
+	if CrossingSign(a0, a1, Point{b0.MulScalar(-1)}, Point{b1.MulScalar(-1)}) == Cross {
 		return s1.StraightChordAngle, true
 	}
 

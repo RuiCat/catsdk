@@ -4,11 +4,11 @@ package widget
 
 import (
 	"gioui/io/pointer"
-	"gioui/mat/unit"
 	"gioui/op/clip"
 	"gioui/widget/gesture"
 	"gioui/widget/layout"
 	"image"
+	"mat/mat/spatial/unit"
 )
 
 // Float is for selecting a value in a range.

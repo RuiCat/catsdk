@@ -37,7 +37,7 @@ func (v Vec) Normalize() Vec {
 	if n2 == 0 {
 		return Vec{0, 0, 0}
 	}
-	return v.Mul(1 / math.Sqrt(n2))
+	return v.MulScalar(1 / math.Sqrt(n2))
 }
 
 // IsUnit returns whether this Vec is of approximately unit length.
@@ -55,8 +55,20 @@ func (v Vec) Add(ov Vec) Vec { return Vec{v.X + ov.X, v.Y + ov.Y, v.Z + ov.Z} }
 // Sub returns the standard Vec difference of v and ov.
 func (v Vec) Sub(ov Vec) Vec { return Vec{v.X - ov.X, v.Y - ov.Y, v.Z - ov.Z} }
 
-// Mul returns the standard scalar product of v and m.
-func (v Vec) Mul(m float64) Vec { return Vec{m * v.X, m * v.Y, m * v.Z} }
+func (a Vec) Mul(b Vec) Vec {
+	return Vec{a.X * b.X, a.Y * b.Y, a.Z * b.Z}
+}
+func (a Vec) Div(b Vec) Vec {
+	return Vec{a.X / b.X, a.Y / b.Y, a.Z / b.Z}
+}
+
+func (a Vec) Mod(b Vec) Vec {
+	// as implemented in GLSL
+	x := a.X - b.X*math.Floor(a.X/b.X)
+	y := a.Y - b.Y*math.Floor(a.Y/b.Y)
+	z := a.Z - b.Z*math.Floor(a.Z/b.Z)
+	return Vec{x, y, z}
+}
 
 // Dot returns the standard dot product of v and ov.
 func (v Vec) Dot(ov Vec) float64 {
@@ -78,6 +90,92 @@ func (v Vec) Distance(ov Vec) float64 { return v.Sub(ov).Norm() }
 // Angle returns the angle between v and ov.
 func (v Vec) Angle(ov Vec) s1.Angle {
 	return s1.Angle(math.Atan2(v.Cross(ov).Norm(), v.Dot(ov))) * s1.Radian
+}
+
+func (a Vec) Length() float64 {
+	return math.Sqrt(a.X*a.X + a.Y*a.Y + a.Z*a.Z)
+}
+
+func (a Vec) LengthN(n float64) float64 {
+	if n == 2 {
+		return a.Length()
+	}
+	a = a.Abs()
+	return math.Pow(math.Pow(a.X, n)+math.Pow(a.Y, n)+math.Pow(a.Z, n), 1/n)
+}
+
+func (a Vec) Negate() Vec {
+	return Vec{-a.X, -a.Y, -a.Z}
+}
+
+func (a Vec) AddScalar(b float64) Vec {
+	return Vec{a.X + b, a.Y + b, a.Z + b}
+}
+
+func (a Vec) SubScalar(b float64) Vec {
+	return Vec{a.X - b, a.Y - b, a.Z - b}
+}
+
+func (a Vec) DivScalar(b float64) Vec {
+	return Vec{a.X / b, a.Y / b, a.Z / b}
+}
+
+func (a Vec) MulScalar(b float64) Vec {
+	return Vec{a.X * b, a.Y * b, a.Z * b}
+}
+func (a Vec) Min(b Vec) Vec {
+	return Vec{math.Min(a.X, b.X), math.Min(a.Y, b.Y), math.Min(a.Z, b.Z)}
+}
+
+func (a Vec) Max(b Vec) Vec {
+	return Vec{math.Max(a.X, b.X), math.Max(a.Y, b.Y), math.Max(a.Z, b.Z)}
+}
+
+func (a Vec) MinAxis() Vec {
+	x, y, z := math.Abs(a.X), math.Abs(a.Y), math.Abs(a.Z)
+	switch {
+	case x <= y && x <= z:
+		return Vec{1, 0, 0}
+	case y <= x && y <= z:
+		return Vec{0, 1, 0}
+	}
+	return Vec{0, 0, 1}
+}
+
+func (a Vec) MinComponent() float64 {
+	return math.Min(math.Min(a.X, a.Y), a.Z)
+}
+
+func (a Vec) MaxComponent() float64 {
+	return math.Max(math.Max(a.X, a.Y), a.Z)
+}
+
+func (n Vec) Reflect(i Vec) Vec {
+	return i.Sub(n.MulScalar(2 * n.Dot(i)))
+}
+
+func (n Vec) Refract(i Vec, n1, n2 float64) Vec {
+	nr := n1 / n2
+	cosI := -n.Dot(i)
+	sinT2 := nr * nr * (1 - cosI*cosI)
+	if sinT2 > 1 {
+		return Vec{}
+	}
+	cosT := math.Sqrt(1 - sinT2)
+	return i.MulScalar(nr).Add(n.MulScalar(nr*cosI - cosT))
+}
+
+func (n Vec) Reflectance(i Vec, n1, n2 float64) float64 {
+	nr := n1 / n2
+	cosI := -n.Dot(i)
+	sinT2 := nr * nr * (1 - cosI*cosI)
+	if sinT2 > 1 {
+		return 1
+	}
+	cosT := math.Sqrt(1 - sinT2)
+	rOrth := (n1*cosI - n2*cosT) / (n1*cosI + n2*cosT)
+	rPar := (n2*cosI - n1*cosT) / (n2*cosI + n1*cosT)
+	return (rOrth*rOrth + rPar*rPar) / 2
 }
 
 // Axis enumerates the 3 axes of ℝ³.

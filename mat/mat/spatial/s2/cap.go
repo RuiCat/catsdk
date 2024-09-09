@@ -198,7 +198,7 @@ func (c Cap) Complement() Cap {
 		return FullCap()
 	}
 
-	return CapFromCenterChordAngle(Point{c.center.Mul(-1)}, s1.StraightChordAngle.Sub(c.radius))
+	return CapFromCenterChordAngle(Point{c.center.MulScalar(-1)}, s1.StraightChordAngle.Sub(c.radius))
 }
 
 // CapBound returns a bounding spherical cap. This is not guaranteed to be exact.
@@ -463,7 +463,7 @@ func (c Cap) Centroid() Point {
 		return Point{}
 	}
 	r := 1 - 0.5*c.Height()
-	return Point{c.center.Mul(r * c.Area())}
+	return Point{c.center.MulScalar(r * c.Area())}
 }
 
 // Union returns the smallest cap which encloses this cap and other.

@@ -68,7 +68,7 @@ func (p *Polyline) Centroid() Point {
 		vDiff := (*p)[i-1].Sub((*p)[i].Vec) // Length == 2*sin(theta)
 
 		// Length == 2*sin(theta)
-		centroid = Point{centroid.Add(vSum.Mul(math.Sqrt(vDiff.Norm2() / vSum.Norm2())))}
+		centroid = Point{centroid.Add(vSum.MulScalar(math.Sqrt(vDiff.Norm2() / vSum.Norm2())))}
 	}
 	return centroid
 }
@@ -473,7 +473,7 @@ func (p *Polyline) Validate() error {
 		if prev == cur {
 			return fmt.Errorf("vertices %d and %d are identical", i-1, i)
 		}
-		if prev == (Point{cur.Mul(-1)}) {
+		if prev == (Point{cur.MulScalar(-1)}) {
 			return fmt.Errorf("vertices %d and %d are antipodal", i-1, i)
 		}
 	}

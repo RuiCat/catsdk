@@ -10,13 +10,13 @@ import (
 	"unicode/utf8"
 
 	"gioui/font"
-	"gioui/mat/f32"
-	"gioui/mat/unit"
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/op/paint"
 	"gioui/widget/layout"
 	"gioui/widget/text"
+	"mat/mat/spatial/f32"
+	"mat/mat/spatial/unit"
 
 	"sdk/x/exp/slices"
 	"sdk/x/image/math/fixed"

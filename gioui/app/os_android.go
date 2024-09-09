@@ -136,9 +136,9 @@ import (
 	"unicode/utf16"
 	"unsafe"
 
-	"gioui/mat/f32"
-	"gioui/mat/f32color"
 	"gioui/op"
+	"mat/mat/spatial/f32"
+	"mat/mat/spatial/f32color"
 
 	"gioui/io/event"
 	"gioui/io/input"
@@ -147,7 +147,7 @@ import (
 	"gioui/io/semantic"
 	"gioui/io/system"
 	"gioui/io/transfer"
-	"gioui/mat/unit"
+	"mat/mat/spatial/unit"
 )
 
 type window struct {

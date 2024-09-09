@@ -23,12 +23,12 @@ import (
 	"gioui/internal/ops"
 	"gioui/internal/scene"
 	"gioui/internal/stroke"
-	"gioui/mat/f32"
-	"gioui/mat/f32color"
 	"gioui/op"
 	"gioui/shader"
 	"gioui/shader/gio"
 	"gioui/widget/layout"
+	"mat/mat/spatial/f32"
+	"mat/mat/spatial/f32color"
 
 	// Register backends.
 	_ "gioui/gpu/internal/d3d11"

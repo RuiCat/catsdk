@@ -7,13 +7,13 @@ import (
 
 	"gioui/font"
 	"gioui/io/semantic"
-	"gioui/mat/f32"
-	"gioui/mat/unit"
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/op/paint"
 	"gioui/widget/layout"
 	"gioui/widget/text"
+	"mat/mat/spatial/f32"
+	"mat/mat/spatial/unit"
 
 	"sdk/x/image/math/fixed"
 )

@@ -9,8 +9,8 @@ import (
 	"gioui/internal/ops"
 	"gioui/io/event"
 	"gioui/io/key"
-	"gioui/mat/f32"
 	"gioui/op"
+	"mat/mat/spatial/f32"
 )
 
 // Event is a pointer event.

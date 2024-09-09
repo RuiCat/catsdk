@@ -10,9 +10,9 @@ import (
 	"math"
 
 	"gioui/internal/ops"
-	"gioui/mat/f32"
 	"gioui/op"
 	"gioui/op/clip"
+	"mat/mat/spatial/f32"
 )
 
 // ImageFilter is the scaling filter for images.

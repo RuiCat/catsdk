@@ -13,10 +13,10 @@ import (
 
 	"gioui/gpu/internal/driver"
 	"gioui/internal/byteslice"
-	"gioui/mat/f32"
-	"gioui/mat/f32color"
 	"gioui/shader"
 	"gioui/shader/gio"
+	"mat/mat/spatial/f32"
+	"mat/mat/spatial/f32color"
 )
 
 type pather struct {

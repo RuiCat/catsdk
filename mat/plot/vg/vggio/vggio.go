@@ -19,8 +19,7 @@ import (
 	giofont "gioui/font"
 	"gioui/font/opentype"
 	"gioui/gpu/headless"
-	"gioui/mat/f32"
-	"gioui/mat/unit"
+
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/op/paint"
@@ -34,6 +33,8 @@ import (
 
 	bstroke "sdk/stroke"
 
+	"mat/mat/spatial/f32"
+	"mat/mat/spatial/unit"
 	"mat/plot/font"
 	"mat/plot/vg"
 )

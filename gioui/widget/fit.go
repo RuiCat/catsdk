@@ -5,8 +5,8 @@ package widget
 import (
 	"image"
 
-	"gioui/mat/f32"
 	"gioui/widget/layout"
+	"mat/mat/spatial/f32"
 )
 
 // Fit scales a widget to fit and clip to the constraints.

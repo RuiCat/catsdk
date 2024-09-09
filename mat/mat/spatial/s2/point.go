@@ -277,12 +277,12 @@ func Rotate(p, axis Point, angle s1.Angle) Point {
 	// right-handed orthogonal frame (dx, dy, center) such that dx is the
 	// vector from center to P, and dy has the same length as dx. The
 	// result can then be expressed as (cos(angle)*dx + sin(angle)*dy + center).
-	center := axis.Mul(p.Dot(axis.Vec))
+	center := axis.MulScalar(p.Dot(axis.Vec))
 	dx := p.Sub(center)
 	dy := axis.Cross(p.Vec)
 	// Mathematically the result is unit length, but normalization is necessary
 	// to ensure that numerical errors don't accumulate.
-	return Point{dx.Mul(math.Cos(angle.Radians())).Add(dy.Mul(math.Sin(angle.Radians()))).Add(center).Normalize()}
+	return Point{dx.MulScalar(math.Cos(angle.Radians())).Add(dy.MulScalar(math.Sin(angle.Radians()))).Add(center).Normalize()}
 }
 
 // stableAngle reports the angle between two vectors with better precision when

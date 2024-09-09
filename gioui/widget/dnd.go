@@ -4,12 +4,12 @@ import (
 	"gioui/io/event"
 	"gioui/io/pointer"
 	"gioui/io/transfer"
-	"gioui/mat/f32"
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/widget/gesture"
 	"gioui/widget/layout"
 	"io"
+	"mat/mat/spatial/f32"
 )
 
 // Draggable makes a widget draggable.

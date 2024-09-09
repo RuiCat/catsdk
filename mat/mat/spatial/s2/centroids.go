@@ -94,7 +94,7 @@ func TrueCentroid(a, b, c Point) Point {
 	z := r3.Vec{a.Z, b.Z - a.Z, c.Z - a.Z}
 	r := r3.Vec{ra, rb - ra, rc - ra}
 
-	return Point{r3.Vec{y.Cross(z).Dot(r), z.Cross(x).Dot(r), x.Cross(y).Dot(r)}.Mul(0.5)}
+	return Point{r3.Vec{y.Cross(z).Dot(r), z.Cross(x).Dot(r), x.Cross(y).Dot(r)}.MulScalar(0.5)}
 }
 
 // EdgeTrueCentroid returns the true centroid of the spherical geodesic edge AB
@@ -120,7 +120,7 @@ func EdgeTrueCentroid(a, b Point) Point {
 	if cos2 == 0 {
 		return Point{} // Ignore antipodal edges.
 	}
-	return Point{vSum.Mul(math.Sqrt(sin2 / cos2))} // Length == 2*sin(theta)
+	return Point{vSum.MulScalar(math.Sqrt(sin2 / cos2))} // Length == 2*sin(theta)
 }
 
 // PlanarCentroid returns the centroid of the planar triangle ABC. This can be
@@ -129,5 +129,5 @@ func EdgeTrueCentroid(a, b Point) Point {
 // that for large spherical triangles the surface centroid may be nowhere near
 // the intuitive "center".
 func PlanarCentroid(a, b, c Point) Point {
-	return Point{a.Add(b.Vec).Add(c.Vec).Mul(1. / 3)}
+	return Point{a.Add(b.Vec).Add(c.Vec).MulScalar(1. / 3)}
 }

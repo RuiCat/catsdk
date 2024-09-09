@@ -60,7 +60,7 @@ func NewMaxDistanceToPointTarget(point Point) *MaxDistanceToPointTarget {
 }
 
 func (m *MaxDistanceToPointTarget) capBound() Cap {
-	return CapFromCenterChordAngle(Point{m.point.Mul(-1)}, (s1.ChordAngle(0)))
+	return CapFromCenterChordAngle(Point{m.point.MulScalar(-1)}, (s1.ChordAngle(0)))
 }
 
 func (m *MaxDistanceToPointTarget) updateDistanceToPoint(p Point, dist distance) (distance, bool) {
@@ -84,7 +84,7 @@ func (m *MaxDistanceToPointTarget) visitContainingShapes(index *ShapeIndex, v sh
 	// the antipode of the target point. These are the polygons whose
 	// distance to the target is maxDistance.zero()
 	q := NewContainsPointQuery(index, VertexModelSemiOpen)
-	return q.visitContainingShapes(Point{m.point.Mul(-1)}, func(shape Shape) bool {
+	return q.visitContainingShapes(Point{m.point.MulScalar(-1)}, func(shape Shape) bool {
 		return v(shape, m.point)
 	})
 }
@@ -112,7 +112,7 @@ func (m *MaxDistanceToEdgeTarget) capBound() Cap {
 	// efficient and numerically stable way.
 	d2 := float64(ChordAngleBetweenPoints(m.e.V0, m.e.V1))
 	r2 := (0.5 * d2) / (1 + math.Sqrt(1-0.25*d2))
-	return CapFromCenterChordAngle(Point{m.e.V0.Add(m.e.V1.Vec).Mul(-1).Normalize()}, s1.ChordAngleFromSquaredLength(r2))
+	return CapFromCenterChordAngle(Point{m.e.V0.Add(m.e.V1.Vec).MulScalar(-1).Normalize()}, s1.ChordAngleFromSquaredLength(r2))
 }
 
 func (m *MaxDistanceToEdgeTarget) updateDistanceToPoint(p Point, dist distance) (distance, bool) {
@@ -165,7 +165,7 @@ func NewMaxDistanceToCellTarget(cell Cell) *MaxDistanceToCellTarget {
 
 func (m *MaxDistanceToCellTarget) capBound() Cap {
 	c := m.cell.CapBound()
-	return CapFromCenterAngle(Point{c.Center().Mul(-1)}, c.Radius())
+	return CapFromCenterAngle(Point{c.Center().MulScalar(-1)}, c.Radius())
 }
 
 func (m *MaxDistanceToCellTarget) updateDistanceToPoint(p Point, dist distance) (distance, bool) {
@@ -212,7 +212,7 @@ func NewMaxDistanceToShapeIndexTarget(index *ShapeIndex) *MaxDistanceToShapeInde
 // is the set of points whose maxDistance to the target is maxDistance.zero()
 func (m *MaxDistanceToShapeIndexTarget) capBound() Cap {
 	c := m.index.Region().CapBound()
-	return CapFromCenterAngle(Point{c.Center().Mul(-1)}, c.Radius())
+	return CapFromCenterAngle(Point{c.Center().MulScalar(-1)}, c.Radius())
 }
 
 func (m *MaxDistanceToShapeIndexTarget) updateDistanceToPoint(p Point, dist distance) (distance, bool) {

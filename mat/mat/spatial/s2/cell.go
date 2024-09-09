@@ -107,9 +107,9 @@ func (c Cell) Edge(k int) Point {
 	case 1:
 		return Point{uNorm(int(c.face), c.uv.X.Max).Normalize()} // Right
 	case 2:
-		return Point{vNorm(int(c.face), c.uv.Y.Max).Mul(-1.0).Normalize()} // Top
+		return Point{vNorm(int(c.face), c.uv.Y.Max).MulScalar(-1.0).Normalize()} // Top
 	default:
-		return Point{uNorm(int(c.face), c.uv.X.Min).Mul(-1.0).Normalize()} // Left
+		return Point{uNorm(int(c.face), c.uv.X.Min).MulScalar(-1.0).Normalize()} // Left
 	}
 }
 
@@ -581,7 +581,7 @@ func (c Cell) MaxDistance(target Point) s1.ChordAngle {
 
 	// Otherwise, find the minimum distance dMin to the antipodal point and the
 	// maximum distance will be pi - dMin.
-	return s1.StraightChordAngle - c.Distance(Point{target.Mul(-1)})
+	return s1.StraightChordAngle - c.Distance(Point{target.MulScalar(-1)})
 }
 
 // BoundaryDistance reports the distance from the cell boundary to the given point.
@@ -641,7 +641,7 @@ func (c Cell) MaxDistanceToEdge(a, b Point) s1.ChordAngle {
 		return maxDist
 	}
 
-	return s1.StraightChordAngle - c.DistanceToEdge(Point{a.Mul(-1)}, Point{b.Mul(-1)})
+	return s1.StraightChordAngle - c.DistanceToEdge(Point{a.MulScalar(-1)}, Point{b.MulScalar(-1)})
 }
 
 // DistanceToCell returns the minimum distance from this cell to the given cell.

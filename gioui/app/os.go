@@ -14,7 +14,7 @@ import (
 	"gioui/gpu"
 	"gioui/io/pointer"
 	"gioui/io/system"
-	"gioui/mat/unit"
+	"mat/mat/spatial/unit"
 )
 
 // errOutOfDate is reported when the GPU surface dimensions or properties no

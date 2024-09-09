@@ -8,7 +8,7 @@ import (
 
 	"gioui/io/event"
 	"gioui/io/key"
-	"gioui/mat/f32"
+	"mat/mat/spatial/f32"
 )
 
 // EditorState represents the state of an editor needed by input handlers.

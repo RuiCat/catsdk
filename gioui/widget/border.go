@@ -6,10 +6,10 @@ import (
 	"image"
 	"image/color"
 
-	"gioui/mat/unit"
 	"gioui/op/clip"
 	"gioui/op/paint"
 	"gioui/widget/layout"
+	"mat/mat/spatial/unit"
 )
 
 // Border lays out a widget and draws a border inside it.

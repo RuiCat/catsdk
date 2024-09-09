@@ -25,13 +25,13 @@ import (
 	"gioui/internal/byteslice"
 	"gioui/internal/ops"
 	"gioui/internal/scene"
-	"gioui/mat/f32"
-	"gioui/mat/f32color"
 	"gioui/op"
 	"gioui/shader"
 	"gioui/shader/gio"
 	"gioui/shader/piet"
 	"gioui/widget/layout"
+	"mat/mat/spatial/f32"
+	"mat/mat/spatial/f32color"
 )
 
 type compute struct {

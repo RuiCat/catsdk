@@ -6,13 +6,13 @@ import (
 	"image"
 	"image/color"
 
-	"gioui/mat/f32color"
-	"gioui/mat/unit"
 	"gioui/op"
 	"gioui/op/clip"
 	"gioui/op/paint"
 	"gioui/widget"
 	"gioui/widget/layout"
+	"mat/mat/spatial/f32color"
+	"mat/mat/spatial/unit"
 )
 
 // Slider is for selecting a value in a range.
