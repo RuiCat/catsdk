@@ -40,7 +40,7 @@ func (f *Function) UV(p Vector) Vector {
 	y1, y2 := f.Box.Min.Y, f.Box.Max.Y
 	u := (p.X - x1) / (x2 - x1)
 	v := (p.Y - y1) / (y2 - y1)
-	return Vector{u, v, 0}
+	return Vector{X: u, Y: v, Z: 0}
 }
 
 func (f *Function) MaterialAt(p Vector) Material {
@@ -50,9 +50,9 @@ func (f *Function) MaterialAt(p Vector) Material {
 func (f *Function) NormalAt(p Vector) Vector {
 	eps := 1e-3
 	v := Vector{
-		f.Function(p.X-eps, p.Y) - f.Function(p.X+eps, p.Y),
-		f.Function(p.X, p.Y-eps) - f.Function(p.X, p.Y+eps),
-		2 * eps,
+		X: f.Function(p.X-eps, p.Y) - f.Function(p.X+eps, p.Y),
+		Y: f.Function(p.X, p.Y-eps) - f.Function(p.X, p.Y+eps),
+		Z: 2 * eps,
 	}
 	return v.Normalize()
 }

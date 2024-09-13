@@ -5,27 +5,30 @@ import (
 	"math/rand"
 )
 
+// LightMode 表示光照模式，枚举值有：
 type LightMode int
 
 const (
-	LightModeRandom = iota
-	LightModeAll
+	LightModeRandom = iota // 随机光照
+	LightModeAll           // 全体光照
 )
 
+// SpecularMode 表示specular模式，枚举值有：
 type SpecularMode int
 
 const (
-	SpecularModeNaive = iota
-	SpecularModeFirst
-	SpecularModeAll
+	SpecularModeNaive = iota // 简单镜面反射
+	SpecularModeFirst        // 首次镜面反射
+	SpecularModeAll          // 全体镜面反射
 )
 
+// BounceType 表示反弹类型，枚举值有：
 type BounceType int
 
 const (
-	BounceTypeAny = iota
-	BounceTypeDiffuse
-	BounceTypeSpecular
+	BounceTypeAny      = iota // 任意反弹
+	BounceTypeDiffuse         // 散射反弹
+	BounceTypeSpecular        // 镜面反弹
 )
 
 type Sampler interface {
@@ -40,13 +43,14 @@ func NewDirectSampler() *DefaultSampler {
 	return &DefaultSampler{1, 0, true, false, LightModeAll, SpecularModeAll}
 }
 
+// DefaultSampler 是一个结构体，用于存储采样器的参数
 type DefaultSampler struct {
-	FirstHitSamples int
-	MaxBounces      int
-	DirectLighting  bool
-	SoftShadows     bool
-	LightMode       LightMode
-	SpecularMode    SpecularMode
+	FirstHitSamples int          // 第一次采样数
+	MaxBounces      int          // 最大反弹次数
+	DirectLighting  bool         // 直接光照模式
+	SoftShadows     bool         // 软阴影模式
+	LightMode       LightMode    // 光照模式
+	SpecularMode    SpecularMode // specular模式
 }
 
 func (s *DefaultSampler) Sample(scene *Scene, ray Ray, rnd *rand.Rand) Color {
@@ -54,66 +58,99 @@ func (s *DefaultSampler) Sample(scene *Scene, ray Ray, rnd *rand.Rand) Color {
 }
 
 func (s *DefaultSampler) sample(scene *Scene, ray Ray, emission bool, samples, depth int, rnd *rand.Rand) Color {
+	// 如果当前层数超过最大反弹次数，返回材质色
 	if depth > s.MaxBounces {
 		return Black
 	}
-	hit := scene.Intersect(ray)
+	// 检查ray与场景是否相交，如果没有则返回环境光
+	hit, list := scene.Intersect(ray)
 	if !hit.Ok() {
 		return s.sampleEnvironment(scene, ray)
 	}
+	// 获取物体的信息和材质
 	info := hit.Info(ray)
 	material := info.Material
+	// 如果物体有自发光，直接返回结果
 	result := material.Color
 	if material.Emittance > 0 {
+		// 如果启用直射光并且不是自发光，返回结果
 		if s.DirectLighting && !emission {
 			return Black
 		}
-		result = result.Add(material.Color.MulScalar(material.Emittance * float64(samples)))
+		// 计算自发光贡献
+		result = result.Add(material.Color.MulScalar(material.Emittance * float32(samples)))
 	}
+	// 确定反弹模式
 	n := int(math.Sqrt(float64(samples)))
 	var ma, mb BounceType
 	if s.SpecularMode == SpecularModeAll || (depth == 0 && s.SpecularMode == SpecularModeFirst) {
-		ma = BounceTypeDiffuse
-		mb = BounceTypeSpecular
+		ma = BounceTypeDiffuse  // 反弹为漫射
+		mb = BounceTypeSpecular // 反弹为镜面
 	} else {
-		ma = BounceTypeAny
-		mb = BounceTypeAny
+		ma = BounceTypeAny // 反弹为任何类型
+		mb = BounceTypeAny // 反弹为任何类型
 	}
+	// 循环计算反弹次数
 	for u := 0; u < n; u++ {
 		for v := 0; v < n; v++ {
 			for mode := ma; mode <= mb; mode++ {
-				fu := (float64(u) + rnd.Float64()) / float64(n)
-				fv := (float64(v) + rnd.Float64()) / float64(n)
+				// 计算随机采样点
+				fu := (float32(u) + rnd.Float32()) / float32(n)
+				fv := (float32(v) + rnd.Float32()) / float32(n)
+				// 计算新的射线和反弹信息
 				newRay, reflected, p := ray.Bounce(&info, fu, fv, mode, rnd)
 				if mode == BounceTypeAny {
-					p = 1
+					p = 1 // 如果是任意类型，直接设置权值为1
 				}
-				if p > 0 && reflected {
-					// specular
+				if p > 0 {
 					indirect := s.sample(scene, newRay, reflected, 1, depth+1, rnd)
-					tinted := indirect.Mix(material.Color.Mul(indirect), material.Tint)
-					result = result.Add(tinted.MulScalar(p))
-				}
-				if p > 0 && !reflected {
-					// diffuse
-					indirect := s.sample(scene, newRay, reflected, 1, depth+1, rnd)
-					direct := Black
-					if s.DirectLighting {
-						direct = s.sampleLights(scene, info.Ray, rnd)
+					if reflected {
+						// specular
+						// 如果是镜面反弹，计算间接光和材质混合
+						tinted := indirect.Mix(material.Color.Mul(indirect), material.Tint)
+						result = result.Add(tinted.MulScalar(p))
 					}
-					result = result.Add(material.Color.Mul(direct.Add(indirect)).MulScalar(p))
+					if !reflected {
+						// diffuse
+						// 如果是漫射反弹，计算间接光和材质混合
+						direct := Black
+						if s.DirectLighting {
+							// 如果启用直射光，计算直接光
+							direct = s.sampleLights(scene, info.Ray, rnd)
+						}
+						result = result.Add(material.Color.Mul(direct.Add(indirect)).MulScalar(p))
+					}
 				}
 			}
 		}
 	}
-	return result.DivScalar(float64(n * n))
+	// 处理透明像素
+	color := Black
+	if result.A != 1 {
+		for _, hit := range list {
+			if hit.Ok() {
+				position := ray.Position(hit.T)
+				material := MaterialAt(hit.Shape, position)
+				// 混合颜色
+				color = material.Color.AddColor(color)
+				// 检查是否继续
+				if material.Color.A == 1 {
+					break
+				}
+			} else {
+				color = color.AddColor(s.sampleEnvironment(scene, ray))
+				break
+			}
+		}
+	}
+	return result.Add(color).DivScalar(float32(n * n)) // 最终结果除以采样次数
 }
 
 func (s *DefaultSampler) sampleEnvironment(scene *Scene, ray Ray) Color {
 	if scene.Texture != nil {
 		d := ray.Direction
 		u := math.Atan2(d.Z, d.X) + scene.TextureAngle
-		v := math.Atan2(d.Y, Vector{d.X, 0, d.Z}.Length())
+		v := math.Atan2(d.Y, Vector{X: d.X, Y: 0, Z: d.Z}.Length())
 		u = (u + math.Pi) / (2 * math.Pi)
 		v = (v + math.Pi/2) / math.Pi
 		return scene.Texture.Sample(u, v)
@@ -136,7 +173,7 @@ func (s *DefaultSampler) sampleLights(scene *Scene, n Ray, rnd *rand.Rand) Color
 	} else {
 		// pick a random light
 		light := scene.Lights[rand.Intn(nLights)]
-		return s.sampleLight(scene, n, rnd, light).MulScalar(float64(nLights))
+		return s.sampleLight(scene, n, rnd, light).MulScalar(float32(nLights))
 	}
 }
 
@@ -184,7 +221,7 @@ func (s *DefaultSampler) sampleLight(scene *Scene, n Ray, rnd *rand.Rand, light 
 	}
 
 	// check for light visibility
-	hit := scene.Intersect(ray)
+	hit, _ := scene.Intersect(ray)
 	if !hit.Ok() || hit.Shape != light {
 		return Black
 	}
@@ -208,6 +245,6 @@ func (s *DefaultSampler) sampleLight(scene *Scene, n Ray, rnd *rand.Rand, light 
 	material := MaterialAt(light, point)
 
 	// combine factors
-	m := material.Emittance * diffuse * coverage
+	m := material.Emittance * float32(diffuse) * float32(coverage)
 	return material.Color.MulScalar(m)
 }

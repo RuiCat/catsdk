@@ -4,6 +4,7 @@ import (
 	"image"
 	"image/color"
 	"image/gif"
+	"mat/asm/f32"
 	"math"
 	"math/rand"
 	"runtime"
@@ -21,10 +22,10 @@ type Renderer struct {
 	SamplesPerPixel    int     // 表示每个像素的采样次数。
 	StratifiedSampling bool    // 是否使用有序采样。
 	AdaptiveSamples    int     // 使用自适应采样时，最大采样次数。
-	AdaptiveThreshold  float64 // 自适应采样阈值。
-	AdaptiveExponent   float64 // 自适应采样指数。
+	AdaptiveThreshold  float32 // 自适应采样阈值。
+	AdaptiveExponent   float32 // 自适应采样指数。
 	FireflySamples     int     // 火花采样时的采样次数。
-	FireflyThreshold   float64 // 火花采样阈值。
+	FireflyThreshold   float32 // 火花采样阈值。
 	NumCPU             int     // 是用于渲染的 CPU core 数量。
 	Verbose            bool    // 是否开启调试模式。
 }
@@ -36,7 +37,7 @@ func NewRenderer(scene *Scene, camera *Camera, sampler Sampler, w, h int) *Rende
 	r.Sampler = sampler
 	r.Buffer = NewBuffer(w, h)
 	r.SamplesPerPixel = 10
-	r.StratifiedSampling = false
+	r.StratifiedSampling = true
 	r.AdaptiveSamples = 0
 	r.AdaptiveThreshold = 1
 	r.AdaptiveExponent = 1
@@ -92,8 +93,8 @@ func (r *Renderer) run() {
 					if r.AdaptiveSamples > 0 {
 						v := buf.StandardDeviation(x, y).MaxComponent()
 						v = Clamp(v/r.AdaptiveThreshold, 0, 1)
-						v = math.Pow(v, r.AdaptiveExponent)
-						samples := int(v * float64(r.AdaptiveSamples))
+						v = f32.Pow(v, r.AdaptiveExponent)
+						samples := int(v * float32(r.AdaptiveSamples))
 						for i := 0; i < samples; i++ {
 							fu := rnd.Float64()
 							fv := rnd.Float64()

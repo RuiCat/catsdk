@@ -61,7 +61,7 @@ func loadSTLA(file *os.File, material Material) (*Mesh, error) {
 		fields := strings.Fields(line)
 		if len(fields) == 4 && fields[0] == "vertex" {
 			f := ParseFloats(fields[1:])
-			v := Vector{f[0], f[1], f[2]}
+			v := Vector{X: f[0], Y: f[1], Z: f[2]}
 			vertexes = append(vertexes, v)
 		}
 	}
@@ -92,9 +92,9 @@ func loadSTLB(file *os.File, material Material) (*Mesh, error) {
 		}
 		t := Triangle{}
 		t.Material = &material
-		t.V1 = Vector{float64(d.V1[0]), float64(d.V1[1]), float64(d.V1[2])}
-		t.V2 = Vector{float64(d.V2[0]), float64(d.V2[1]), float64(d.V2[2])}
-		t.V3 = Vector{float64(d.V3[0]), float64(d.V3[1]), float64(d.V3[2])}
+		t.V1 = Vector{X: float64(d.V1[0]), Y: float64(d.V1[1]), Z: float64(d.V1[2])}
+		t.V2 = Vector{X: float64(d.V2[0]), Y: float64(d.V2[1]), Z: float64(d.V2[2])}
+		t.V3 = Vector{X: float64(d.V3[0]), Y: float64(d.V3[1]), Z: float64(d.V3[2])}
 		t.FixNormals()
 		triangles[i] = &t
 	}

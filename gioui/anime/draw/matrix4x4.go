@@ -136,14 +136,14 @@ func (a Matrix4x4) MulPosition(b Vector) Vector {
 	x := a.x00*b.X + a.x01*b.Y + a.x02*b.Z + a.x03
 	y := a.x10*b.X + a.x11*b.Y + a.x12*b.Z + a.x13
 	z := a.x20*b.X + a.x21*b.Y + a.x22*b.Z + a.x23
-	return Vector{x, y, z}
+	return Vector{X: x, Y: y, Z: z}
 }
 
 func (a Matrix4x4) MulDirection(b Vector) Vector {
 	x := a.x00*b.X + a.x01*b.Y + a.x02*b.Z
 	y := a.x10*b.X + a.x11*b.Y + a.x12*b.Z
 	z := a.x20*b.X + a.x21*b.Y + a.x22*b.Z
-	return Vector{x, y, z}.Normalize()
+	return Vector{X: x, Y: y, Z: z}.Normalize()
 }
 
 func (a Matrix4x4) MulRay(b Ray) Ray {
@@ -152,10 +152,10 @@ func (a Matrix4x4) MulRay(b Ray) Ray {
 
 func (a Matrix4x4) MulBox(box Box) Box {
 	// http://dev.theomader.com/transform-bounding-boxes/
-	r := Vector{a.x00, a.x10, a.x20}
-	u := Vector{a.x01, a.x11, a.x21}
-	b := Vector{a.x02, a.x12, a.x22}
-	t := Vector{a.x03, a.x13, a.x23}
+	r := Vector{X: a.x00, Y: a.x10, Z: a.x20}
+	u := Vector{X: a.x01, Y: a.x11, Z: a.x21}
+	b := Vector{X: a.x02, Y: a.x12, Z: a.x22}
+	t := Vector{X: a.x03, Y: a.x13, Z: a.x23}
 	xa := r.MulScalar(box.Min.X)
 	xb := r.MulScalar(box.Max.X)
 	ya := u.MulScalar(box.Min.Y)

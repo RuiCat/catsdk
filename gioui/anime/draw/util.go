@@ -6,6 +6,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io/fs"
+	"mat/asm/f32"
 	"math"
 	"math/rand"
 	"os"
@@ -27,21 +28,21 @@ func Radians(degrees float64) float64 {
 func Degrees(radians float64) float64 {
 	return radians * 180 / math.Pi
 }
-func Cone(direction Vector, theta, u, v float64, rnd *rand.Rand) Vector {
+func Cone(direction Vector, theta, u, v float32, rnd *rand.Rand) Vector {
 	if theta < EPS {
 		return direction
 	}
-	theta = theta * (1 - (2 * math.Acos(u) / math.Pi))
-	m1 := math.Sin(theta)
-	m2 := math.Cos(theta)
+	theta = theta * (1 - (2 * f32.Acos(u) / math.Pi))
+	m1 := f32.Sin(theta)
+	m2 := f32.Cos(theta)
 	a := v * 2 * math.Pi
 	q := RandomUnitVector(rnd)
 	s := direction.Cross(q)
 	t := direction.Cross(s)
 	d := Vector{}
-	d = d.Add(s.MulScalar(m1 * math.Cos(a)))
-	d = d.Add(t.MulScalar(m1 * math.Sin(a)))
-	d = d.Add(direction.MulScalar(m2))
+	d = d.Add(s.MulScalar(float64(m1 * f32.Cos(a))))
+	d = d.Add(t.MulScalar(float64(m1 * f32.Sin(a))))
+	d = d.Add(direction.MulScalar(float64(m2)))
 	d = d.Normalize()
 	return d
 }
@@ -101,12 +102,12 @@ func RelativePath(path1, path2 string) string {
 	return path.Join(dir, path2)
 }
 
-func Fract(x float64) float64 {
-	_, x = math.Modf(x)
+func Fract(x float32) float32 {
+	_, x = f32.Modf(x)
 	return x
 }
 
-func Clamp(x, lo, hi float64) float64 {
+func Clamp(x, lo, hi float32) float32 {
 	if x < lo {
 		return lo
 	}
@@ -205,7 +206,7 @@ func parseHexColor(x string) (r, g, b, a int) {
 }
 
 func fixp(x, y float64) fixed.Point26_6 {
-	return fixed.Point26_6{fix(x), fix(y)}
+	return fixed.Point26_6{X: fix(x), Y: fix(y)}
 }
 
 func fix(x float64) fixed.Int26_6 {

@@ -18,14 +18,14 @@ func NewSDFMesh(sdf SDF, box Box, step float64) *Mesh {
 				x0, y0, z0 := float64(x)*sx+min.X, float64(y)*sy+min.Y, float64(z)*sz+min.Z
 				x1, y1, z1 := x0+sx, y0+sy, z0+sz
 				p := [8]Vector{
-					Vector{x0, y0, z0},
-					Vector{x1, y0, z0},
-					Vector{x1, y1, z0},
-					Vector{x0, y1, z0},
-					Vector{x0, y0, z1},
-					Vector{x1, y0, z1},
-					Vector{x1, y1, z1},
-					Vector{x0, y1, z1},
+					{X: x0, Y: y0, Z: z0},
+					{X: x1, Y: y0, Z: z0},
+					{X: x1, Y: y1, Z: z0},
+					{X: x0, Y: y1, Z: z0},
+					{X: x0, Y: y0, Z: z1},
+					{X: x1, Y: y0, Z: z1},
+					{X: x1, Y: y1, Z: z1},
+					{X: x0, Y: y1, Z: z1},
 				}
 				var v [8]float64
 				for i := 0; i < 8; i++ {
@@ -83,9 +83,9 @@ func mcInterpolate(p1, p2 Vector, v1, v2, x float64) Vector {
 	}
 	t := (x - v1) / (v2 - v1)
 	return Vector{
-		p1.X + t*(p2.X-p1.X),
-		p1.Y + t*(p2.Y-p1.Y),
-		p1.Z + t*(p2.Z-p1.Z),
+		X: p1.X + t*(p2.X-p1.X),
+		Y: p1.Y + t*(p2.Y-p1.Y),
+		Z: p1.Z + t*(p2.Z-p1.Z),
 	}
 }
 

@@ -1,45 +1,58 @@
 package draw
 
+// Material 是用于定义材质的结构体
 type Material struct {
-	Color          Color
-	Texture        Texture
-	NormalTexture  Texture
-	BumpTexture    Texture
-	GlossTexture   Texture
+	// 色彩值
+	Color Color
+	// 纹理图像
+	Texture Texture
+	// 正常纹理图像
+	NormalTexture Texture
+	// 凸起纹理图像
+	BumpTexture Texture
+	// 高光纹理图像
+	GlossTexture Texture
+	// 凸起乘数
 	BumpMultiplier float64
-	Emittance      float64
-	Index          float64 // refractive index
-	Gloss          float64 // reflection cone angle in radians
-	Tint           float64 // specular and refractive tinting
-	Reflectivity   float64 // metallic reflection
-	Transparent    bool
+	// 发光度
+	Emittance float32
+	// refractive index 表示折射率
+	Index float32
+	// 反射锥角（单位：弧度）
+	Gloss float32
+	// specular 和 refractive 的色彩染色值
+	Tint float32
+	//金属反射系数
+	Reflectivity float64
+	// 是否透明
+	Transparent bool
 }
 
 func DiffuseMaterial(color Color) Material {
 	return Material{color, nil, nil, nil, nil, 1, 0, 1, 0, 0, -1, false}
 }
 
-func SpecularMaterial(color Color, index float64) Material {
+func SpecularMaterial(color Color, index float32) Material {
 	return Material{color, nil, nil, nil, nil, 1, 0, index, 0, 0, -1, false}
 }
 
-func GlossyMaterial(color Color, index, gloss float64) Material {
+func GlossyMaterial(color Color, index, gloss float32) Material {
 	return Material{color, nil, nil, nil, nil, 1, 0, index, gloss, 0, -1, false}
 }
 
-func ClearMaterial(index, gloss float64) Material {
+func ClearMaterial(index float32, gloss float32) Material {
 	return Material{Black, nil, nil, nil, nil, 1, 0, index, gloss, 0, -1, true}
 }
 
-func TransparentMaterial(color Color, index, gloss, tint float64) Material {
+func TransparentMaterial(color Color, index, gloss, tint float32) Material {
 	return Material{color, nil, nil, nil, nil, 1, 0, index, gloss, tint, -1, true}
 }
 
-func MetallicMaterial(color Color, gloss, tint float64) Material {
+func MetallicMaterial(color Color, gloss, tint float32) Material {
 	return Material{color, nil, nil, nil, nil, 1, 0, 1, gloss, tint, 1, false}
 }
 
-func LightMaterial(color Color, emittance float64) Material {
+func LightMaterial(color Color, emittance float32) Material {
 	return Material{color, nil, nil, nil, nil, 1, emittance, 1, 0, 0, -1, false}
 }
 

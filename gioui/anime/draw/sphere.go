@@ -10,8 +10,8 @@ type Sphere struct {
 }
 
 func NewSphere(center Vector, radius float64, material Material) Shape {
-	min := Vector{center.X - radius, center.Y - radius, center.Z - radius}
-	max := Vector{center.X + radius, center.Y + radius, center.Z + radius}
+	min := Vector{X: center.X - radius, Y: center.Y - radius, Z: center.Z - radius}
+	max := Vector{X: center.X + radius, Y: center.Y + radius, Z: center.Z + radius}
 	box := Box{min, max}
 	return &Sphere{center, radius, material, box}
 }
@@ -45,10 +45,10 @@ func (s *Sphere) Intersect(r Ray) Hit {
 func (s *Sphere) UV(p Vector) Vector {
 	p = p.Sub(s.Center)
 	u := math.Atan2(p.Z, p.X)
-	v := math.Atan2(p.Y, Vector{p.X, 0, p.Z}.Length())
+	v := math.Atan2(p.Y, Vector{X: p.X, Y: 0, Z: p.Z}.Length())
 	u = 1 - (u+math.Pi)/(2*math.Pi)
 	v = (v + math.Pi/2) / math.Pi
-	return Vector{u, v, 0}
+	return Vector{X: u, Y: v, Z: 0}
 }
 
 func (s *Sphere) MaterialAt(p Vector) Material {

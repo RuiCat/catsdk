@@ -8,7 +8,7 @@ import (
 type Vector = r3.Vec
 
 func V(x, y, z float64) Vector {
-	return Vector{x, y, z}
+	return Vector{X: x, Y: y, Z: z}
 }
 
 func RandomUnitVector(rnd *rand.Rand) Vector {
@@ -26,6 +26,6 @@ func RandomUnitVector(rnd *rand.Rand) Vector {
 		if x*x+y*y+z*z > 1 {
 			continue
 		}
-		return Vector{x, y, z}.Normalize()
+		return Vector{X: x, Y: y, Z: z}.Normalize()
 	}
 }

@@ -24,11 +24,11 @@ func (s *SphericalHarmonic) Compile() {
 
 func (s *SphericalHarmonic) BoundingBox() Box {
 	const r = 1
-	return Box{Vector{-r, -r, -r}, Vector{r, r, r}}
+	return Box{Vector{X: -r, Y: -r, Z: -r}, Vector{X: r, Y: r, Z: r}}
 }
 
 func (s *SphericalHarmonic) Intersect(r Ray) Hit {
-	hit := s.mesh.Intersect(r)
+	hit, _ := s.mesh.Intersect(r)
 	if !hit.Ok() {
 		return NoHit
 	}
@@ -53,9 +53,9 @@ func (s *SphericalHarmonic) NormalAt(p Vector) Vector {
 	const e = 0.0001
 	x, y, z := p.X, p.Y, p.Z
 	n := Vector{
-		s.Evaluate(Vector{x - e, y, z}) - s.Evaluate(Vector{x + e, y, z}),
-		s.Evaluate(Vector{x, y - e, z}) - s.Evaluate(Vector{x, y + e, z}),
-		s.Evaluate(Vector{x, y, z - e}) - s.Evaluate(Vector{x, y, z + e}),
+		X: s.Evaluate(Vector{X: x - e, Y: y, Z: z}) - s.Evaluate(Vector{X: x + e, Y: y, Z: z}),
+		Y: s.Evaluate(Vector{X: x, Y: y - e, Z: z}) - s.Evaluate(Vector{X: x, Y: y + e, Z: z}),
+		Z: s.Evaluate(Vector{X: x, Y: y, Z: z - e}) - s.Evaluate(Vector{X: x, Y: y, Z: z + e}),
 	}
 	return n.Normalize()
 }

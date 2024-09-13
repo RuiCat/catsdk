@@ -2,15 +2,15 @@ package draw
 
 import (
 	"image"
-	"math"
+	"mat/asm/f32"
 )
 
 type Texture interface {
 	Sample(u, v float64) Color
 	NormalSample(u, v float64) Vector
 	BumpSample(u, v float64) Vector
-	Pow(a float64) Texture
-	MulScalar(a float64) Texture
+	Pow(a float32) Texture
+	MulScalar(a float32) Texture
 }
 
 var textures map[string]Texture
@@ -56,31 +56,31 @@ func NewTexture(im image.Image) Texture {
 	return &ColorTexture{size.X, size.Y, data}
 }
 
-func (t *ColorTexture) Pow(a float64) Texture {
+func (t *ColorTexture) Pow(a float32) Texture {
 	for i := range t.Data {
 		t.Data[i] = t.Data[i].Pow(a)
 	}
 	return t
 }
 
-func (t *ColorTexture) MulScalar(a float64) Texture {
+func (t *ColorTexture) MulScalar(a float32) Texture {
 	for i := range t.Data {
 		t.Data[i] = t.Data[i].MulScalar(a)
 	}
 	return t
 }
 
-func (t *ColorTexture) bilinearSample(u, v float64) Color {
+func (t *ColorTexture) bilinearSample(u, v float32) Color {
 	if u == 1 {
 		u -= EPS
 	}
 	if v == 1 {
 		v -= EPS
 	}
-	w := float64(t.Width) - 1
-	h := float64(t.Height) - 1
-	X, x := math.Modf(u * w)
-	Y, y := math.Modf(v * h)
+	w := float32(t.Width) - 2
+	h := float32(t.Height) - 2
+	X, x := f32.Modf(u * w)
+	Y, y := f32.Modf(v * h)
 	x0 := int(X)
 	y0 := int(Y)
 	x1 := x0 + 1
@@ -98,19 +98,17 @@ func (t *ColorTexture) bilinearSample(u, v float64) Color {
 }
 
 func (t *ColorTexture) Sample(u, v float64) Color {
-	u = Fract(Fract(u) + 1)
-	v = Fract(Fract(v) + 1)
-	return t.bilinearSample(u, 1-v)
+	return t.bilinearSample(Fract(Fract(float32(u))+1), 1-Fract(Fract(float32(v))+1))
 }
 
 func (t *ColorTexture) NormalSample(u, v float64) Vector {
 	c := t.Sample(u, v)
-	return Vector{c.R*2 - 1, c.G*2 - 1, c.B*2 - 1}.Normalize()
+	return Vector{X: float64(c.R)*2 - 1, Y: float64(c.G)*2 - 1, Z: float64(c.B)*2 - 1}.Normalize()
 }
 
 func (t *ColorTexture) BumpSample(u, v float64) Vector {
-	u = Fract(Fract(u) + 1)
-	v = Fract(Fract(v) + 1)
+	u = float64(Fract(Fract(float32(u)) + 1))
+	v = float64(Fract(Fract(float32(v)) + 1))
 	v = 1 - v
 	x := int(u * float64(t.Width))
 	y := int(v * float64(t.Height))
@@ -118,5 +116,5 @@ func (t *ColorTexture) BumpSample(u, v float64) Vector {
 	y1, y2 := ClampInt(y-1, 0, t.Height-1), ClampInt(y+1, 0, t.Height-1)
 	cx := t.Data[y*t.Width+x1].Sub(t.Data[y*t.Width+x2])
 	cy := t.Data[y1*t.Width+x].Sub(t.Data[y2*t.Width+x])
-	return Vector{cx.R, cy.R, 0}
+	return Vector{X: float64(cx.R), Y: float64(cy.R), Z: 0}
 }

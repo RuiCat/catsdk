@@ -56,9 +56,9 @@ func (s *SDFShape) NormalAt(p Vector) Vector {
 	const e = 0.0001
 	x, y, z := p.X, p.Y, p.Z
 	n := Vector{
-		s.Evaluate(Vector{x - e, y, z}) - s.Evaluate(Vector{x + e, y, z}),
-		s.Evaluate(Vector{x, y - e, z}) - s.Evaluate(Vector{x, y + e, z}),
-		s.Evaluate(Vector{x, y, z - e}) - s.Evaluate(Vector{x, y, z + e}),
+		X: s.Evaluate(Vector{X: x - e, Y: y, Z: z}) - s.Evaluate(Vector{X: x + e, Y: y, Z: z}),
+		Y: s.Evaluate(Vector{X: x, Y: y - e, Z: z}) - s.Evaluate(Vector{X: x, Y: y + e, Z: z}),
+		Z: s.Evaluate(Vector{X: x, Y: y, Z: z - e}) - s.Evaluate(Vector{X: x, Y: y, Z: z + e}),
 	}
 	return n.Normalize()
 }
@@ -91,7 +91,7 @@ func (s *SphereSDF) Evaluate(p Vector) float64 {
 
 func (s *SphereSDF) BoundingBox() Box {
 	r := s.Radius
-	return Box{Vector{-r, -r, -r}, Vector{r, r, r}}
+	return Box{Vector{X: -r, Y: -r, Z: -r}, Vector{X: r, Y: r, Z: r}}
 }
 
 // CubeSDF
@@ -145,7 +145,7 @@ func (s *CubeSDF) Evaluate(p Vector) float64 {
 
 func (s *CubeSDF) BoundingBox() Box {
 	x, y, z := s.Size.X/2, s.Size.Y/2, s.Size.Z/2
-	return Box{Vector{-x, -y, -z}, Vector{x, y, z}}
+	return Box{Vector{X: -x, Y: -y, Z: -z}, Vector{X: x, Y: y, Z: z}}
 }
 
 // CylinderSDF
@@ -190,7 +190,7 @@ func (s *CylinderSDF) Evaluate(p Vector) float64 {
 func (s *CylinderSDF) BoundingBox() Box {
 	r := s.Radius
 	h := s.Height / 2
-	return Box{Vector{-r, -h, -r}, Vector{r, h, r}}
+	return Box{Vector{X: -r, Y: -h, Z: -r}, Vector{X: r, Y: h, Z: r}}
 }
 
 // CapsuleSDF
@@ -231,14 +231,14 @@ func NewTorusSDF(major, minor float64) SDF {
 }
 
 func (s *TorusSDF) Evaluate(p Vector) float64 {
-	q := Vector{Vector{p.X, p.Y, 0}.LengthN(s.MajorExponent) - s.MajorRadius, p.Z, 0}
+	q := Vector{X: Vector{X: p.X, Y: p.Y, Z: 0}.LengthN(s.MajorExponent) - s.MajorRadius, Y: p.Z, Z: 0}
 	return q.LengthN(s.MinorExponent) - s.MinorRadius
 }
 
 func (s *TorusSDF) BoundingBox() Box {
 	a := s.MinorRadius
 	b := s.MinorRadius + s.MajorRadius
-	return Box{Vector{-b, -b, -a}, Vector{b, b, a}}
+	return Box{Vector{X: -b, Y: -b, Z: -a}, Vector{X: b, Y: b, Z: a}}
 }
 
 // TransformSDF
@@ -279,7 +279,7 @@ func (s *ScaleSDF) Evaluate(p Vector) float64 {
 
 func (s *ScaleSDF) BoundingBox() Box {
 	f := s.Factor
-	m := Scale4x4(Vector{f, f, f})
+	m := Scale4x4(Vector{X: f, Y: f, Z: f})
 	return m.MulBox(s.SDF.BoundingBox())
 }
 

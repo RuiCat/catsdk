@@ -164,3 +164,19 @@ func Min(x, y float32) float32 {
 
 // NaN returns an IEEE 754 “not-a-number” value.
 func NaN() float32 { return math.Float32frombits(unan) }
+
+func Pow(x, y float32) float32 { return float32(math.Pow(float64(x), float64(y))) }
+
+func Modf(f float32) (int float32, frac float32) {
+	int_, frac_ := math.Modf(float64(f))
+	return float32(int_), float32(frac_)
+}
+func Acos(x float32) float32 {
+	return float32(math.Acos(float64(x)))
+}
+func Sin(x float32) float32 {
+	return float32(math.Sin(float64(x)))
+}
+func Cos(x float32) float32 {
+	return float32(math.Cos(float64(x)))
+}

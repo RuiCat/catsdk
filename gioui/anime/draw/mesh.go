@@ -54,7 +54,7 @@ func (m *Mesh) BoundingBox() Box {
 	return *m.box
 }
 
-func (m *Mesh) Intersect(r Ray) Hit {
+func (m *Mesh) Intersect(r Ray) (Hit, []Hit) {
 	return m.tree.Intersect(r)
 }
 
@@ -113,8 +113,8 @@ func (m *Mesh) SmoothNormals() {
 }
 
 func (m *Mesh) UnitCube() {
-	m.FitInside(Box{Vector{}, Vector{1, 1, 1}}, Vector{})
-	m.MoveTo(Vector{}, Vector{0.5, 0.5, 0.5})
+	m.FitInside(Box{Vector{}, Vector{X: 1, Y: 1, Z: 1}}, Vector{})
+	m.MoveTo(Vector{}, Vector{X: 0.5, Y: 0.5, Z: 0.5})
 }
 
 func (m *Mesh) MoveTo(position, anchor Vector) {
@@ -127,7 +127,7 @@ func (m *Mesh) FitInside(box Box, anchor Vector) {
 	extra := box.Size().Sub(m.BoundingBox().Size().MulScalar(scale))
 	matrix := Identity4x4()
 	matrix = matrix.Translate(m.BoundingBox().Min.Negate())
-	matrix = matrix.Scale(Vector{scale, scale, scale})
+	matrix = matrix.Scale(Vector{X: scale, Y: scale, Z: scale})
 	matrix = matrix.Translate(box.Min.Add(extra.Mul(anchor)))
 	m.Transform(matrix)
 }

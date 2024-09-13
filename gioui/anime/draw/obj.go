@@ -50,15 +50,15 @@ func LoadOBJ(path string, parent Material) (*Mesh, error) {
 			}
 		case "v":
 			f := ParseFloats(args)
-			v := Vector{f[0], f[1], f[2]}
+			v := Vector{X: f[0], Y: f[1], Z: f[2]}
 			vs = append(vs, v)
 		case "vt":
 			f := ParseFloats(args)
-			v := Vector{f[0], f[1], 0}
+			v := Vector{X: f[0], Y: f[1], Z: 0}
 			vts = append(vts, v)
 		case "vn":
 			f := ParseFloats(args)
-			v := Vector{f[0], f[1], f[2]}
+			v := Vector{X: f[0], Y: f[1], Z: f[2]}
 			vns = append(vns, v)
 		case "f":
 			fvs := make([]int, len(args))
@@ -120,12 +120,12 @@ func LoadMTL(path string, parent Material, materials map[string]*Material) error
 			c := ParseFloats(args)
 			max := math.Max(math.Max(c[0], c[1]), c[2])
 			if max > 0 {
-				material.Color = Color{c[0] / max, c[1] / max, c[2] / max}
-				material.Emittance = max
+				material.Color = Color{float32(c[0] / max), float32(c[1] / max), float32(c[2] / max), 1}
+				material.Emittance = float32(max)
 			}
 		case "Kd":
 			c := ParseFloats(args)
-			material.Color = Color{c[0], c[1], c[2]}
+			material.Color = Color{float32(c[0]), float32(c[1]), float32(c[2]), 1}
 		case "map_Kd":
 			p := RelativePath(path, args[0])
 			material.Texture = GetTexture(p)

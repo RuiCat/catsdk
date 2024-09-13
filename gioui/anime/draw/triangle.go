@@ -75,7 +75,7 @@ func (t *Triangle) UV(p Vector) Vector {
 	n = n.Add(t.T1.MulScalar(u))
 	n = n.Add(t.T2.MulScalar(v))
 	n = n.Add(t.T3.MulScalar(w))
-	return Vector{n.X, n.Y, 0}
+	return Vector{X: n.X, Y: n.Y, Z: 0}
 }
 
 func (t *Triangle) MaterialAt(p Vector) Material {

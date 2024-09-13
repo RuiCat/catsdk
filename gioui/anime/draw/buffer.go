@@ -2,16 +2,18 @@ package draw
 
 import (
 	"image"
-	"math"
+	"mat/asm/f32"
 )
 
+// Channel 是一个用于表示图形缓存通道的类型
 type Channel int
 
+// ColorChannel 表示颜色通道
 const (
-	ColorChannel = iota
-	VarianceChannel
-	StandardDeviationChannel
-	SamplesChannel
+	ColorChannel             Channel = iota // 颜色通道的编号
+	VarianceChannel                         // 方差通道的编号
+	StandardDeviationChannel                // 标准差通道的编号
+	SamplesChannel                          // 样本通道的编号
 )
 
 type Pixel struct {
@@ -26,7 +28,7 @@ func (p *Pixel) AddSample(sample Color) {
 		return
 	}
 	m := p.M
-	p.M = p.M.Add(sample.Sub(p.M).DivScalar(float64(p.Samples)))
+	p.M = p.M.Add(sample.Sub(p.M).DivScalar(float32(p.Samples)))
 	p.V = p.V.Add(sample.Sub(m).Mul(sample.Sub(p.M)))
 }
 
@@ -38,7 +40,7 @@ func (p *Pixel) Variance() Color {
 	if p.Samples < 2 {
 		return Black
 	}
-	return p.V.DivScalar(float64(p.Samples - 1))
+	return p.V.DivScalar(float32(p.Samples - 1))
 }
 
 func (p *Pixel) StandardDeviation() Color {
@@ -83,10 +85,10 @@ func (b *Buffer) StandardDeviation(x, y int) Color {
 
 func (b *Buffer) Image(channel Channel) image.Image {
 	result := image.NewRGBA64(image.Rect(0, 0, b.W, b.H))
-	var maxSamples float64
+	var maxSamples float32
 	if channel == SamplesChannel {
 		for _, pixel := range b.Pixels {
-			maxSamples = math.Max(maxSamples, float64(pixel.Samples))
+			maxSamples = f32.Max(maxSamples, float32(pixel.Samples))
 		}
 	}
 	for y := 0; y < b.H; y++ {
@@ -100,8 +102,8 @@ func (b *Buffer) Image(channel Channel) image.Image {
 			case StandardDeviationChannel:
 				c = b.Pixels[y*b.W+x].StandardDeviation()
 			case SamplesChannel:
-				p := float64(b.Pixels[y*b.W+x].Samples) / maxSamples
-				c = Color{p, p, p}
+				p := float32(b.Pixels[y*b.W+x].Samples) / maxSamples
+				c = Color{p, p, p, p}
 			}
 			result.SetRGBA64(x, y, c.RGBA64())
 		}

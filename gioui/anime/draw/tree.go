@@ -17,10 +17,10 @@ func NewTree(shapes []Shape) *Tree {
 	return &Tree{box, node}
 }
 
-func (tree *Tree) Intersect(r Ray) Hit {
+func (tree *Tree) Intersect(r Ray) (Hit, []Hit) {
 	tmin, tmax := tree.Box.Intersect(r)
 	if tmax < tmin || tmax <= 0 {
-		return NoHit
+		return NoHit, nil
 	}
 	return tree.Root.Intersect(r, tmin, tmax)
 }
@@ -37,7 +37,7 @@ func NewNode(shapes []Shape) *Node {
 	return &Node{AxisNone, 0, shapes, nil, nil}
 }
 
-func (node *Node) Intersect(r Ray, tmin, tmax float64) Hit {
+func (node *Node) Intersect(r Ray, tmin, tmax float64) (Hit, []Hit) {
 	var tsplit float64
 	var leftFirst bool
 	switch node.Axis {
@@ -66,28 +66,37 @@ func (node *Node) Intersect(r Ray, tmin, tmax float64) Hit {
 	} else if tsplit < tmin {
 		return second.Intersect(r, tmin, tmax)
 	} else {
-		h1 := first.Intersect(r, tmin, tsplit)
+		h1, list := first.Intersect(r, tmin, tsplit)
 		if h1.T <= tsplit {
-			return h1
+			return h1, list
 		}
-		h2 := second.Intersect(r, tsplit, math.Min(tmax, h1.T))
+		h2, list := second.Intersect(r, tsplit, math.Min(tmax, h1.T))
 		if h1.T <= h2.T {
-			return h1
+			return h1, list
 		} else {
-			return h2
+			return h2, list
 		}
 	}
 }
 
-func (node *Node) IntersectShapes(r Ray) Hit {
+type HitList []Hit
+
+func (a HitList) Len() int           { return len(a) }
+func (a HitList) Less(i, j int) bool { return a[i].T < a[j].T }
+func (a HitList) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+
+func (node *Node) IntersectShapes(r Ray) (_ Hit, list HitList) {
 	hit := NoHit
-	for _, shape := range node.Shapes {
+	list = make([]Hit, len(node.Shapes))
+	for i, shape := range node.Shapes {
 		h := shape.Intersect(r)
+		list[i] = h
 		if h.T < hit.T {
 			hit = h
 		}
 	}
-	return hit
+	sort.Sort(list)
+	return hit, list
 }
 
 func (node *Node) PartitionScore(axis Axis, point float64) int {

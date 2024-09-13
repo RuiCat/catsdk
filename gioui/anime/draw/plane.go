@@ -17,7 +17,7 @@ func (p *Plane) Compile() {
 }
 
 func (p *Plane) BoundingBox() Box {
-	return Box{Vector{-INF, -INF, -INF}, Vector{INF, INF, INF}}
+	return Box{Vector{X: -INF, Y: -INF, Z: -INF}, Vector{X: INF, Y: INF, Z: INF}}
 }
 
 func (p *Plane) Intersect(ray Ray) Hit {

@@ -32,7 +32,7 @@ func (s *Scene) RayCount() uint64 {
 	return atomic.LoadUint64(&s.rays)
 }
 
-func (s *Scene) Intersect(r Ray) Hit {
+func (s *Scene) Intersect(r Ray) (Hit, []Hit) {
 	atomic.AddUint64(&s.rays, 1)
 	return s.tree.Intersect(r)
 }
