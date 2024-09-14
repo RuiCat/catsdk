@@ -13,13 +13,16 @@ type Camera struct {
 }
 
 func LookAt(eye, center, up Vector, fovy float64) Camera {
-	c := Camera{}
+	c := Camera{m: 1 / math.Tan(fovy*math.Pi/360)}
+	c.LookAt(eye, center, up)
+	return c
+}
+
+func (c *Camera) LookAt(eye, center, up Vector) {
 	c.p = eye
 	c.w = center.Sub(eye).Normalize()
 	c.u = up.Cross(c.w).Normalize()
 	c.v = c.w.Cross(c.u).Normalize()
-	c.m = 1 / math.Tan(fovy*math.Pi/360)
-	return c
 }
 
 func (c *Camera) SetFocus(focalPoint Vector, apertureRadius float64) {

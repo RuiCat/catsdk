@@ -63,6 +63,15 @@ func (b *Buffer) Copy() *Buffer {
 	return &Buffer{b.W, b.H, pixels}
 }
 
+func (b *Buffer) SetLen(w, h int) {
+	le := w * h
+	if len(b.Pixels) < le {
+		b.Pixels = append(b.Pixels, make([]Pixel, le-len(b.Pixels))...)
+	}
+	clear(b.Pixels)
+	b.W, b.H = w, h
+}
+
 func (b *Buffer) AddSample(x, y int, sample Color) {
 	b.Pixels[y*b.W+x].AddSample(sample)
 }

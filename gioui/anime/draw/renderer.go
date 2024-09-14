@@ -36,7 +36,7 @@ func NewRenderer(scene *Scene, camera *Camera, sampler Sampler, w, h int) *Rende
 	r.Camera = camera
 	r.Sampler = sampler
 	r.Buffer = NewBuffer(w, h)
-	r.SamplesPerPixel = 10
+	r.SamplesPerPixel = 20
 	r.StratifiedSampling = true
 	r.AdaptiveSamples = 0
 	r.AdaptiveThreshold = 1
