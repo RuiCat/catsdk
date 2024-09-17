@@ -1,6 +1,6 @@
-package storm
+package boltdb
 
-import bolt "device/util/bbolt"
+import bolt "device/boltdb/bbolt"
 
 // CreateBucketIfNotExists creates the bucket below the current node if it doesn't
 // already exist.

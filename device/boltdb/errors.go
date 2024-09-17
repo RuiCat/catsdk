@@ -1,4 +1,4 @@
-package storm
+package boltdb
 
 import "errors"
 

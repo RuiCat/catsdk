@@ -118,3 +118,37 @@ func (t *ColorTexture) BumpSample(u, v float64) Vector {
 	cy := t.Data[y1*t.Width+x].Sub(t.Data[y2*t.Width+x])
 	return Vector{X: float64(cx.R), Y: float64(cy.R), Z: 0}
 }
+
+type ColorImage struct {
+	Width  int
+	Height int
+	image.Image
+}
+
+func NewColorImage(im image.Image) *ColorImage {
+	size := im.Bounds().Max
+	return &ColorImage{size.X, size.Y, im}
+}
+
+func (t *ColorImage) bilinearSample(u, v float32) Color {
+	if u == 1 {
+		u -= EPS
+	}
+	if v == 1 {
+		v -= EPS
+	}
+	w := float32(t.Width) - 2
+	h := float32(t.Height) - 2
+	X, _ := f32.Modf(u * w)
+	Y, _ := f32.Modf(v * h)
+	x0 := int(X)
+	y0 := int(Y)
+	return NewColor(t.At(x0, y0)).Pow(2.2)
+}
+func (t *ColorImage) Sample(u, v float64) Color {
+	return t.bilinearSample(Fract(Fract(float32(u))+1), 1-Fract(Fract(float32(v))+1))
+}
+func (t *ColorImage) NormalSample(u, v float64) Vector { return Vector{} }
+func (t *ColorImage) BumpSample(u, v float64) Vector   { return Vector{} }
+func (t *ColorImage) Pow(a float32) Texture            { return t }
+func (t *ColorImage) MulScalar(a float32) Texture      { return t }

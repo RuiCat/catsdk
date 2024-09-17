@@ -93,7 +93,7 @@ func (b *Buffer) StandardDeviation(x, y int) Color {
 }
 
 func (b *Buffer) Image(channel Channel) image.Image {
-	result := image.NewRGBA64(image.Rect(0, 0, b.W, b.H))
+	result := image.NewRGBA(image.Rect(0, 0, b.W, b.H))
 	var maxSamples float32
 	if channel == SamplesChannel {
 		for _, pixel := range b.Pixels {

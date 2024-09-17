@@ -2,21 +2,23 @@ package logs
 
 import (
 	"os"
+	"os/signal"
 	"sync"
 )
 
 // Std 全局函数
 var Std = struct {
-	LogOut  *os.File
+	LogOut  [2]os.File
 	LogMap  sync.Map
 	LogCode sync.Map
 	Exit    chan struct{}
 	Pool    Pool
-}{Exit: make(chan struct{}), LogOut: os.Stdout, Pool: NewPool(1024)}
+}{Exit: make(chan struct{}), LogOut: [2]os.File{*os.Stdout, *os.Stderr}, Pool: NewPool(1024)}
 
-// Exit 结束程序
+// Exit 退出程序
 func Exit() {
 	close(Std.Exit)
+	os.Exit(0)
 }
 
 // IsExit 程序是否结束
@@ -25,6 +27,13 @@ func IsExit() <-chan struct{} {
 }
 
 func init() {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c)
+	go func() {
+		<-c
+		close(Std.Exit)
+		os.Exit(0)
+	}()
 	// 更改默认输出
 	os.Stdout = InfoLevel.Info().LogFile
 	os.Stderr = ErrorLevel.Info().LogFile

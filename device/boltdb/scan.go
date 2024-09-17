@@ -1,9 +1,9 @@
-package storm
+package boltdb
 
 import (
 	"bytes"
 
-	bolt "device/util/bbolt"
+	bolt "device/boltdb/bbolt"
 )
 
 // A BucketScanner scans a Node for a list of buckets

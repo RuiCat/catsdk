@@ -1,4 +1,4 @@
-package storm
+package boltdb
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 	"device/boltdb/codec"
 	"device/boltdb/codec/json"
 
-	bolt "device/util/bbolt"
+	bolt "device/boltdb/bbolt"
 )
 
 const (

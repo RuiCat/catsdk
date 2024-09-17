@@ -1,6 +1,6 @@
-package storm
+package boltdb
 
-import bolt "device/util/bbolt"
+import bolt "device/boltdb/bbolt"
 
 // Tx is a transaction.
 type Tx interface {

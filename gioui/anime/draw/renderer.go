@@ -49,6 +49,7 @@ func NewRenderer(scene *Scene, camera *Camera, sampler Sampler, w, h int) *Rende
 }
 
 func (r *Renderer) run() {
+	clear(r.Buffer.Pixels)
 	scene := r.Scene
 	camera := r.Camera
 	sampler := r.Sampler

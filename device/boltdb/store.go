@@ -1,4 +1,4 @@
-package storm
+package boltdb
 
 import (
 	"bytes"
@@ -7,7 +7,7 @@ import (
 	"device/boltdb/index"
 	"device/boltdb/q"
 
-	bolt "device/util/bbolt"
+	bolt "device/boltdb/bbolt"
 )
 
 // TypeStore stores user defined types in BoltDB.

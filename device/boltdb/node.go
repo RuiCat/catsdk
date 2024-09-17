@@ -1,9 +1,9 @@
-package storm
+package boltdb
 
 import (
 	"device/boltdb/codec"
 
-	bolt "device/util/bbolt"
+	bolt "device/boltdb/bbolt"
 )
 
 // A Node in Storm represents the API to a BoltDB bucket.

@@ -1,9 +1,9 @@
-package storm
+package boltdb
 
 import (
 	"reflect"
 
-	bolt "device/util/bbolt"
+	bolt "device/boltdb/bbolt"
 )
 
 // KeyValueStore can store and fetch values by key

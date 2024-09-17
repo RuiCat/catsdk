@@ -2,19 +2,25 @@ package anime
 
 import (
 	"gioui/anime/draw"
-	"mat/mat/spatial/r3"
 )
 
 // AnimeObject 动画对象底层
 type AnimeObject struct {
+	Width, Height int
 	ObjectDrawing
-	draw.Axis // 绘图平面
-	r3.Box    // 任何动画对象均为一个基础 Box 包围盒为基础.
-	r3.Mat    // 变换矩阵
-	Value     map[string]any
+	draw.ContextDrawing
+	Value map[string]any
 }
 
-func (anime *AnimeObject) Init()                    {}
+// Init 初始化
+func (anime *AnimeObject) Init() {
+	if anime.Context == nil {
+		// 得到绘图大小
+		size := anime.Box.Size()
+		// 绘制上下文
+		anime.ContextDrawing.Context = draw.NewContext(int(size.X), int(size.Y))
+	}
+}
 func (anime *AnimeObject) GetValue(v string) any    { return anime.Value[v] }
 func (anime *AnimeObject) AddValue(v string, k any) { anime.Value[v] = k }
 
@@ -33,22 +39,24 @@ type Anime struct {
 func (anime *Anime) Drawing(cxt *Context) {
 	obj := anime.Object.getObject()
 	if (cxt.CurrentFrame >= anime.StartFrame) && (cxt.CurrentFrame <= anime.StopFrame || anime.StopFrame == anime.StartFrame) {
+		cxt.Context = obj.Context // 设置上下文
+		cxt.ClearPix()            // 清除场景
 		for _, trans := range anime.TransList {
 			trans.Transformation(obj, cxt)
 		}
 		anime.Object.Drawing(cxt) // 对象绘制
+		cxt.FillPreserve()        // 绘制填充图像
+		cxt.StrokePreserve()      // 绘制线条图像
 	}
 }
 
 // Play 播放动画
-func (anime *Anime) Play(stop uint64, width int, height int, call func(cxt *draw.Context)) {
-	cxt := &Context{Context: draw.NewContext(width, height)}
+func (anime *Anime) Play(stop uint64, width int, height int, call func(cxt *Context)) {
+	// 绘制
+	cxt := &Context{}
 	for frame := range stop {
 		cxt.CurrentFrame = frame // 设置当前帧
-		cxt.ClearPix()           // 清除场景
 		anime.Drawing(cxt)       // 绘制当前帧
-		cxt.FillPreserve()       // 绘制填充图像
-		cxt.StrokePreserve()     // 绘制线条图像
-		call(cxt.Context)        // 回调
+		call(cxt)                // 回调
 	}
 }

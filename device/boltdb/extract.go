@@ -1,4 +1,4 @@
-package storm
+package boltdb
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 
 	"device/boltdb/index"
 
-	bolt "device/util/bbolt"
+	bolt "device/boltdb/bbolt"
 )
 
 // Storm tags

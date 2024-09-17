@@ -4,6 +4,7 @@ package draw
 import (
 	"errors"
 	"gioui/anime/quantize"
+	"mat/asm/f32"
 
 	"image"
 	"image/color"
@@ -683,7 +684,7 @@ func (dc *Context) DrawImageAnchored(im image.Image, x, y int, ax, ay float64) {
 	} else {
 		transformer.Transform(dc.im, s2d, im, im.Bounds(), draw.Over, &draw.Options{
 			DstMask:  dc.mask,
-			DstMaskP: image.ZP,
+			DstMaskP: image.Point{},
 		})
 	}
 }
@@ -939,7 +940,88 @@ func (dc *Context) ClearPix() {
 	dc.ClearPath()
 }
 
-// ClearPix AxisDrawing
-func (dc *Context) AxisDrawing(Min Vector, Axis Axis) *AxisDrawing {
-	return &AxisDrawing{}
+// ContextDrawing 上下文绘图
+type ContextDrawing struct {
+	Box
+	Axis Axis // 坐标轴
+	*Context
+}
+
+func (a *ContextDrawing) SetAxis(axis Axis, box Box) {
+	bx := box
+	switch axis {
+	case AxisX:
+		bx.Min.X = 1
+		bx.Max.X = 1
+		bx.Min.Y = box.Min.Y
+		bx.Min.Z = box.Min.X
+		bx.Max.Y = box.Max.Y
+		bx.Max.Z = box.Max.X
+	case AxisY:
+		bx.Min.Y = 1
+		bx.Max.Y = 1
+		bx.Min.X = box.Min.X
+		bx.Min.Z = box.Min.Y
+		bx.Max.X = box.Max.X
+		bx.Max.Z = box.Max.Y
+	case AxisZ:
+		bx.Min.Z = 1
+		bx.Max.Z = 1
+		bx.Min.X = box.Min.X
+		bx.Min.Y = box.Min.Y
+		bx.Max.X = box.Max.X
+		bx.Max.Y = box.Max.Y
+	}
+	a.Box = bx
+}
+func (a *ContextDrawing) Compile() {}
+func (a *ContextDrawing) BoundingBox() Box {
+	return a.Box
+}
+func (a *ContextDrawing) NormalAt(vec Vector) Vector       { return Vector{X: 1, Y: 1, Z: 1} }
+func (t *ContextDrawing) MaterialAt(vec Vector) Material   { return Material{Texture: t} }
+func (t *ContextDrawing) NormalSample(u, v float64) Vector { return Vector{} }
+func (t *ContextDrawing) BumpSample(u, v float64) Vector   { return Vector{} }
+func (t *ContextDrawing) Pow(a float32) Texture            { return t }
+func (t *ContextDrawing) MulScalar(a float32) Texture      { return t }
+func (t *ContextDrawing) Intersect(ray Ray) Hit {
+	n := t.Min.Sub(ray.Origin).Div(ray.Direction)
+	f := t.Max.Sub(ray.Origin).Div(ray.Direction)
+	n, f = n.Min(f), n.Max(f)
+	t0 := math.Max(math.Max(n.X, n.Y), n.Z)
+	t1 := math.Min(math.Min(f.X, f.Y), f.Z)
+	if t0 > 0 && t0 <= t1 {
+		return Hit{t, t0, nil}
+	}
+	return NoHit
+}
+func (a *ContextDrawing) UV(v Vector) Vector {
+	v = v.Sub(a.Min).Div(a.Max.Sub(a.Min))
+	switch a.Axis {
+	case AxisX:
+		return Vector{X: v.Z, Y: v.Y, Z: 0}
+	case AxisY:
+		return Vector{X: v.X, Y: v.Z, Z: 0}
+	case AxisZ:
+		return Vector{X: v.X, Y: v.Y, Z: 0}
+	}
+	return Vector{}
+}
+func (t *ContextDrawing) bilinearSample(u, v float32) Color {
+	if u == 1 {
+		u -= EPS
+	}
+	if v == 1 {
+		v -= EPS
+	}
+	w := float32(t.width) - 2
+	h := float32(t.height) - 2
+	X, _ := f32.Modf(u * w)
+	Y, _ := f32.Modf(v * h)
+	x0 := int(X)
+	y0 := int(Y)
+	return NewColor(t.im.At(x0, y0)).Pow(2.2)
+}
+func (t *ContextDrawing) Sample(u, v float64) Color {
+	return t.bilinearSample(Fract(Fract(float32(u))+1), 1-Fract(Fract(float32(v))+1))
 }

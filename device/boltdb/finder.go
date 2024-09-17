@@ -1,4 +1,4 @@
-package storm
+package boltdb
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"device/boltdb/index"
 	"device/boltdb/q"
 
-	bolt "device/util/bbolt"
+	bolt "device/boltdb/bbolt"
 )
 
 // A Finder can fetch types from BoltDB.

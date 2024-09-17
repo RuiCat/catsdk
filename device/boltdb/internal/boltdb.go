@@ -3,7 +3,7 @@ package internal
 import (
 	"bytes"
 
-	bolt "device/util/bbolt"
+	bolt "device/boltdb/bbolt"
 )
 
 // Cursor that can be reversed

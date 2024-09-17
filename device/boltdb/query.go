@@ -1,10 +1,10 @@
-package storm
+package boltdb
 
 import (
 	"device/boltdb/internal"
 	"device/boltdb/q"
 
-	bolt "device/util/bbolt"
+	bolt "device/boltdb/bbolt"
 )
 
 // Select a list of records that match a list of matchers. Doesn't use indexes.

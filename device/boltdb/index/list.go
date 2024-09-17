@@ -5,7 +5,7 @@ import (
 
 	"device/boltdb/internal"
 
-	bolt "device/util/bbolt"
+	bolt "device/boltdb/bbolt"
 )
 
 // NewListIndex loads a ListIndex

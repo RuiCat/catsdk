@@ -1,4 +1,4 @@
-package storm
+package boltdb
 
 import (
 	"device/boltdb/index"
@@ -7,7 +7,7 @@ import (
 	"sort"
 	"time"
 
-	bolt "device/util/bbolt"
+	bolt "device/boltdb/bbolt"
 )
 
 type item struct {

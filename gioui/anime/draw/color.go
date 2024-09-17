@@ -137,11 +137,18 @@ func (a Color) Mix(b Color, pct float32) Color {
 }
 
 func (a Color) AddColor(b Color) Color {
-	aR, aG, aB, aA := a.R, a.G, a.B, a.A
-	bR, bG, bB, bA := b.R, b.G, b.B, b.A
-	R := aR*aA + bR*bA*(1-aA)
-	G := aG*aA + bG*bA*(1-aA)
-	B := aB*aA + bB*bA*(1-aA)
-	Alpha := 1 - (1-aA)*(1-bA)
-	return Color{R / Alpha, G / Alpha, B / Alpha, Alpha}
+	switch {
+	case a.A == 0:
+		return b
+	case b.A == 0:
+		return a
+	default:
+		aR, aG, aB, aA := a.R, a.G, a.B, a.A
+		bR, bG, bB, bA := b.R, b.G, b.B, b.A
+		R := aR*aA + bR*bA*(1-aA)
+		G := aG*aA + bG*bA*(1-aA)
+		B := aB*aA + bB*bA*(1-aA)
+		Alpha := 1 - (1-aA)*(1-bA)
+		return Color{R / Alpha, G / Alpha, B / Alpha, Alpha}
+	}
 }

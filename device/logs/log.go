@@ -10,13 +10,48 @@ type LogLevel uint8
 
 // 默认日志等级
 var (
-	DebugLevel   = NewLevel(0x0, "DebugLevel", nil)   // "Debug.log")
-	InfoLevel    = NewLevel(0x1, "InfoLevel", nil)    //"Info.log")
-	WarnLevel    = NewLevel(0x2, "WarnLevel", nil)    //"Warn.log")
-	ErrorLevel   = NewLevel(0x3, "ErrorLevel", nil)   // "Error.log")
-	FatalLevel   = NewLevel(0x4, "FatalLevel", nil)   // "Fatal.log")
-	UnknownLevel = NewLevel(0x5, "UnknownLevel", nil) // "Unknown.log")
+	DebugLevel   = NewLevel(0x0, "DebugLevel", getFile("DebugLevel", "Debug.log"))
+	InfoLevel    = NewLevel(0x1, "InfoLevel", getFile("InfoLevel", "Info.log"))
+	WarnLevel    = NewLevel(0x2, "WarnLevel", getFile("WarnLevel", "Warn.log"))
+	ErrorLevel   = NewLevel(0x3, "ErrorLevel", getFile("ErrorLevel", "Error.log"))
+	FatalLevel   = NewLevel(0x4, "FatalLevel", getFile("FatalLevel", "Fatal.log"))
+	UnknownLevel = NewLevel(0x5, "UnknownLevel", getFile("UnknownLevel", "Unknown.log"))
 )
+
+// SetFile 设置日志文件
+func (def *LogLevel) SetFile(name string) error {
+	return SetConfing(def.Info().Name, name)
+}
+
+// GetFile 读取日志文件
+func (def *LogLevel) GetFile(name string) string {
+	info := def.Info()
+	return GetConfing(info.Name, name)
+}
+
+// SetEnable 设置是否启用日志文件
+func (def *LogLevel) SetEnable(is bool) error {
+	return SetConfing("Is"+def.Info().Name, is)
+}
+
+// GetEnable 读取是否启用日志文件
+func (def *LogLevel) GetEnable(is bool) bool {
+	info := def.Info()
+	return GetConfing("Is"+info.Name, is)
+}
+
+// getFile 日志文件
+func getFile(log, name string) *os.File {
+	name = GetConfing[string](log, name)
+	if GetConfing[bool]("Is"+log, false) {
+		file, err := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			panic(err)
+		}
+		return file
+	}
+	return nil
+}
 
 // LogInfo 日志信息
 type LogInfo struct {
@@ -29,7 +64,7 @@ type LogInfo struct {
 func NewLevel(Level LogLevel, Name string, File *os.File) LogLevel {
 	if _, ok := Std.LogMap.Load(Level); !ok {
 		if File == nil {
-			File = Std.LogOut
+			File = &Std.LogOut[0]
 		}
 		Std.LogMap.Store(Level, &LogInfo{Name: Name, Level: Level, LogFile: File})
 		return Level
@@ -70,7 +105,7 @@ func (code LogCode) Level() LogLevel {
 	if level, ok := Std.LogCode.Load(code); ok {
 		return level.(LogLevel)
 	}
-	return UnknownLevel
+	return LogLevel(UnknownLevel)
 }
 
 // Info 日志信息

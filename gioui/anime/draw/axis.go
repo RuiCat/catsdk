@@ -1,6 +1,8 @@
 package draw
 
-import "math"
+import (
+	"math"
+)
 
 // Axis 枚举类型，表示 3D 空间中的三个坐标轴
 type Axis uint8
@@ -15,6 +17,19 @@ const (
 // NewAxisDrawing 创建平面
 // axis: 垂直轴
 func NewAxisDrawing(axis Axis, box Box, color Color) *AxisDrawing {
+	a := &AxisDrawing{Axis: axis, Material: Material{Color: color}}
+	a.SetAxis(axis, box)
+	return a
+}
+
+// AxisDrawing 垂直坐标的绘图平面
+type AxisDrawing struct {
+	Box
+	Axis     Axis // 坐标轴
+	Material Material
+}
+
+func (a *AxisDrawing) SetAxis(axis Axis, box Box) {
 	bx := box
 	switch axis {
 	case AxisX:
@@ -39,16 +54,8 @@ func NewAxisDrawing(axis Axis, box Box, color Color) *AxisDrawing {
 		bx.Max.X = box.Max.X
 		bx.Max.Y = box.Max.Y
 	}
-	return &AxisDrawing{Axis: axis, Box: bx, Material: Material{Color: color}}
+	a.Box = bx
 }
-
-// AxisDrawing 垂直坐标的绘图平面
-type AxisDrawing struct {
-	Box
-	Axis     Axis // 坐标轴
-	Material Material
-}
-
 func (a *AxisDrawing) Compile()                       {}
 func (a *AxisDrawing) BoundingBox() Box               { return a.Box }
 func (a *AxisDrawing) MaterialAt(vec Vector) Material { return a.Material }

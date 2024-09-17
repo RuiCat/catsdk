@@ -1,4 +1,4 @@
-package storm
+package boltdb
 
 import (
 	"os"
@@ -6,7 +6,7 @@ import (
 	"device/boltdb/codec"
 	"device/boltdb/index"
 
-	bolt "device/util/bbolt"
+	bolt "device/boltdb/bbolt"
 )
 
 // BoltOptions used to pass options to BoltDB.
