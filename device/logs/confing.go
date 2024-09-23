@@ -3,6 +3,7 @@ package logs
 import (
 	"device/boltdb"
 	"device/boltdb/bbolt"
+	"encoding/json"
 	"runtime"
 	"time"
 )
@@ -25,26 +26,42 @@ var Confing = ConfingDB.From("Confing")
 type confing struct {
 	ID    int    `storm:"id,increment"`
 	Key   string `storm:"unique"`
-	Value any
+	Value []byte
 }
 
 // GetConfing 得到配置
-func GetConfing[T any](key string, value T) T {
-	var to confing
-	if Confing.One("Key", key, &to) == nil {
-		return (to.Value).(T)
+func GetConfing(key string, value any) error {
+	to := new(confing)
+	err := Confing.One("Key", key, to)
+	if err != nil {
+		to.Key = key
+		to.Value, err = json.Marshal(value)
+		if err != nil {
+			return err
+		}
+		err = Confing.Save(to)
+		if err != nil {
+			return err
+		}
+	} else {
+		err = json.Unmarshal(to.Value, value)
+		if err != nil {
+			return err
+		}
 	}
-	Confing.Save(&confing{Key: key, Value: value})
-	return value
+	return nil
 }
 
 // SetConfing 设置配置
-func SetConfing[T any](key string, value T) error {
+func SetConfing(key string, value any) error {
 	var to confing
 	err := Confing.One("Key", key, &to)
 	if err != nil {
 		return err
 	}
-	to.Value = value
+	to.Value, err = json.Marshal(value)
+	if err != nil {
+		return err
+	}
 	return Confing.Update(&to)
 }

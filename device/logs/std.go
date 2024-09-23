@@ -1,6 +1,7 @@
 package logs
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"sync"
@@ -17,7 +18,32 @@ var Std = struct {
 
 // Exit 退出程序
 func Exit() {
-	close(Std.Exit)
+	// 退出程序
+	select {
+	case <-Std.Exit:
+		return
+	default:
+		// 关闭通道
+		close(Std.Exit)
+	}
+	if r := recover(); r != nil {
+		ErrorLevel.Info().WriteString(fmt.Sprint(r))
+	}
+	// 储存并关闭日志
+	confing := []ConfingLog{}
+	Std.LogMap.Range(func(key, value any) bool {
+		if info, ok := value.(*LogInfo); ok {
+			if info.IsDB {
+				confing = append(confing, info.ConfingLog)
+			}
+			info.Close()
+		}
+		return true
+	})
+	if len(confing) != 0 {
+		Panicf("储存日志失败:%s ", SetConfing("LogConfing", &confing))
+	}
+	// 结束程序
 	os.Exit(0)
 }
 
@@ -31,12 +57,8 @@ func init() {
 	signal.Notify(c)
 	go func() {
 		<-c
-		close(Std.Exit)
-		os.Exit(0)
+		Exit()
 	}()
-	// 更改默认输出
-	os.Stdout = InfoLevel.Info().LogFile
-	os.Stderr = ErrorLevel.Info().LogFile
 }
 
 // Close 用于处理代码中存在多次关联的 Close 过程

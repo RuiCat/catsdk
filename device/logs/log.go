@@ -1,7 +1,10 @@
 package logs
 
 import (
+	"bufio"
 	"fmt"
+	"io"
+	"net"
 	"os"
 )
 
@@ -9,67 +12,110 @@ import (
 type LogLevel uint8
 
 // 默认日志等级
-var (
-	DebugLevel   = NewLevel(0x0, "DebugLevel", getFile("DebugLevel", "Debug.log"))
-	InfoLevel    = NewLevel(0x1, "InfoLevel", getFile("InfoLevel", "Info.log"))
-	WarnLevel    = NewLevel(0x2, "WarnLevel", getFile("WarnLevel", "Warn.log"))
-	ErrorLevel   = NewLevel(0x3, "ErrorLevel", getFile("ErrorLevel", "Error.log"))
-	FatalLevel   = NewLevel(0x4, "FatalLevel", getFile("FatalLevel", "Fatal.log"))
-	UnknownLevel = NewLevel(0x5, "UnknownLevel", getFile("UnknownLevel", "Unknown.log"))
+const (
+	DebugLevel LogLevel = iota
+	InfoLevel
+	WarnLevel
+	ErrorLevel
+	FatalLevel
+	UnknownLevel
 )
 
-// SetFile 设置日志文件
-func (def *LogLevel) SetFile(name string) error {
-	return SetConfing(def.Info().Name, name)
+// ConfingLog 日志配置
+type ConfingLog struct {
+	Name     string   // 定义名称
+	Level    LogLevel // 日志等级
+	IsDB     bool     // 记录到数据库
+	IsNet    bool     // 启用远程日志
+	IsFile   bool     // 启用本地文件
+	NetAddr  net.Addr // 远程日志
+	FileName string   // 文件路径
 }
 
-// GetFile 读取日志文件
-func (def *LogLevel) GetFile(name string) string {
-	info := def.Info()
-	return GetConfing(info.Name, name)
-}
-
-// SetEnable 设置是否启用日志文件
-func (def *LogLevel) SetEnable(is bool) error {
-	return SetConfing("Is"+def.Info().Name, is)
-}
-
-// GetEnable 读取是否启用日志文件
-func (def *LogLevel) GetEnable(is bool) bool {
-	info := def.Info()
-	return GetConfing("Is"+info.Name, is)
-}
-
-// getFile 日志文件
-func getFile(log, name string) *os.File {
-	name = GetConfing[string](log, name)
-	if GetConfing[bool]("Is"+log, false) {
-		file, err := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-		if err != nil {
-			panic(err)
+// New 初始化
+func (confing ConfingLog) New() {
+	if _, ok := Std.LogMap.Load(confing.Level); !ok {
+		info := &LogInfo{ConfingLog: confing, LogWriter: &Std.LogOut[0]}
+		lw := []LogWriter{}
+		// 将日志写入文件
+		if info.IsFile {
+			f, err := os.OpenFile(info.FileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+			if err != nil {
+				Panicf("无法创建日志文件: %s", err)
+			}
+			lw = append(lw, f)
 		}
-		return file
+		// 将日志写入远程
+		if info.IsNet {
+			Panic("目前功能没有实现")
+		}
+		// 处理日志转发
+		if len(lw) != 0 {
+			r, w, err := os.Pipe()
+			Panicf("日志 Pipe 创建失败: %s", err)
+			info.LogWriter = w
+			info.close = func() {
+				w.Close()
+			}
+			go func() {
+				scanner := bufio.NewScanner(r)
+				for scanner.Scan() {
+					b := scanner.Bytes()
+					if b[len(b)-1] != '\n' {
+						b = append(b, '\n')
+					}
+					// 转发日志信息
+					for _, w := range lw {
+						w.Write(b)
+					}
+				}
+				for _, w := range lw {
+					w.Close()
+				}
+			}()
+		}
+		Std.LogMap.Store(confing.Level, info)
 	}
-	return nil
+}
+
+// LogWriter 日志写入接口
+type LogWriter interface {
+	io.Writer
+	io.StringWriter
+	io.Closer
+	Name() string
 }
 
 // LogInfo 日志信息
 type LogInfo struct {
-	Name    string
-	Level   LogLevel
-	LogFile *os.File
+	ConfingLog        // 日志配置
+	LogWriter         // 日志写入接口
+	close      func() // 用于关闭
 }
 
-// NewLevel 创建新日志等级
-func NewLevel(Level LogLevel, Name string, File *os.File) LogLevel {
-	if _, ok := Std.LogMap.Load(Level); !ok {
-		if File == nil {
-			File = &Std.LogOut[0]
-		}
-		Std.LogMap.Store(Level, &LogInfo{Name: Name, Level: Level, LogFile: File})
-		return Level
+// Close 关闭连接
+func (Info *LogInfo) Close() error {
+	if Info.close != nil {
+		Info.close()
 	}
-	panic(fmt.Sprintf("函数 NewLevel(Level:%d Name:%s File%s) 重复创建", Level, Name, File.Name()))
+	return nil
+}
+
+func init() {
+	// 初始化配置
+	confing := []ConfingLog{
+		{Name: "DebugLevel", IsDB: true, Level: DebugLevel, FileName: "Debug.log"},
+		{Name: "InfoLevel", IsDB: true, Level: InfoLevel, FileName: "Info.log"},
+		{Name: "WarnLevel", IsDB: true, Level: WarnLevel, FileName: "Warn.log"},
+		{Name: "ErrorLevel", IsDB: true, Level: ErrorLevel, FileName: "Error.log"},
+		{Name: "FatalLevel", IsDB: true, Level: FatalLevel, FileName: "Fatal.log"},
+		{Name: "UnknownLevel", IsDB: true, Level: UnknownLevel, FileName: "Unknown.log"},
+	}
+	Panicf("默认日志初始化失败:%s ", GetConfing("LogConfing", &confing))
+	// 创建日志
+	for _, cfg := range confing {
+		cfg.New()
+	}
 }
 
 // NewCode 创建新日志代码
@@ -92,7 +138,7 @@ func (level LogLevel) Info() *LogInfo {
 // String 等级标志
 func (level LogLevel) String() string {
 	if info, ok := Std.LogMap.Load(level); ok {
-		return info.(*LogInfo).Name
+		return (info.(*LogInfo)).ConfingLog.Name
 	}
 	return fmt.Sprintf("LogLevel(%d?)", level)
 }
@@ -120,7 +166,7 @@ func (code LogCode) String() string {
 
 // Print 写入信息
 func (code LogCode) Print(a ...any) {
-	code.Info().LogFile.WriteString(fmt.Sprintf("%s,Details:%v\n", code.String(), a))
+	code.Info().LogWriter.WriteString(fmt.Sprintf("%s,Details:%v\n", code.String(), a))
 }
 
 // Error 输出错误
@@ -201,7 +247,7 @@ func IfPrint(is bool, err error) {
 }
 
 // Print 输出错误/日志信息
-func Print(err error) {
+func Print(err any) {
 	if err != nil {
 		switch v := err.(type) {
 		case LogDetails:
@@ -215,7 +261,7 @@ func Print(err error) {
 }
 
 // Panic 输出错误/日志信息
-func Panic(err error) {
+func Panic(err any) {
 	if err != nil {
 		switch v := err.(type) {
 		case LogDetails:
@@ -224,6 +270,21 @@ func Panic(err error) {
 			v.Code.Error(v)
 		default:
 			panic(v)
+		}
+	}
+}
+
+// Panicf 输出错误/日志信息
+func Panicf(format string, err any) {
+	if err != nil {
+		a := fmt.Sprintf(format, err)
+		switch v := err.(type) {
+		case LogDetails:
+			v.Code.Print(a)
+		case *LogDetails:
+			v.Code.Print(a)
+		default:
+			panic(a)
 		}
 	}
 }
