@@ -9,6 +9,8 @@ import (
 	"sdk/typesetting/opentype/tables"
 )
 
+//go:generate ../../../../typesetting-utils/generators/binarygen/cmd/generator . _src.go
+
 // CFF2 represents a parsed 'CFF2' Opentype table.
 type CFF2 struct {
 	fdSelect fdSelect // maybe nil if there is only one font dict

@@ -1,14 +1,15 @@
 package anime
 
+/*
 import (
-	"gioui/anime/draw"
+	"gioui/anime/canvas"
 )
 
 // AnimeObject 动画对象底层
 type AnimeObject struct {
 	Width, Height int
 	ObjectDrawing
-	draw.ContextDrawing
+	canvas.ContextDrawing
 	Value map[string]any
 }
 
@@ -18,7 +19,7 @@ func (anime *AnimeObject) Init() {
 		// 得到绘图大小
 		size := anime.Box.Size()
 		// 绘制上下文
-		anime.ContextDrawing.Context = draw.NewContext(int(size.X), int(size.Y))
+		anime.ContextDrawing.Context = canvas.NewContext(int(size.X), int(size.Y))
 	}
 }
 func (anime *AnimeObject) GetValue(v string) any    { return anime.Value[v] }
@@ -60,3 +61,4 @@ func (anime *Anime) Play(stop uint64, width int, height int, call func(cxt *Cont
 		call(cxt)                // 回调
 	}
 }
+*/

@@ -4,6 +4,8 @@ package tables
 
 import "sdk/typesetting/opentype/loader"
 
+//go:generate ../../../typesetting-utils/generators/binarygen/cmd/generator . _src.go
+
 type GlyphID = uint16
 
 // NameID is the ID for entries in the font table.

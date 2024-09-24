@@ -1,7 +1,8 @@
 package anime
 
+/*
 import (
-	"gioui/anime/draw"
+	"gioui/anime/canvas"
 	"gioui/op/paint"
 	"gioui/widget/layout"
 	"image"
@@ -9,10 +10,10 @@ import (
 
 // AnimeManager 动画管理器
 type AnimeManager struct {
-	StopFrame uint64         // 停止帧
-	Renderer  *draw.Renderer // 渲染
-	Context   Context        // 动画上下文
-	AnimeList []*Anime       // 动画列表
+	StopFrame uint64           // 停止帧
+	Renderer  *canvas.Renderer // 渲染
+	Context   Context          // 动画上下文
+	AnimeList []*Anime         // 动画列表
 	Image     image.Image
 }
 
@@ -50,3 +51,4 @@ func (ui *AnimeManager) Layout(gtx layout.Context) layout.Dimensions {
 	}
 	return layout.Dimensions{}
 }
+*/

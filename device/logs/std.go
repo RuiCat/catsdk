@@ -3,7 +3,6 @@ package logs
 import (
 	"fmt"
 	"os"
-	"os/signal"
 	"sync"
 )
 
@@ -53,12 +52,12 @@ func IsExit() <-chan struct{} {
 }
 
 func init() {
-	c := make(chan os.Signal, 1)
-	signal.Notify(c)
-	go func() {
-		<-c
-		Exit()
-	}()
+	// c := make(chan os.Signal, 1)
+	// signal.Notify(c)
+	// go func() {
+	// 	<-c
+	// 	Exit()
+	// }()
 }
 
 // Close 用于处理代码中存在多次关联的 Close 过程

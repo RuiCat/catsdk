@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//go:generate go run gen.go
+
 // Package identifier defines the contract between implementations of Encoding
 // and Index by defining identifiers that uniquely identify standardized coded
 // character sets (CCS) and character encoding schemes (CES), which we will

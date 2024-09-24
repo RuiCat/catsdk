@@ -1,5 +1,6 @@
 package anime
 
+/*
 import (
 	"gioui/anime/draw"
 )
@@ -52,3 +53,4 @@ func ConfingAxis(axis draw.Axis) func(obj *Anime) {
 		o.SetAxis(axis, draw.Box{Min: draw.Vector{}, Max: draw.Vector{X: float64(o.Width), Y: float64(o.Height), Z: 0}})
 	}
 }
+*/

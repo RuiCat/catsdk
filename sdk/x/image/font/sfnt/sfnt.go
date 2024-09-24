@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//go:generate go run gen.go
+
 // Package sfnt implements a decoder for TTF (TrueType Fonts) and OTF (OpenType
 // Fonts). Such fonts are also known as SFNT fonts.
 //

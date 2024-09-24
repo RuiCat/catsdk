@@ -6,6 +6,8 @@ import (
 	"sdk/typesetting/opentype/tables"
 )
 
+//go:generate ../../../../../typesetting-utils/generators/binarygen/cmd/generator . _src.go
+
 type header2 struct {
 	majorVersion  uint8  //	Format major version. Set to 2.
 	minorVersion  uint8  //	Format minor version. Set to zero.

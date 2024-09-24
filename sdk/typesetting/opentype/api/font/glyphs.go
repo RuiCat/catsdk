@@ -10,11 +10,10 @@ import (
 	"image/jpeg"
 	"image/png"
 
-	"sdk/x/image/tiff"
-
 	"sdk/typesetting/opentype/api"
 	"sdk/typesetting/opentype/loader"
 	"sdk/typesetting/opentype/tables"
+	"sdk/x/image/tiff"
 )
 
 type contourPoint struct {

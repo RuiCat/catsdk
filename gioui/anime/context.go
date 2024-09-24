@@ -1,11 +1,12 @@
 package anime
 
-import "gioui/anime/draw"
+/*
+import "gioui/anime/canvas"
 
 // Context 对象上下文
 type Context struct {
-	*draw.Context        // 绘图画布
-	CurrentFrame  uint64 // 当前帧
+	*canvas.Context        // 绘图画布
+	CurrentFrame    uint64 // 当前帧
 }
 
 // ObjectTransformation 底层接口用于对动画对象进行变换
@@ -19,3 +20,4 @@ type ObjectDrawing interface {
 	Drawing(*Context)        // 绘制
 	getObject() *AnimeObject // 底层接口
 }
+*/
