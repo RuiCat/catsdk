@@ -124,6 +124,9 @@ func decoHeightOpt(h unit.Dp) Option {
 		c.decoHeight = h
 	}
 }
+func (w *Window) GetGPU() gpu.GPU {
+	return w.gpu
+}
 
 func (w *Window) validateAndProcess(size image.Point, sync bool, frame *op.Ops, sigChan chan<- struct{}) error {
 	signal := func() {

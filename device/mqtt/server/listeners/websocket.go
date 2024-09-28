@@ -16,7 +16,7 @@ import (
 
 	"log/slog"
 
-	"device/util/websocket"
+	"device/websocket"
 )
 
 var (

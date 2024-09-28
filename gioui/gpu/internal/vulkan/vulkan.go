@@ -12,7 +12,7 @@ import (
 	"image"
 	"math/bits"
 
-	"gioui/gpu/internal/driver"
+	"gioui/gpu/driver"
 	"gioui/internal/vk"
 	"gioui/shader"
 )

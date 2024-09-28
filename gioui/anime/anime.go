@@ -1,25 +1,27 @@
 package anime
 
 /*
-import (
-	"gioui/anime/canvas"
-)
+// AnimeObject 动画底层对象
+type AnimeObject interface {
+	init(obj AnimeObject) // 通过组合的方式实现继承
+}
+
 
 // AnimeObject 动画对象底层
 type AnimeObject struct {
 	Width, Height int
 	ObjectDrawing
-	canvas.ContextDrawing
+	*canvas.Context
 	Value map[string]any
 }
 
 // Init 初始化
 func (anime *AnimeObject) Init() {
 	if anime.Context == nil {
-		// 得到绘图大小
-		size := anime.Box.Size()
-		// 绘制上下文
-		anime.ContextDrawing.Context = canvas.NewContext(int(size.X), int(size.Y))
+		// // 得到绘图大小
+		// size := anime.Box.Size()
+		// // 绘制上下文
+		// anime.ContextDrawing.Context = canvas.NewContext(int(size.X), int(size.Y))
 	}
 }
 func (anime *AnimeObject) GetValue(v string) any    { return anime.Value[v] }
@@ -41,13 +43,13 @@ func (anime *Anime) Drawing(cxt *Context) {
 	obj := anime.Object.getObject()
 	if (cxt.CurrentFrame >= anime.StartFrame) && (cxt.CurrentFrame <= anime.StopFrame || anime.StopFrame == anime.StartFrame) {
 		cxt.Context = obj.Context // 设置上下文
-		cxt.ClearPix()            // 清除场景
+		// cxt.ClearPix()            // 清除场景
 		for _, trans := range anime.TransList {
 			trans.Transformation(obj, cxt)
 		}
 		anime.Object.Drawing(cxt) // 对象绘制
-		cxt.FillPreserve()        // 绘制填充图像
-		cxt.StrokePreserve()      // 绘制线条图像
+		// cxt.FillPreserve()        // 绘制填充图像
+		// cxt.StrokePreserve()      // 绘制线条图像
 	}
 }
 

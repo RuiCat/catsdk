@@ -1,7 +1,7 @@
 package logs
 
 import (
-	"fmt"
+	"bufio"
 	"os"
 	"sync"
 )
@@ -25,14 +25,16 @@ func Exit() {
 		// 关闭通道
 		close(Std.Exit)
 	}
+	// 拦截错误
 	if r := recover(); r != nil {
-		ErrorLevel.Info().WriteString(fmt.Sprint(r))
+		CodeError.Print(r)
 	}
 	// 储存并关闭日志
 	confing := []ConfingLog{}
 	Std.LogMap.Range(func(key, value any) bool {
 		if info, ok := value.(*LogInfo); ok {
-			if info.IsDB {
+			// 是否储存配置到数据库
+			if info.IsConfingDB {
 				confing = append(confing, info.ConfingLog)
 			}
 			info.Close()
@@ -52,12 +54,32 @@ func IsExit() <-chan struct{} {
 }
 
 func init() {
-	// c := make(chan os.Signal, 1)
-	// signal.Notify(c)
-	// go func() {
-	// 	<-c
-	// 	Exit()
-	// }()
+	// os.Stdout 转发
+	{
+		r, w, err := os.Pipe()
+		Panicf("日志 Pipe 创建失败: %s", err)
+		os.Stdout = w
+		go func() {
+			scanner := bufio.NewScanner(r)
+			for scanner.Scan() {
+				CodePrint.Print(scanner.Text())
+			}
+			w.Close()
+		}()
+	}
+	// os.Stderr 转发
+	{
+		r, w, err := os.Pipe()
+		Panicf("日志 Pipe 创建失败: %s", err)
+		os.Stderr = w
+		go func() {
+			scanner := bufio.NewScanner(r)
+			for scanner.Scan() {
+				CodeError.Print(scanner.Text())
+			}
+			w.Close()
+		}()
+	}
 }
 
 // Close 用于处理代码中存在多次关联的 Close 过程

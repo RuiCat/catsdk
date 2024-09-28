@@ -18,12 +18,13 @@ import (
 	"time"
 	"unsafe"
 
-	"gioui/gpu/internal/driver"
+	"gioui/gpu/driver"
 	"gioui/internal/byteslice"
 	"gioui/internal/ops"
 	"gioui/internal/scene"
 	"gioui/internal/stroke"
 	"gioui/op"
+	"gioui/op/paint"
 	"gioui/shader"
 	"gioui/shader/gio"
 	"gioui/widget/layout"
@@ -261,11 +262,53 @@ type texture struct {
 type blitter struct {
 	ctx                    driver.Device
 	viewport               image.Point
-	pipelines              [2][3]*pipeline
+	pipelines              [2][4]*pipeline
 	colUniforms            *blitColUniforms
 	texUniforms            *blitTexUniforms
 	linearGradientUniforms *blitLinearGradientUniforms
 	quadVerts              driver.Buffer
+	blitter3D              blitter3D
+}
+
+type blitter3D struct {
+	uniforms       *f32.Mat4 // 世界逆矩阵
+	bufferVertex   sizedBuffer
+	bufferIndex    sizedBuffer
+	bufferIndexLen int
+	tex            driver.Texture
+	// 透视信息
+	Near   float32 // 近平面
+	Far    float32 // 远平面
+	Fovy   float32 // 视场角
+	Aspect float32 // 宽高比
+	// 摄像机信息
+	Position f32.Vec3 // 位置
+	Target   f32.Vec3 // 看向目标
+	UP       f32.Vec3 // 视点
+	// 矩阵信息
+	World f32.Mat4 // 世界矩阵
+}
+
+// Init 初始化摄像机
+func (b3d *blitter3D) Init() {
+	b3d.Fovy = 45
+	b3d.Near = 1
+	b3d.Far = 100
+	b3d.UP = f32.Vec3{0, -1, 0}
+	b3d.Target = f32.Vec3{0, 0, 0}
+	b3d.Position = f32.Vec3{0, 0, -2}
+	b3d.World = f32.Mat4{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+}
+
+// Update 更新摄像机矩阵
+func (b3d *blitter3D) Update() {
+	// 获取投影矩阵
+	proj := f32.Perspective(f32.DegToRad(b3d.Fovy), b3d.Aspect, b3d.Near, b3d.Far)
+	// 获取视角矩阵
+	view := f32.LookAtV(b3d.Position, b3d.Target, b3d.UP)
+	// 计算矩阵
+	//@ proj * view * World
+	*b3d.uniforms = proj.Mul4(view).Mul4(b3d.World)
 }
 
 type blitColUniforms struct {
@@ -318,6 +361,7 @@ const (
 	clipTypeNone clipType = iota
 	clipTypePath
 	clipTypeIntersection
+	clipType3D
 )
 
 type materialType uint8
@@ -326,6 +370,9 @@ const (
 	materialColor materialType = iota
 	materialLinearGradient
 	materialTexture
+	material3D
+	material3DPosition
+	material3DTarget
 )
 
 // New creates a GPU for the given API.
@@ -385,6 +432,7 @@ func (g *gpu) Release() {
 }
 
 func (g *gpu) Frame(frameOps *op.Ops, target RenderTarget, viewport image.Point) error {
+	g.renderer.blitter.blitter3D.Aspect = float32(viewport.X) / float32(viewport.Y)
 	g.collect(viewport, frameOps)
 	return g.frame(target)
 }
@@ -546,9 +594,11 @@ func newBlitter(ctx driver.Device) *blitter {
 	}
 	b.colUniforms = new(blitColUniforms)
 	b.texUniforms = new(blitTexUniforms)
+	b.blitter3D.Init()
+	b.blitter3D.uniforms = &f32.Mat4{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 	b.linearGradientUniforms = new(blitLinearGradientUniforms)
 	pipelines, err := createColorPrograms(ctx, gio.Shader_blit_vert, gio.Shader_blit_frag,
-		[3]interface{}{b.colUniforms, b.linearGradientUniforms, b.texUniforms},
+		[4]interface{}{b.colUniforms, b.linearGradientUniforms, b.texUniforms, b.blitter3D.uniforms},
 	)
 	if err != nil {
 		panic(err)
@@ -566,7 +616,7 @@ func (b *blitter) release() {
 	}
 }
 
-func createColorPrograms(b driver.Device, vsSrc shader.Sources, fsSrc [3]shader.Sources, uniforms [3]interface{}) (pipelines [2][3]*pipeline, err error) {
+func createColorPrograms(b driver.Device, vsSrc shader.Sources, fsSrc [3]shader.Sources, uniforms [4]interface{}) (pipelines [2][4]*pipeline, err error) {
 	defer func() {
 		if err != nil {
 			for _, p := range pipelines {
@@ -665,7 +715,41 @@ func createColorPrograms(b driver.Device, vsSrc shader.Sources, fsSrc [3]shader.
 			}
 			pipelines[i][materialLinearGradient] = &pipeline{pipe, vertBuffer}
 		}
+		// 3D数据初始化过程
+		{
+			layout := driver.VertexLayout{
+				Inputs: []driver.InputDesc{
+					{Type: shader.DataTypeFloat, Size: 3, Offset: 0},
+					{Type: shader.DataTypeFloat, Size: 3, Offset: 12},
+					{Type: shader.DataTypeFloat, Size: 2, Offset: 24},
+				},
+				Stride: 32,
+			}
+			var pipe driver.Pipeline
+			vsh, fsh, err := newShaders(b, gio.Shader_input_vert, gio.Shader_simple_frag)
+			if err == nil {
+				defer vsh.Release()
+				defer fsh.Release()
+				pipe, err = b.NewPipeline(driver.PipelineDesc{
+					VertexShader:   vsh,
+					FragmentShader: fsh,
+					VertexLayout:   layout,
+					BlendDesc:      blend,
+					PixelFormat:    driver.TextureFormatFloat,
+					Topology:       driver.TopologyTriangleStrip,
+				})
+			}
+			if err != nil {
+				return pipelines, err
+			}
+			var vertBuffer *uniformBuffer
+			if u := uniforms[material3D]; u != nil {
+				vertBuffer = newUniformBuffer(b, u)
+			}
+			pipelines[i][material3D] = &pipeline{pipe, vertBuffer}
+		}
 	}
+
 	return pipelines, nil
 }
 
@@ -1061,7 +1145,6 @@ loop:
 			quads = quadsOp{}
 		case ops.TypePopClip:
 			state.cpath = state.cpath.parent
-
 		case ops.TypeColor:
 			state.matType = materialColor
 			state.color = decodeColorOp(encOp.Data)
@@ -1144,6 +1227,38 @@ loop:
 			reset()
 			id := ops.DecodeLoad(encOp.Data)
 			state.t = d.states[id]
+		case ops.Type3D, ops.Type3DPosition, ops.Type3DTarget, ops.Type3DTexture, ops.Type3DOp: // 3D 数据处理
+			var mat material
+			switch ops.OpType(encOp.Data[0]) {
+			case ops.Type3D:
+				mat = material{
+					material: material3D,
+					data:     imageOpData{handle: encOp.Refs[0]},
+				}
+			case ops.Type3DPosition:
+				mat = material{
+					material: material3DPosition,
+					data:     imageOpData{handle: encOp.Refs[0]},
+				}
+			case ops.Type3DTarget:
+				mat = material{
+					material: material3DTarget,
+					data:     imageOpData{handle: encOp.Refs[0]},
+				}
+			case ops.Type3DTexture:
+				mat = material{
+					material: materialTexture,
+					data:     state.image,
+				}
+			case ops.Type3DOp:
+				mat = material{
+					material: material3D,
+				}
+			}
+			d.imageOps = append(d.imageOps, imageOp{
+				clipType: clipType3D,
+				material: mat,
+			})
 		}
 	}
 }
@@ -1243,7 +1358,6 @@ func (r *renderer) drawOps(isFBO bool, opOff, viewport image.Point, ops []imageO
 			r.ctx.BindTexture(0, m.tex)
 		}
 		drc := img.clip.Add(opOff)
-
 		scale, off := clipSpaceTransform(drc, viewport)
 		var fbo FBO
 		fboIdx := 0
@@ -1261,6 +1375,40 @@ func (r *renderer) drawOps(isFBO bool, opOff, viewport image.Point, ops []imageO
 			fbo = r.pather.stenciler.cover(img.place.Idx)
 		case clipTypeIntersection:
 			fbo = r.pather.stenciler.intersections.fbos[img.place.Idx]
+		case clipType3D:
+			b := r.blitter
+			p := b.pipelines[fboIdx][material3D]
+			switch m.material {
+			case material3D:
+				if m.data.handle != nil {
+					data := m.data.handle.(paint.Paint3D)
+					vertexData := byteslice.Slice(data.Vertex)
+					b.blitter3D.bufferVertex.ensureCapacity(false, r.ctx, driver.BufferBindingVertices, len(vertexData))
+					b.blitter3D.bufferVertex.buffer.Upload(vertexData)
+					indexData := byteslice.Slice(data.Index)
+					b.blitter3D.bufferIndex.ensureCapacity(false, r.ctx, driver.BufferBindingIndices, len(indexData))
+					b.blitter3D.bufferIndex.buffer.Upload(indexData)
+					b.blitter3D.bufferIndexLen = len(data.Index)
+				} else {
+					r.ctx.BindPipeline(p.pipeline) // 绑定着色器
+					p.UploadUniforms(b.ctx)        // 更新摄像机数据
+					if b.blitter3D.tex != nil {
+						r.ctx.BindTexture(0, b.blitter3D.tex) // 绑定材质
+					}
+					r.ctx.BindVertexBuffer(b.blitter3D.bufferVertex.buffer, 0) // 绑定数据
+					r.ctx.BindIndexBuffer(b.blitter3D.bufferIndex.buffer)      // 顶点索引
+					b.ctx.DrawElements(0, b.blitter3D.bufferIndexLen)
+				}
+			case materialTexture: // 设置材质
+				b.blitter3D.tex = m.tex
+			case material3DPosition: // 设置相机位置
+				b.blitter3D.Position = (f32.Vec3)(m.data.handle.(paint.Paint3DPosition))
+				b.blitter3D.Update() // 更新摄像机
+			case material3DTarget: // 设置相机看向位置
+				b.blitter3D.Target = (f32.Vec3)(m.data.handle.(paint.Paint3DTarget))
+				b.blitter3D.Update() // 更新摄像机
+			}
+			continue
 		}
 		if coverTex != fbo.tex {
 			coverTex = fbo.tex
@@ -1298,7 +1446,6 @@ func (b *blitter) blit(mat materialType, fbo bool, col f32color.RGBA, col1, col2
 	case materialLinearGradient:
 		b.linearGradientUniforms.color1 = col1
 		b.linearGradientUniforms.color2 = col2
-
 		t1, t2, t3, t4, t5, t6 := uvTrans.Elems()
 		uniforms = &b.linearGradientUniforms.blitUniforms
 		uniforms.uvTransformR1 = [4]float32{t1, t2, t3, 0}

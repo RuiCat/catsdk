@@ -21,7 +21,7 @@ import (
 	"unsafe"
 
 	"gioui/cpu"
-	"gioui/gpu/internal/driver"
+	"gioui/gpu/driver"
 	"gioui/internal/byteslice"
 	"gioui/internal/ops"
 	"gioui/internal/scene"
@@ -1829,6 +1829,11 @@ func (c *collector) collect(root *op.Ops, viewport image.Point, texOps *[]textur
 			id := ops.DecodeLoad(encOp.Data)
 			state.t = c.states[id]
 			state.relTrans = state.t
+		case ops.Type3D: // 3D 数据处理
+			// c.frame.ops = append(c.frame.ops, paintOp{
+			// 	state: paintKey{matType: material3D},
+			// })
+			panic("collector no 3D")
 		}
 	}
 	for i := range c.frame.ops {

@@ -81,8 +81,8 @@ type Stop struct {
 type Stops []Stop
 
 // Add adds a new color stop to a gradient.
-func (stops *Stops) Add(t float64, color color.RGBA) {
-	stop := Stop{math.Min(math.Max(t, 0.0), 1.0), color}
+func (stops *Stops) Add(t float64, c color.RGBA) {
+	stop := Stop{math.Min(math.Max(t, 0.0), 1.0), c}
 	// insert or replace stop and keep sort order
 	for i := range *stops {
 		if Equal((*stops)[i].Offset, stop.Offset) {

@@ -1,4 +1,4 @@
-package logs
+package itabs
 
 import (
 	"reflect"

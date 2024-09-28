@@ -4,7 +4,6 @@ package gpu
 
 import (
 	"fmt"
-
 	"mat/mat/spatial/f32"
 )
 

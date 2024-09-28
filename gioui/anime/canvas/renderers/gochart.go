@@ -2,8 +2,8 @@ package renderers
 
 import (
 	"gioui/anime/canvas"
-	"gioui/anime/canvas/drawing"
 	"gioui/anime/chart"
+	"gioui/anime/color"
 	"io"
 	"math"
 	"sdk/font"
@@ -19,7 +19,7 @@ type GoChart struct {
 	dpi          float64
 	font         *canvas.FontFamily
 	fontSize     float64
-	fontColor    drawing.Color
+	fontColor    color.Color
 	textRotation float64
 
 	fonts map[string]*canvas.FontFamily
@@ -36,7 +36,7 @@ func NewGoChart(writer canvas.Writer) func(int, int) (chart.Renderer, error) {
 			writer:    writer,
 			dpi:       chart.DefaultDPI,
 			fontSize:  12.0, // uses default of github.com/golang/freetype/truetype
-			fontColor: drawing.ColorTransparent,
+			fontColor: chart.ColorTransparent,
 			fonts:     map[string]*canvas.FontFamily{},
 		}
 		gochart.ctx.SetFillColor(canvas.Transparent)
@@ -73,12 +73,12 @@ func (r *GoChart) SetClassName(name string) {
 }
 
 // SetStrokeColor sets the current stroke color.
-func (r *GoChart) SetStrokeColor(col drawing.Color) {
+func (r *GoChart) SetStrokeColor(col color.Color) {
 	r.ctx.SetStrokeColor(col)
 }
 
 // SetFillColor sets the current fill color.
-func (r *GoChart) SetFillColor(col drawing.Color) {
+func (r *GoChart) SetFillColor(col color.Color) {
 	r.ctx.SetFillColor(col)
 }
 
@@ -173,7 +173,7 @@ func (r *GoChart) SetFont(f *truetype.Font) {
 }
 
 // SetFontColor sets a font's color.
-func (r *GoChart) SetFontColor(col drawing.Color) {
+func (r *GoChart) SetFontColor(col color.Color) {
 	r.fontColor = col
 }
 

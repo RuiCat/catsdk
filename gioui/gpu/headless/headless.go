@@ -10,7 +10,7 @@ import (
 	"image/color"
 
 	"gioui/gpu"
-	"gioui/gpu/internal/driver"
+	"gioui/gpu/driver"
 	"gioui/op"
 )
 

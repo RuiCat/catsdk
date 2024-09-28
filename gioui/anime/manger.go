@@ -21,7 +21,6 @@ type AnimeManager struct {
 func (anime *AnimeManager) Anime(node *Anime) {
 	obj := node.Object.getObject()
 	obj.Init()
-	anime.Renderer.Scene.Add(obj)
 	anime.AnimeList = append(anime.AnimeList, node)
 }
 
@@ -37,8 +36,6 @@ func (ui *AnimeManager) Update() {
 		cxt.CurrentFrame = ui.Context.CurrentFrame // 设置帧
 		anime.Drawing(cxt)                         // 绘制当前对象
 	}
-	// 渲染
-	ui.Image = ui.Renderer.Render()
 }
 
 // Layout 绘制

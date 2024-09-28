@@ -4,12 +4,11 @@ package ops
 
 import (
 	"encoding/binary"
-	"image"
-	"math"
-
 	"gioui/internal/byteslice"
 	"gioui/internal/scene"
+	"image"
 	"mat/mat/spatial/f32"
+	"math"
 )
 
 type Ops struct {
@@ -77,6 +76,11 @@ const (
 	TypeSemanticSelected
 	TypeSemanticEnabled
 	TypeActionInput
+	Type3D
+	Type3DOp
+	Type3DPosition
+	Type3DTarget
+	Type3DTexture
 )
 
 type StackID struct {
@@ -153,6 +157,7 @@ const (
 	TypeSemanticSelectedLen = 2
 	TypeSemanticEnabledLen  = 2
 	TypeActionInputLen      = 1 + 1
+	Type3DLen               = 1
 )
 
 func (op *ClipOp) Decode(data []byte) {
@@ -426,6 +431,11 @@ var opProps = [0x100]opProp{
 	TypeSemanticSelected: {Size: TypeSemanticSelectedLen, NumRefs: 0},
 	TypeSemanticEnabled:  {Size: TypeSemanticEnabledLen, NumRefs: 0},
 	TypeActionInput:      {Size: TypeActionInputLen, NumRefs: 0},
+	Type3D:               {Size: Type3DLen, NumRefs: 1},
+	Type3DOp:             {Size: Type3DLen, NumRefs: 0},
+	Type3DPosition:       {Size: Type3DLen, NumRefs: 1},
+	Type3DTarget:         {Size: Type3DLen, NumRefs: 1},
+	Type3DTexture:        {Size: Type3DLen, NumRefs: 0},
 }
 
 func (t OpType) props() (size, numRefs uint32) {
@@ -491,6 +501,16 @@ func (t OpType) String() string {
 		return "Stroke"
 	case TypeSemanticLabel:
 		return "SemanticDescription"
+	case Type3D:
+		return "Type3D"
+	case Type3DOp:
+		return "Type3DOp"
+	case Type3DPosition:
+		return "Type3DPosition"
+	case Type3DTarget:
+		return "Type3DTarget"
+	case Type3DTexture:
+		return "Type3DTexture"
 	default:
 		panic("unknown OpType")
 	}

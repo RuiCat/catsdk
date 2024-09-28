@@ -194,3 +194,44 @@ func (t OpacityStack) Pop() {
 	data := ops.Write(t.ops, ops.TypePopOpacityLen)
 	data[0] = byte(ops.TypePopOpacity)
 }
+
+type Paint3D struct {
+	Vertex []float32
+	Index  []uint16
+}
+
+func (d Paint3D) Add(o *op.Ops) {
+	data := ops.Write1(&o.Internal, ops.Type3DLen, d)
+	data[0] = byte(ops.Type3D)
+}
+
+type Paint3DPosition f32.Vec3
+
+func (d Paint3DPosition) Add(o *op.Ops) {
+	data := ops.Write1(&o.Internal, ops.Type3DLen, d)
+	data[0] = byte(ops.Type3DPosition)
+}
+
+type Paint3DTarget f32.Vec3
+
+func (d Paint3DTarget) Add(o *op.Ops) {
+	data := ops.Write1(&o.Internal, ops.Type3DLen, d)
+	data[0] = byte(ops.Type3DTarget)
+}
+
+type Paint3DTexture struct{}
+
+func (d Paint3DTexture) Add(o *op.Ops) {
+	data := ops.Write(&o.Internal, ops.Type3DLen)
+	data[0] = byte(ops.Type3DTexture)
+}
+
+type Paint3DOp struct {
+	Vertex []float32
+	Index  []uint16
+}
+
+func (d Paint3DOp) Add(o *op.Ops) {
+	data := ops.Write1(&o.Internal, ops.Type3DLen, d)
+	data[0] = byte(ops.Type3DOp)
+}

@@ -41,12 +41,6 @@ var (
 	zblit_frag_0_glsl150 string
 	//go:embed zblit.frag.0.dxbc
 	zblit_frag_0_dxbc string
-	//go:embed zblit.frag.0.metallibmacos
-	zblit_frag_0_metallibmacos string
-	//go:embed zblit.frag.0.metallibios
-	zblit_frag_0_metallibios string
-	//go:embed zblit.frag.0.metallibiossimulator
-	zblit_frag_0_metallibiossimulator string
 	//go:embed zblit.frag.1.spirv
 	zblit_frag_1_spirv string
 	//go:embed zblit.frag.1.glsl100es
@@ -55,12 +49,6 @@ var (
 	zblit_frag_1_glsl150 string
 	//go:embed zblit.frag.1.dxbc
 	zblit_frag_1_dxbc string
-	//go:embed zblit.frag.1.metallibmacos
-	zblit_frag_1_metallibmacos string
-	//go:embed zblit.frag.1.metallibios
-	zblit_frag_1_metallibios string
-	//go:embed zblit.frag.1.metallibiossimulator
-	zblit_frag_1_metallibiossimulator string
 	//go:embed zblit.frag.2.spirv
 	zblit_frag_2_spirv string
 	//go:embed zblit.frag.2.glsl100es
@@ -69,13 +57,7 @@ var (
 	zblit_frag_2_glsl150 string
 	//go:embed zblit.frag.2.dxbc
 	zblit_frag_2_dxbc string
-	//go:embed zblit.frag.2.metallibmacos
-	zblit_frag_2_metallibmacos string
-	//go:embed zblit.frag.2.metallibios
-	zblit_frag_2_metallibios string
-	//go:embed zblit.frag.2.metallibiossimulator
-	zblit_frag_2_metallibiossimulator string
-	Shader_blit_vert                  = shader.Sources{
+	Shader_blit_vert  = shader.Sources{
 		Name:   "blit.vert",
 		Inputs: []shader.InputLocation{{Name: "pos", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 2}, {Name: "uv", Location: 1, Semantic: "TEXCOORD", SemanticIndex: 1, Type: 0x0, Size: 2}},
 		Uniforms: shader.UniformsReflection{
@@ -91,13 +73,7 @@ var (
 	zblit_vert_0_glsl150 string
 	//go:embed zblit.vert.0.dxbc
 	zblit_vert_0_dxbc string
-	//go:embed zblit.vert.0.metallibmacos
-	zblit_vert_0_metallibmacos string
-	//go:embed zblit.vert.0.metallibios
-	zblit_vert_0_metallibios string
-	//go:embed zblit.vert.0.metallibiossimulator
-	zblit_vert_0_metallibiossimulator string
-	Shader_copy_frag                  = shader.Sources{
+	Shader_copy_frag  = shader.Sources{
 		Name:     "copy.frag",
 		Inputs:   []shader.InputLocation{{Name: "vUV", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 2}},
 		Textures: []shader.TextureBinding{{Name: "tex", Binding: 0}},
@@ -110,13 +86,7 @@ var (
 	zcopy_frag_0_glsl150 string
 	//go:embed zcopy.frag.0.dxbc
 	zcopy_frag_0_dxbc string
-	//go:embed zcopy.frag.0.metallibmacos
-	zcopy_frag_0_metallibmacos string
-	//go:embed zcopy.frag.0.metallibios
-	zcopy_frag_0_metallibios string
-	//go:embed zcopy.frag.0.metallibiossimulator
-	zcopy_frag_0_metallibiossimulator string
-	Shader_copy_vert                  = shader.Sources{
+	Shader_copy_vert  = shader.Sources{
 		Name:   "copy.vert",
 		Inputs: []shader.InputLocation{{Name: "pos", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 2}, {Name: "uv", Location: 1, Semantic: "TEXCOORD", SemanticIndex: 1, Type: 0x0, Size: 2}},
 		Uniforms: shader.UniformsReflection{
@@ -132,13 +102,7 @@ var (
 	zcopy_vert_0_glsl150 string
 	//go:embed zcopy.vert.0.dxbc
 	zcopy_vert_0_dxbc string
-	//go:embed zcopy.vert.0.metallibmacos
-	zcopy_vert_0_metallibmacos string
-	//go:embed zcopy.vert.0.metallibios
-	zcopy_vert_0_metallibios string
-	//go:embed zcopy.vert.0.metallibiossimulator
-	zcopy_vert_0_metallibiossimulator string
-	Shader_cover_frag                 = [...]shader.Sources{
+	Shader_cover_frag = [...]shader.Sources{
 		{
 			Name:   "cover.frag",
 			Inputs: []shader.InputLocation{{Name: "vCoverUV", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 2}, {Name: "vUV", Location: 1, Semantic: "TEXCOORD", SemanticIndex: 1, Type: 0x0, Size: 2}},
@@ -171,12 +135,6 @@ var (
 	zcover_frag_0_glsl150 string
 	//go:embed zcover.frag.0.dxbc
 	zcover_frag_0_dxbc string
-	//go:embed zcover.frag.0.metallibmacos
-	zcover_frag_0_metallibmacos string
-	//go:embed zcover.frag.0.metallibios
-	zcover_frag_0_metallibios string
-	//go:embed zcover.frag.0.metallibiossimulator
-	zcover_frag_0_metallibiossimulator string
 	//go:embed zcover.frag.1.spirv
 	zcover_frag_1_spirv string
 	//go:embed zcover.frag.1.glsl100es
@@ -185,12 +143,6 @@ var (
 	zcover_frag_1_glsl150 string
 	//go:embed zcover.frag.1.dxbc
 	zcover_frag_1_dxbc string
-	//go:embed zcover.frag.1.metallibmacos
-	zcover_frag_1_metallibmacos string
-	//go:embed zcover.frag.1.metallibios
-	zcover_frag_1_metallibios string
-	//go:embed zcover.frag.1.metallibiossimulator
-	zcover_frag_1_metallibiossimulator string
 	//go:embed zcover.frag.2.spirv
 	zcover_frag_2_spirv string
 	//go:embed zcover.frag.2.glsl100es
@@ -199,13 +151,7 @@ var (
 	zcover_frag_2_glsl150 string
 	//go:embed zcover.frag.2.dxbc
 	zcover_frag_2_dxbc string
-	//go:embed zcover.frag.2.metallibmacos
-	zcover_frag_2_metallibmacos string
-	//go:embed zcover.frag.2.metallibios
-	zcover_frag_2_metallibios string
-	//go:embed zcover.frag.2.metallibiossimulator
-	zcover_frag_2_metallibiossimulator string
-	Shader_cover_vert                  = shader.Sources{
+	Shader_cover_vert  = shader.Sources{
 		Name:   "cover.vert",
 		Inputs: []shader.InputLocation{{Name: "pos", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 2}, {Name: "uv", Location: 1, Semantic: "TEXCOORD", SemanticIndex: 1, Type: 0x0, Size: 2}},
 		Uniforms: shader.UniformsReflection{
@@ -221,15 +167,9 @@ var (
 	zcover_vert_0_glsl150 string
 	//go:embed zcover.vert.0.dxbc
 	zcover_vert_0_dxbc string
-	//go:embed zcover.vert.0.metallibmacos
-	zcover_vert_0_metallibmacos string
-	//go:embed zcover.vert.0.metallibios
-	zcover_vert_0_metallibios string
-	//go:embed zcover.vert.0.metallibiossimulator
-	zcover_vert_0_metallibiossimulator string
-	Shader_input_vert                  = shader.Sources{
+	Shader_input_vert  = shader.Sources{
 		Name:   "input.vert",
-		Inputs: []shader.InputLocation{{Name: "position", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 4}},
+		Inputs: []shader.InputLocation{{Name: "inPos", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 3}, {Name: "inColor", Location: 1, Semantic: "TEXCOORD", SemanticIndex: 1, Type: 0x0, Size: 3}, {Name: "inUV", Location: 2, Semantic: "TEXCOORD", SemanticIndex: 2, Type: 0x0, Size: 2}},
 	}
 	//go:embed zinput.vert.0.spirv
 	zinput_vert_0_spirv string
@@ -238,14 +178,8 @@ var (
 	//go:embed zinput.vert.0.glsl150
 	zinput_vert_0_glsl150 string
 	//go:embed zinput.vert.0.dxbc
-	zinput_vert_0_dxbc string
-	//go:embed zinput.vert.0.metallibmacos
-	zinput_vert_0_metallibmacos string
-	//go:embed zinput.vert.0.metallibios
-	zinput_vert_0_metallibios string
-	//go:embed zinput.vert.0.metallibiossimulator
-	zinput_vert_0_metallibiossimulator string
-	Shader_intersect_frag              = shader.Sources{
+	zinput_vert_0_dxbc    string
+	Shader_intersect_frag = shader.Sources{
 		Name:     "intersect.frag",
 		Inputs:   []shader.InputLocation{{Name: "vUV", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 2}},
 		Textures: []shader.TextureBinding{{Name: "cover", Binding: 0}},
@@ -258,13 +192,7 @@ var (
 	zintersect_frag_0_glsl150 string
 	//go:embed zintersect.frag.0.dxbc
 	zintersect_frag_0_dxbc string
-	//go:embed zintersect.frag.0.metallibmacos
-	zintersect_frag_0_metallibmacos string
-	//go:embed zintersect.frag.0.metallibios
-	zintersect_frag_0_metallibios string
-	//go:embed zintersect.frag.0.metallibiossimulator
-	zintersect_frag_0_metallibiossimulator string
-	Shader_intersect_vert                  = shader.Sources{
+	Shader_intersect_vert  = shader.Sources{
 		Name:   "intersect.vert",
 		Inputs: []shader.InputLocation{{Name: "pos", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 2}, {Name: "uv", Location: 1, Semantic: "TEXCOORD", SemanticIndex: 1, Type: 0x0, Size: 2}},
 		Uniforms: shader.UniformsReflection{
@@ -280,13 +208,7 @@ var (
 	zintersect_vert_0_glsl150 string
 	//go:embed zintersect.vert.0.dxbc
 	zintersect_vert_0_dxbc string
-	//go:embed zintersect.vert.0.metallibmacos
-	zintersect_vert_0_metallibmacos string
-	//go:embed zintersect.vert.0.metallibios
-	zintersect_vert_0_metallibios string
-	//go:embed zintersect.vert.0.metallibiossimulator
-	zintersect_vert_0_metallibiossimulator string
-	Shader_material_frag                   = shader.Sources{
+	Shader_material_frag   = shader.Sources{
 		Name:   "material.frag",
 		Inputs: []shader.InputLocation{{Name: "vUV", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 2}},
 		Uniforms: shader.UniformsReflection{
@@ -303,13 +225,7 @@ var (
 	zmaterial_frag_0_glsl150 string
 	//go:embed zmaterial.frag.0.dxbc
 	zmaterial_frag_0_dxbc string
-	//go:embed zmaterial.frag.0.metallibmacos
-	zmaterial_frag_0_metallibmacos string
-	//go:embed zmaterial.frag.0.metallibios
-	zmaterial_frag_0_metallibios string
-	//go:embed zmaterial.frag.0.metallibiossimulator
-	zmaterial_frag_0_metallibiossimulator string
-	Shader_material_vert                  = shader.Sources{
+	Shader_material_vert  = shader.Sources{
 		Name:   "material.vert",
 		Inputs: []shader.InputLocation{{Name: "pos", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 2}, {Name: "uv", Location: 1, Semantic: "TEXCOORD", SemanticIndex: 1, Type: 0x0, Size: 2}},
 		Uniforms: shader.UniformsReflection{
@@ -325,14 +241,10 @@ var (
 	zmaterial_vert_0_glsl150 string
 	//go:embed zmaterial.vert.0.dxbc
 	zmaterial_vert_0_dxbc string
-	//go:embed zmaterial.vert.0.metallibmacos
-	zmaterial_vert_0_metallibmacos string
-	//go:embed zmaterial.vert.0.metallibios
-	zmaterial_vert_0_metallibios string
-	//go:embed zmaterial.vert.0.metallibiossimulator
-	zmaterial_vert_0_metallibiossimulator string
-	Shader_simple_frag                    = shader.Sources{
-		Name: "simple.frag",
+	Shader_simple_frag    = shader.Sources{
+		Name:     "simple.frag",
+		Inputs:   []shader.InputLocation{{Name: "vUV", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 2}, {Name: "vertexColor", Location: 1, Semantic: "TEXCOORD", SemanticIndex: 1, Type: 0x0, Size: 4}},
+		Textures: []shader.TextureBinding{{Name: "vTexture", Binding: 0}},
 	}
 	//go:embed zsimple.frag.0.spirv
 	zsimple_frag_0_spirv string
@@ -342,13 +254,7 @@ var (
 	zsimple_frag_0_glsl150 string
 	//go:embed zsimple.frag.0.dxbc
 	zsimple_frag_0_dxbc string
-	//go:embed zsimple.frag.0.metallibmacos
-	zsimple_frag_0_metallibmacos string
-	//go:embed zsimple.frag.0.metallibios
-	zsimple_frag_0_metallibios string
-	//go:embed zsimple.frag.0.metallibiossimulator
-	zsimple_frag_0_metallibiossimulator string
-	Shader_stencil_frag                 = shader.Sources{
+	Shader_stencil_frag = shader.Sources{
 		Name:   "stencil.frag",
 		Inputs: []shader.InputLocation{{Name: "vFrom", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 2}, {Name: "vCtrl", Location: 1, Semantic: "TEXCOORD", SemanticIndex: 1, Type: 0x0, Size: 2}, {Name: "vTo", Location: 2, Semantic: "TEXCOORD", SemanticIndex: 2, Type: 0x0, Size: 2}},
 	}
@@ -360,13 +266,7 @@ var (
 	zstencil_frag_0_glsl150 string
 	//go:embed zstencil.frag.0.dxbc
 	zstencil_frag_0_dxbc string
-	//go:embed zstencil.frag.0.metallibmacos
-	zstencil_frag_0_metallibmacos string
-	//go:embed zstencil.frag.0.metallibios
-	zstencil_frag_0_metallibios string
-	//go:embed zstencil.frag.0.metallibiossimulator
-	zstencil_frag_0_metallibiossimulator string
-	Shader_stencil_vert                  = shader.Sources{
+	Shader_stencil_vert  = shader.Sources{
 		Name:   "stencil.vert",
 		Inputs: []shader.InputLocation{{Name: "corner", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 1}, {Name: "maxy", Location: 1, Semantic: "TEXCOORD", SemanticIndex: 1, Type: 0x0, Size: 1}, {Name: "from", Location: 2, Semantic: "TEXCOORD", SemanticIndex: 2, Type: 0x0, Size: 2}, {Name: "ctrl", Location: 3, Semantic: "TEXCOORD", SemanticIndex: 3, Type: 0x0, Size: 2}, {Name: "to", Location: 4, Semantic: "TEXCOORD", SemanticIndex: 4, Type: 0x0, Size: 2}},
 		Uniforms: shader.UniformsReflection{
@@ -382,12 +282,6 @@ var (
 	zstencil_vert_0_glsl150 string
 	//go:embed zstencil.vert.0.dxbc
 	zstencil_vert_0_dxbc string
-	//go:embed zstencil.vert.0.metallibmacos
-	zstencil_vert_0_metallibmacos string
-	//go:embed zstencil.vert.0.metallibios
-	zstencil_vert_0_metallibios string
-	//go:embed zstencil.vert.0.metallibiossimulator
-	zstencil_vert_0_metallibiossimulator string
 )
 
 func init() {
@@ -410,13 +304,10 @@ func init() {
 		Shader_blit_frag[0].DXBC = zblit_frag_0_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_blit_frag[0].MetalLib = zblit_frag_0_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_blit_frag[0].MetalLib = zblit_frag_0_metallibiossimulator
 		} else {
-			Shader_blit_frag[0].MetalLib = zblit_frag_0_metallibios
 		}
 	}
 	if vulkan {
@@ -432,13 +323,10 @@ func init() {
 		Shader_blit_frag[1].DXBC = zblit_frag_1_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_blit_frag[1].MetalLib = zblit_frag_1_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_blit_frag[1].MetalLib = zblit_frag_1_metallibiossimulator
 		} else {
-			Shader_blit_frag[1].MetalLib = zblit_frag_1_metallibios
 		}
 	}
 	if vulkan {
@@ -454,13 +342,10 @@ func init() {
 		Shader_blit_frag[2].DXBC = zblit_frag_2_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_blit_frag[2].MetalLib = zblit_frag_2_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_blit_frag[2].MetalLib = zblit_frag_2_metallibiossimulator
 		} else {
-			Shader_blit_frag[2].MetalLib = zblit_frag_2_metallibios
 		}
 	}
 	if vulkan {
@@ -476,13 +361,10 @@ func init() {
 		Shader_blit_vert.DXBC = zblit_vert_0_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_blit_vert.MetalLib = zblit_vert_0_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_blit_vert.MetalLib = zblit_vert_0_metallibiossimulator
 		} else {
-			Shader_blit_vert.MetalLib = zblit_vert_0_metallibios
 		}
 	}
 	if vulkan {
@@ -498,13 +380,10 @@ func init() {
 		Shader_copy_frag.DXBC = zcopy_frag_0_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_copy_frag.MetalLib = zcopy_frag_0_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_copy_frag.MetalLib = zcopy_frag_0_metallibiossimulator
 		} else {
-			Shader_copy_frag.MetalLib = zcopy_frag_0_metallibios
 		}
 	}
 	if vulkan {
@@ -520,13 +399,10 @@ func init() {
 		Shader_copy_vert.DXBC = zcopy_vert_0_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_copy_vert.MetalLib = zcopy_vert_0_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_copy_vert.MetalLib = zcopy_vert_0_metallibiossimulator
 		} else {
-			Shader_copy_vert.MetalLib = zcopy_vert_0_metallibios
 		}
 	}
 	if vulkan {
@@ -542,13 +418,10 @@ func init() {
 		Shader_cover_frag[0].DXBC = zcover_frag_0_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_cover_frag[0].MetalLib = zcover_frag_0_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_cover_frag[0].MetalLib = zcover_frag_0_metallibiossimulator
 		} else {
-			Shader_cover_frag[0].MetalLib = zcover_frag_0_metallibios
 		}
 	}
 	if vulkan {
@@ -564,13 +437,10 @@ func init() {
 		Shader_cover_frag[1].DXBC = zcover_frag_1_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_cover_frag[1].MetalLib = zcover_frag_1_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_cover_frag[1].MetalLib = zcover_frag_1_metallibiossimulator
 		} else {
-			Shader_cover_frag[1].MetalLib = zcover_frag_1_metallibios
 		}
 	}
 	if vulkan {
@@ -586,13 +456,10 @@ func init() {
 		Shader_cover_frag[2].DXBC = zcover_frag_2_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_cover_frag[2].MetalLib = zcover_frag_2_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_cover_frag[2].MetalLib = zcover_frag_2_metallibiossimulator
 		} else {
-			Shader_cover_frag[2].MetalLib = zcover_frag_2_metallibios
 		}
 	}
 	if vulkan {
@@ -608,13 +475,10 @@ func init() {
 		Shader_cover_vert.DXBC = zcover_vert_0_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_cover_vert.MetalLib = zcover_vert_0_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_cover_vert.MetalLib = zcover_vert_0_metallibiossimulator
 		} else {
-			Shader_cover_vert.MetalLib = zcover_vert_0_metallibios
 		}
 	}
 	if vulkan {
@@ -630,13 +494,10 @@ func init() {
 		Shader_input_vert.DXBC = zinput_vert_0_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_input_vert.MetalLib = zinput_vert_0_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_input_vert.MetalLib = zinput_vert_0_metallibiossimulator
 		} else {
-			Shader_input_vert.MetalLib = zinput_vert_0_metallibios
 		}
 	}
 	if vulkan {
@@ -652,13 +513,10 @@ func init() {
 		Shader_intersect_frag.DXBC = zintersect_frag_0_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_intersect_frag.MetalLib = zintersect_frag_0_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_intersect_frag.MetalLib = zintersect_frag_0_metallibiossimulator
 		} else {
-			Shader_intersect_frag.MetalLib = zintersect_frag_0_metallibios
 		}
 	}
 	if vulkan {
@@ -674,13 +532,10 @@ func init() {
 		Shader_intersect_vert.DXBC = zintersect_vert_0_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_intersect_vert.MetalLib = zintersect_vert_0_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_intersect_vert.MetalLib = zintersect_vert_0_metallibiossimulator
 		} else {
-			Shader_intersect_vert.MetalLib = zintersect_vert_0_metallibios
 		}
 	}
 	if vulkan {
@@ -696,13 +551,10 @@ func init() {
 		Shader_material_frag.DXBC = zmaterial_frag_0_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_material_frag.MetalLib = zmaterial_frag_0_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_material_frag.MetalLib = zmaterial_frag_0_metallibiossimulator
 		} else {
-			Shader_material_frag.MetalLib = zmaterial_frag_0_metallibios
 		}
 	}
 	if vulkan {
@@ -718,13 +570,10 @@ func init() {
 		Shader_material_vert.DXBC = zmaterial_vert_0_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_material_vert.MetalLib = zmaterial_vert_0_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_material_vert.MetalLib = zmaterial_vert_0_metallibiossimulator
 		} else {
-			Shader_material_vert.MetalLib = zmaterial_vert_0_metallibios
 		}
 	}
 	if vulkan {
@@ -740,13 +589,10 @@ func init() {
 		Shader_simple_frag.DXBC = zsimple_frag_0_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_simple_frag.MetalLib = zsimple_frag_0_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_simple_frag.MetalLib = zsimple_frag_0_metallibiossimulator
 		} else {
-			Shader_simple_frag.MetalLib = zsimple_frag_0_metallibios
 		}
 	}
 	if vulkan {
@@ -762,13 +608,10 @@ func init() {
 		Shader_stencil_frag.DXBC = zstencil_frag_0_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_stencil_frag.MetalLib = zstencil_frag_0_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_stencil_frag.MetalLib = zstencil_frag_0_metallibiossimulator
 		} else {
-			Shader_stencil_frag.MetalLib = zstencil_frag_0_metallibios
 		}
 	}
 	if vulkan {
@@ -784,13 +627,10 @@ func init() {
 		Shader_stencil_vert.DXBC = zstencil_vert_0_dxbc
 	}
 	if runtime.GOOS == "darwin" {
-		Shader_stencil_vert.MetalLib = zstencil_vert_0_metallibmacos
 	}
 	if runtime.GOOS == "ios" {
 		if runtime.GOARCH == "amd64" {
-			Shader_stencil_vert.MetalLib = zstencil_vert_0_metallibiossimulator
 		} else {
-			Shader_stencil_vert.MetalLib = zstencil_vert_0_metallibios
 		}
 	}
 }

@@ -2,9 +2,9 @@ package gpu
 
 import (
 	"encoding/binary"
+	"gioui/internal/stroke"
 	"math"
 
-	"gioui/internal/stroke"
 	"mat/mat/spatial/f32"
 )
 

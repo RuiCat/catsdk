@@ -2,7 +2,7 @@ package chart
 
 import (
 	"fmt"
-	"gioui/anime/canvas/drawing"
+	"gioui/anime/color"
 	"strings"
 
 	"sdk/freetype/truetype"
@@ -49,19 +49,19 @@ type Style struct {
 	ClassName string
 
 	StrokeWidth     float64
-	StrokeColor     drawing.Color
+	StrokeColor     color.Color
 	StrokeDashArray []float64
 
-	DotColor drawing.Color
+	DotColor color.Color
 	DotWidth float64
 
 	DotWidthProvider SizeProvider
 	DotColorProvider DotColorProvider
 
-	FillColor drawing.Color
+	FillColor color.Color
 
 	FontSize  float64
-	FontColor drawing.Color
+	FontColor color.Color
 	Font      *truetype.Font
 
 	TextHorizontalAlign TextHorizontalAlign
@@ -184,34 +184,34 @@ func (s Style) GetClassName(defaults ...string) string {
 }
 
 // GetStrokeColor returns the stroke color.
-func (s Style) GetStrokeColor(defaults ...drawing.Color) drawing.Color {
+func (s Style) GetStrokeColor(defaults ...color.Color) color.Color {
 	if s.StrokeColor.IsZero() {
 		if len(defaults) > 0 {
 			return defaults[0]
 		}
-		return drawing.ColorTransparent
+		return color.ColorTransparent
 	}
 	return s.StrokeColor
 }
 
 // GetFillColor returns the fill color.
-func (s Style) GetFillColor(defaults ...drawing.Color) drawing.Color {
+func (s Style) GetFillColor(defaults ...color.Color) color.Color {
 	if s.FillColor.IsZero() {
 		if len(defaults) > 0 {
 			return defaults[0]
 		}
-		return drawing.ColorTransparent
+		return color.ColorTransparent
 	}
 	return s.FillColor
 }
 
 // GetDotColor returns the stroke color.
-func (s Style) GetDotColor(defaults ...drawing.Color) drawing.Color {
+func (s Style) GetDotColor(defaults ...color.Color) color.Color {
 	if s.DotColor.IsZero() {
 		if len(defaults) > 0 {
 			return defaults[0]
 		}
-		return drawing.ColorTransparent
+		return color.ColorTransparent
 	}
 	return s.DotColor
 }
@@ -261,12 +261,12 @@ func (s Style) GetFontSize(defaults ...float64) float64 {
 }
 
 // GetFontColor gets the font size.
-func (s Style) GetFontColor(defaults ...drawing.Color) drawing.Color {
+func (s Style) GetFontColor(defaults ...color.Color) color.Color {
 	if s.FontColor.IsZero() {
 		if len(defaults) > 0 {
 			return defaults[0]
 		}
-		return drawing.ColorTransparent
+		return color.ColorTransparent
 	}
 	return s.FontColor
 }

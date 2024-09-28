@@ -2,8 +2,13 @@
 precision mediump float;
 precision highp int;
 
+uniform mediump sampler2D vTexture;
+
+varying highp vec2 vUV;
+varying highp vec4 vertexColor;
+
 void main()
 {
-    gl_FragData[0] = vec4(0.25, 0.550000011920928955078125, 0.75, 1.0);
+    gl_FragData[0] = texture2D(vTexture, vUV) * vertexColor;
 }
 

@@ -11,7 +11,7 @@ import (
 	"math"
 	"unsafe"
 
-	"gioui/gpu/internal/driver"
+	"gioui/gpu/driver"
 	"gioui/internal/byteslice"
 	"gioui/shader"
 	"gioui/shader/gio"
@@ -30,10 +30,11 @@ type pather struct {
 
 type coverer struct {
 	ctx                    driver.Device
-	pipelines              [2][3]*pipeline
+	pipelines              [2][4]*pipeline
 	texUniforms            *coverTexUniforms
 	colUniforms            *coverColUniforms
 	linearGradientUniforms *coverLinearGradientUniforms
+	blitter3D              blitter3D
 }
 
 type coverTexUniforms struct {
@@ -148,9 +149,10 @@ func newCoverer(ctx driver.Device) *coverer {
 	}
 	c.colUniforms = new(coverColUniforms)
 	c.texUniforms = new(coverTexUniforms)
+	c.blitter3D.uniforms = &f32.Mat4{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 	c.linearGradientUniforms = new(coverLinearGradientUniforms)
 	pipelines, err := createColorPrograms(ctx, gio.Shader_cover_vert, gio.Shader_cover_frag,
-		[3]interface{}{c.colUniforms, c.linearGradientUniforms, c.texUniforms},
+		[4]interface{}{c.colUniforms, c.linearGradientUniforms, c.texUniforms, c.blitter3D.uniforms},
 	)
 	if err != nil {
 		panic(err)

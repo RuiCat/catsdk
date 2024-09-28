@@ -1,10 +1,6 @@
 package anime
 
 /*
-import (
-	"gioui/anime/draw"
-)
-
 // Confing 配置结构体
 type Confing func(obj *Anime)
 
@@ -21,10 +17,7 @@ func New(obj ObjectDrawing, confing ...Confing) *Anime {
 // ConfingPosition 配置绘图位置
 func ConfingPosition(x, y float64) func(obj *Anime) {
 	return func(obj *Anime) {
-		o := obj.Object.getObject()
-		o.Min.X = x
-		o.Min.Y = y
-		o.Min.Z = 0
+
 	}
 }
 
@@ -42,15 +35,6 @@ func ConfingSize(width int, height int) func(obj *Anime) {
 		o := obj.Object.getObject()
 		o.Width = width
 		o.Height = height
-	}
-}
-
-// ConfingAxis 设置绘图平面
-func ConfingAxis(axis draw.Axis) func(obj *Anime) {
-	return func(obj *Anime) {
-		o := obj.Object.getObject()
-		o.Axis = axis
-		o.SetAxis(axis, draw.Box{Min: draw.Vector{}, Max: draw.Vector{X: float64(o.Width), Y: float64(o.Height), Z: 0}})
 	}
 }
 */

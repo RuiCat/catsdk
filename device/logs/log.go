@@ -21,15 +21,20 @@ const (
 	UnknownLevel
 )
 
+var (
+	CodePrint = InfoLevel.NewCode(0)
+	CodeError = ErrorLevel.NewCode(1)
+)
+
 // ConfingLog 日志配置
 type ConfingLog struct {
-	Name     string   // 定义名称
-	Level    LogLevel // 日志等级
-	IsDB     bool     // 记录到数据库
-	IsNet    bool     // 启用远程日志
-	IsFile   bool     // 启用本地文件
-	NetAddr  net.Addr // 远程日志
-	FileName string   // 文件路径
+	Name        string   // 定义名称
+	Level       LogLevel // 日志等级
+	IsConfingDB bool     // 是否储存配置到数据库
+	IsNet       bool     // 启用远程日志
+	IsFile      bool     // 启用本地文件
+	NetAddr     net.Addr // 远程日志
+	FileName    string   // 文件路径
 }
 
 // New 初始化
@@ -104,12 +109,12 @@ func (Info *LogInfo) Close() error {
 func init() {
 	// 初始化配置
 	confing := []ConfingLog{
-		{Name: "DebugLevel", IsDB: true, Level: DebugLevel, FileName: "Debug.log"},
-		{Name: "InfoLevel", IsDB: true, Level: InfoLevel, FileName: "Info.log"},
-		{Name: "WarnLevel", IsDB: true, Level: WarnLevel, FileName: "Warn.log"},
-		{Name: "ErrorLevel", IsDB: true, Level: ErrorLevel, FileName: "Error.log"},
-		{Name: "FatalLevel", IsDB: true, Level: FatalLevel, FileName: "Fatal.log"},
-		{Name: "UnknownLevel", IsDB: true, Level: UnknownLevel, FileName: "Unknown.log"},
+		{Name: "DebugLevel", IsConfingDB: true, Level: DebugLevel, FileName: "Debug.log"},
+		{Name: "InfoLevel", IsConfingDB: true, Level: InfoLevel, FileName: "Info.log"},
+		{Name: "WarnLevel", IsConfingDB: true, Level: WarnLevel, FileName: "Warn.log"},
+		{Name: "ErrorLevel", IsConfingDB: true, Level: ErrorLevel, FileName: "Error.log"},
+		{Name: "FatalLevel", IsConfingDB: true, Level: FatalLevel, FileName: "Fatal.log"},
+		{Name: "UnknownLevel", IsConfingDB: true, Level: UnknownLevel, FileName: "Unknown.log"},
 	}
 	Panicf("默认日志初始化失败:%s ", GetConfing("LogConfing", &confing))
 	// 创建日志
@@ -188,8 +193,8 @@ func (code LogCode) Defer() {
 	}
 }
 
-// New 构建错误
-func (code LogCode) New(a any, Info ...any) error {
+// Details 构建错误
+func (code LogCode) Details(a any, Info ...any) error {
 	return &LogDetails{Code: code, Details: a, Info: Info}
 }
 
@@ -241,7 +246,7 @@ func IfPrint(is bool, err error) {
 		case *LogDetails:
 			v.Code.Error(v)
 		default:
-			print(v)
+			CodePrint.Print(v)
 		}
 	}
 }
@@ -255,7 +260,7 @@ func Print(err any) {
 		case *LogDetails:
 			v.Code.Error(v)
 		default:
-			print(v)
+			CodePrint.Print(v)
 		}
 	}
 }
@@ -286,5 +291,33 @@ func Panicf(format string, err any) {
 		default:
 			panic(a)
 		}
+	}
+}
+
+// Recover 拦截错误
+func Recover() {
+	if err := recover(); err != nil {
+		CodeError.Print(err)
+	}
+}
+
+// Recovere 拦截错误
+func Recovere(err *error) {
+	if e := recover(); e != nil {
+		(*err) = fmt.Errorf("%s", e)
+	}
+}
+
+// Recoverf 拦截错误
+func Recoverf(format string) {
+	if e := recover(); e != nil {
+		CodeError.Print(fmt.Errorf(format, e))
+	}
+}
+
+// Recoverfe 拦截错误
+func Recoverfe(format string, err *error) {
+	if e := recover(); e != nil {
+		(*err) = fmt.Errorf(format, e)
 	}
 }

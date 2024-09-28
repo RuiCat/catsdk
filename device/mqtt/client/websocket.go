@@ -23,7 +23,7 @@ import (
 	"sync"
 	"time"
 
-	"device/util/websocket"
+	"device/websocket"
 )
 
 // WebsocketOptions are config options for a websocket dialer

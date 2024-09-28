@@ -1,7 +1,7 @@
 package chart
 
 import (
-	"gioui/anime/canvas/drawing"
+	"gioui/anime/color"
 	"io"
 	"sdk/freetype/truetype"
 )
@@ -21,10 +21,10 @@ type Renderer interface {
 	SetClassName(string)
 
 	// SetStrokeColor sets the current stroke color.
-	SetStrokeColor(drawing.Color)
+	SetStrokeColor(color.Color)
 
 	// SetFillColor sets the current fill color.
-	SetFillColor(drawing.Color)
+	SetFillColor(color.Color)
 
 	// SetStrokeWidth sets the stroke width.
 	SetStrokeWidth(width float64)
@@ -66,7 +66,7 @@ type Renderer interface {
 	SetFont(*truetype.Font)
 
 	// SetFontColor sets a font's color
-	SetFontColor(drawing.Color)
+	SetFontColor(color.Color)
 
 	// SetFontSize sets the font size for a text field.
 	SetFontSize(size float64)

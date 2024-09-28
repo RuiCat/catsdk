@@ -1,7 +1,7 @@
 package webui
 
 import (
-	"device/util/websocket"
+	"device/websocket"
 	_ "embed"
 	"encoding/json"
 	"net/http"

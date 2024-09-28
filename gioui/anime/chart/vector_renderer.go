@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"gioui/anime/canvas/drawing"
+	"gioui/anime/color"
 	"io"
 	"math"
 	"sdk/freetype/truetype"
@@ -76,12 +77,12 @@ func (vr *vectorRenderer) SetClassName(classname string) {
 }
 
 // SetStrokeColor implements the interface method.
-func (vr *vectorRenderer) SetStrokeColor(c drawing.Color) {
+func (vr *vectorRenderer) SetStrokeColor(c color.Color) {
 	vr.s.StrokeColor = c
 }
 
 // SetFillColor implements the interface method.
-func (vr *vectorRenderer) SetFillColor(c drawing.Color) {
+func (vr *vectorRenderer) SetFillColor(c color.Color) {
 	vr.s.FillColor = c
 }
 
@@ -173,7 +174,7 @@ func (vr *vectorRenderer) SetFont(f *truetype.Font) {
 }
 
 // SetFontColor implements the interface method.
-func (vr *vectorRenderer) SetFontColor(c drawing.Color) {
+func (vr *vectorRenderer) SetFontColor(c color.Color) {
 	vr.s.FontColor = c
 }
 

@@ -4,8 +4,13 @@
 
 precision mediump float;
 
-layout(location = 0) out vec4 fragColor;
+layout(binding = 0) uniform sampler2D vTexture;
+
+layout(location=0) in highp vec2 vUV;
+layout(location=1) in highp vec4 vertexColor;
+
+layout(location=0) out vec4 fragColor;
 
 void main() {
-	fragColor = vec4(.25, .55, .75, 1.0);
+	fragColor = texture(vTexture, vUV)*vertexColor;
 }

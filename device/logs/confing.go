@@ -3,7 +3,7 @@ package logs
 import (
 	"device/boltdb"
 	"device/boltdb/bbolt"
-	"encoding/json"
+	"device/util/msgpack"
 	"runtime"
 	"time"
 )
@@ -35,7 +35,7 @@ func GetConfing(key string, value any) error {
 	err := Confing.One("Key", key, to)
 	if err != nil {
 		to.Key = key
-		to.Value, err = json.Marshal(value)
+		to.Value, err = msgpack.Marshal(value)
 		if err != nil {
 			return err
 		}
@@ -44,7 +44,7 @@ func GetConfing(key string, value any) error {
 			return err
 		}
 	} else {
-		err = json.Unmarshal(to.Value, value)
+		err = msgpack.Unmarshal(to.Value, value)
 		if err != nil {
 			return err
 		}
@@ -59,7 +59,7 @@ func SetConfing(key string, value any) error {
 	if err != nil {
 		return err
 	}
-	to.Value, err = json.Marshal(value)
+	to.Value, err = msgpack.Marshal(value)
 	if err != nil {
 		return err
 	}

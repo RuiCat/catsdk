@@ -1,6 +1,6 @@
 package chart
 
-import "gioui/anime/canvas/drawing"
+import "gioui/anime/color"
 
 // ValuesProvider is a type that produces values.
 type ValuesProvider interface {
@@ -45,7 +45,7 @@ type FullBoundedValuesProvider interface {
 type SizeProvider func(xrange, yrange Range, index int, x, y float64) float64
 
 // ColorProvider is a general provider for color ranges based on values.
-type ColorProvider func(v, vmin, vmax float64) drawing.Color
+type ColorProvider func(v, vmin, vmax float64) color.Color
 
 // DotColorProvider is a provider for dot color.
-type DotColorProvider func(xrange, yrange Range, index int, x, y float64) drawing.Color
+type DotColorProvider func(xrange, yrange Range, index int, x, y float64) color.Color

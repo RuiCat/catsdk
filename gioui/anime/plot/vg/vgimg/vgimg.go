@@ -76,7 +76,7 @@ type JpegCanvas struct {
 func (c JpegCanvas) WriteTo(w io.Writer) (int64, error) {
 	wc := writerCounter{Writer: w}
 	b := bufio.NewWriter(&wc)
-	if err := jpeg.Encode(b, rasterizer.Draw(c.Canvas.Canvas, canvas.DPMM(10.0), canvas.DefaultColorSpace), nil); err != nil {
+	if err := jpeg.Encode(b, rasterizer.Draw(c.Canvas.Canvas, canvas.DefaultResolution, canvas.DefaultColorSpace), nil); err != nil {
 		return wc.n, err
 	}
 	err := b.Flush()
@@ -93,7 +93,7 @@ type PngCanvas struct {
 func (c PngCanvas) WriteTo(w io.Writer) (int64, error) {
 	wc := writerCounter{Writer: w}
 	b := bufio.NewWriter(&wc)
-	if err := png.Encode(b, rasterizer.Draw(c.Canvas.Canvas, canvas.DPMM(10.0), canvas.DefaultColorSpace)); err != nil {
+	if err := png.Encode(b, rasterizer.Draw(c.Canvas.Canvas, canvas.DefaultResolution, canvas.DefaultColorSpace)); err != nil {
 		return wc.n, err
 	}
 	err := b.Flush()
@@ -110,7 +110,7 @@ type TiffCanvas struct {
 func (c TiffCanvas) WriteTo(w io.Writer) (int64, error) {
 	wc := writerCounter{Writer: w}
 	b := bufio.NewWriter(&wc)
-	if err := tiff.Encode(b, rasterizer.Draw(c.Canvas.Canvas, canvas.DPMM(10.0), canvas.DefaultColorSpace), nil); err != nil {
+	if err := tiff.Encode(b, rasterizer.Draw(c.Canvas.Canvas, canvas.DefaultResolution, canvas.DefaultColorSpace), nil); err != nil {
 		return wc.n, err
 	}
 	err := b.Flush()
