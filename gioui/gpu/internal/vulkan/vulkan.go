@@ -813,13 +813,14 @@ func (t *Texture) imageBarrier(cmdBuf vk.CommandBuffer, layout vk.ImageLayout, s
 }
 
 func (b *Backend) PrepareTexture(tex driver.Texture) {
-	t := tex.(*Texture)
-	cmdBuf := b.ensureCmdBuf()
-	t.imageBarrier(cmdBuf,
-		vk.IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		vk.PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-		vk.ACCESS_SHADER_READ_BIT,
-	)
+	if t, ok := tex.(*Texture); ok {
+		cmdBuf := b.ensureCmdBuf()
+		t.imageBarrier(cmdBuf,
+			vk.IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+			vk.PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+			vk.ACCESS_SHADER_READ_BIT,
+		)
+	}
 }
 
 func (b *Backend) BindTexture(unit int, tex driver.Texture) {

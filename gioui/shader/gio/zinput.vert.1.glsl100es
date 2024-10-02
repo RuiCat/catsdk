@@ -1,0 +1,29 @@
+#version 100
+
+struct m3x2
+{
+    vec3 r0;
+    vec3 r1;
+};
+
+struct Gradient
+{
+    vec4 color1;
+    vec4 color2;
+};
+
+uniform Gradient _gradient;
+
+varying vec2 vUV;
+attribute vec2 inUV;
+varying vec4 vertexColor;
+attribute vec3 inColor;
+attribute vec3 inPos;
+
+void main()
+{
+    vUV = inUV;
+    vertexColor = vec4(inColor, 1.0);
+    gl_Position = mix(_gradient.color1, _gradient.color2, vec4(clamp(vUV.x, 0.0, 1.0))) * vec4(inPos, 1.0);
+}
+

@@ -8,19 +8,25 @@ struct m3x2
 
 layout(std140) uniform Block
 {
-    vec4 Matrix[4];
+    vec4 Matrix0;
+    vec4 Matrix1;
+    vec4 Matrix2;
+    vec4 Matrix3;
 } _block;
 
 out vec2 vUV;
 in vec2 inUV;
-out vec4 vertexColor;
+out vec3 vNormal;
+in vec3 innormal;
+out vec3 vertexColor;
 in vec3 inColor;
 in vec3 inPos;
 
 void main()
 {
     vUV = inUV;
-    vertexColor = vec4(inColor, 1.0);
-    gl_Position = mat4(vec4(_block.Matrix[0]), vec4(_block.Matrix[1]), vec4(_block.Matrix[2]), vec4(_block.Matrix[3])) * vec4(inPos, 1.0);
+    vNormal = innormal;
+    vertexColor = inColor;
+    gl_Position = mat4(vec4(_block.Matrix0), vec4(_block.Matrix1), vec4(_block.Matrix2), vec4(_block.Matrix3)) * vec4(inPos, 1.0);
 }
 

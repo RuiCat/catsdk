@@ -5,10 +5,14 @@ precision highp int;
 uniform mediump sampler2D vTexture;
 
 varying highp vec2 vUV;
-varying highp vec4 vertexColor;
+varying highp vec3 vNormal;
+varying highp vec3 vertexColor;
 
 void main()
 {
-    gl_FragData[0] = texture2D(vTexture, vUV) * vertexColor;
+    vec4 color = texture2D(vTexture, vec2(vUV));
+    vec3 norm = normalize(vNormal);
+    float diff = max(dot(norm, vertexColor), 0.20000000298023223876953125);
+    gl_FragData[0] = vec4(vec3(color.x, color.z, color.y) * diff, color.w);
 }
 

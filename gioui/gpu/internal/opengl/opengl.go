@@ -1043,13 +1043,6 @@ func (p *uniforms) update(funcs *gl.Functions, buf *buffer) {
 			data := data[:16]
 			v := *(*[4]float32)(unsafe.Pointer(&data[0]))
 			funcs.Uniform4f(u.uniform, v[0], v[1], v[2], v[3])
-		case u.typ == shader.DataTypeFloat && u.size == 16:
-			data := data[:64]
-			for i := 0; i < 4; i++ {
-				v := *(*[4]float32)(unsafe.Pointer(&data[i*16]))
-				funcs.Uniform4f(gl.Uniform{V: u.uniform.V + i}, v[0], v[1], v[2], v[3])
-			}
-
 		default:
 			panic("unsupported uniform data type or size")
 		}

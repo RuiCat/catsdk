@@ -10,19 +10,25 @@ precision highp float;
 
 layout(std140,binding=0) uniform Block
 {
-    layout(offset=0) vec4 [4]Matrix;
+    // 变换矩阵
+    layout(offset=0) vec4 Matrix0;
+    layout(offset=16) vec4 Matrix1;
+    layout(offset=32) vec4 Matrix2;
+    layout(offset=48) vec4 Matrix3;
 } _block;
 
 layout(location=0) in vec3 inPos;
 layout(location=1) in vec3 inColor;
 layout(location=2) in vec2 inUV;
-
+layout(location=3) in vec3 innormal;
 
 layout(location=0) out vec2 vUV;
-layout(location=1) out vec4 vertexColor;
+layout(location=1) out vec3 vertexColor;
+layout(location=2) out vec3 vNormal;
 
 void main() {
     vUV = inUV;
-    vertexColor =  vec4(inColor,1);
-    gl_Position =  mat4(_block.Matrix[0],_block.Matrix[1],_block.Matrix[2],_block.Matrix[3]) * vec4(inPos,1);
+    vNormal = innormal; 
+    vertexColor = inColor;
+    gl_Position =  mat4(_block.Matrix0,_block.Matrix1,_block.Matrix2,_block.Matrix3) * vec4(inPos,1);
 }

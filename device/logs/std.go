@@ -1,7 +1,7 @@
 package logs
 
 import (
-	"bufio"
+	"io"
 	"os"
 	"sync"
 )
@@ -55,31 +55,23 @@ func IsExit() <-chan struct{} {
 
 func init() {
 	// os.Stdout 转发
-	{
+	go func() {
 		r, w, err := os.Pipe()
 		Panicf("日志 Pipe 创建失败: %s", err)
 		os.Stdout = w
-		go func() {
-			scanner := bufio.NewScanner(r)
-			for scanner.Scan() {
-				CodePrint.Print(scanner.Text())
-			}
-			w.Close()
-		}()
-	}
+		for err != io.EOF {
+			_, err = io.Copy(CodePrint.Info(), r)
+		}
+	}()
 	// os.Stderr 转发
-	{
+	go func() {
 		r, w, err := os.Pipe()
 		Panicf("日志 Pipe 创建失败: %s", err)
 		os.Stderr = w
-		go func() {
-			scanner := bufio.NewScanner(r)
-			for scanner.Scan() {
-				CodeError.Print(scanner.Text())
-			}
-			w.Close()
-		}()
-	}
+		for err != io.EOF {
+			_, err = io.Copy(CodeError.Info(), r)
+		}
+	}()
 }
 
 // Close 用于处理代码中存在多次关联的 Close 过程

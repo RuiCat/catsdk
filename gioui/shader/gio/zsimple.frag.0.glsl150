@@ -2,12 +2,16 @@
 
 uniform sampler2D vTexture;
 
-out vec4 fragColor;
 in vec2 vUV;
-in vec4 vertexColor;
+in vec3 vNormal;
+in vec3 vertexColor;
+out vec4 fragColor;
 
 void main()
 {
-    fragColor = texture(vTexture, vUV) * vertexColor;
+    vec4 color = texture(vTexture, vec2(vUV));
+    vec3 norm = normalize(vNormal);
+    float diff = max(dot(norm, vertexColor), 0.20000000298023223876953125);
+    fragColor = vec4(vec3(color.x, color.z, color.y) * diff, color.w);
 }
 

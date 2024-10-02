@@ -8,21 +8,27 @@ struct m3x2
 
 struct Block
 {
-    vec4 Matrix[4];
+    vec4 Matrix0;
+    vec4 Matrix1;
+    vec4 Matrix2;
+    vec4 Matrix3;
 };
 
 uniform Block _block;
 
 varying vec2 vUV;
 attribute vec2 inUV;
-varying vec4 vertexColor;
+varying vec3 vNormal;
+attribute vec3 innormal;
+varying vec3 vertexColor;
 attribute vec3 inColor;
 attribute vec3 inPos;
 
 void main()
 {
     vUV = inUV;
-    vertexColor = vec4(inColor, 1.0);
-    gl_Position = mat4(vec4(_block.Matrix[0]), vec4(_block.Matrix[1]), vec4(_block.Matrix[2]), vec4(_block.Matrix[3])) * vec4(inPos, 1.0);
+    vNormal = innormal;
+    vertexColor = inColor;
+    gl_Position = mat4(vec4(_block.Matrix0), vec4(_block.Matrix1), vec4(_block.Matrix2), vec4(_block.Matrix3)) * vec4(inPos, 1.0);
 }
 

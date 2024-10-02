@@ -283,8 +283,8 @@ type blitter3D struct {
 	Aspect float32 // 宽高比
 	// 摄像机信息
 	Position f32.Vec3 // 位置
-	Target   f32.Vec3 // 看向目标
-	UP       f32.Vec3 // 视点
+	Target   f32.Vec3 // 目标观察点
+	UP       f32.Vec3 // 上方向
 	// 矩阵信息
 	World f32.Mat4 // 世界矩阵
 }
@@ -292,11 +292,11 @@ type blitter3D struct {
 // Init 初始化摄像机
 func (b3d *blitter3D) Init() {
 	b3d.Fovy = 45
-	b3d.Near = 1
-	b3d.Far = 100
-	b3d.UP = f32.Vec3{0, -1, 0}
+	b3d.Near = 0.1
+	b3d.Far = 1000
+	b3d.UP = f32.Vec3{0, 1, 0}
 	b3d.Target = f32.Vec3{0, 0, 0}
-	b3d.Position = f32.Vec3{0, 0, -2}
+	b3d.Position = f32.Vec3{0, 0, 50}
 	b3d.World = f32.Mat4{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 }
 
@@ -722,8 +722,9 @@ func createColorPrograms(b driver.Device, vsSrc shader.Sources, fsSrc [3]shader.
 					{Type: shader.DataTypeFloat, Size: 3, Offset: 0},
 					{Type: shader.DataTypeFloat, Size: 3, Offset: 12},
 					{Type: shader.DataTypeFloat, Size: 2, Offset: 24},
+					{Type: shader.DataTypeFloat, Size: 3, Offset: 32},
 				},
-				Stride: 32,
+				Stride: 44,
 			}
 			var pipe driver.Pipeline
 			vsh, fsh, err := newShaders(b, gio.Shader_input_vert, gio.Shader_simple_frag)
@@ -736,7 +737,7 @@ func createColorPrograms(b driver.Device, vsSrc shader.Sources, fsSrc [3]shader.
 					VertexLayout:   layout,
 					BlendDesc:      blend,
 					PixelFormat:    driver.TextureFormatFloat,
-					Topology:       driver.TopologyTriangleStrip,
+					Topology:       driver.TopologyTriangles,
 				})
 			}
 			if err != nil {
@@ -1382,13 +1383,18 @@ func (r *renderer) drawOps(isFBO bool, opOff, viewport image.Point, ops []imageO
 			case material3D:
 				if m.data.handle != nil {
 					data := m.data.handle.(paint.Paint3D)
-					vertexData := byteslice.Slice(data.Vertex)
-					b.blitter3D.bufferVertex.ensureCapacity(false, r.ctx, driver.BufferBindingVertices, len(vertexData))
-					b.blitter3D.bufferVertex.buffer.Upload(vertexData)
-					indexData := byteslice.Slice(data.Index)
-					b.blitter3D.bufferIndex.ensureCapacity(false, r.ctx, driver.BufferBindingIndices, len(indexData))
-					b.blitter3D.bufferIndex.buffer.Upload(indexData)
-					b.blitter3D.bufferIndexLen = len(data.Index)
+					if len(data.Vertex) > 0 {
+						vertexData := byteslice.Slice(data.Vertex)
+						b.blitter3D.bufferVertex.ensureCapacity(false, r.ctx, driver.BufferBindingVertices, len(vertexData))
+						b.blitter3D.bufferVertex.buffer.Upload(vertexData)
+
+					}
+					if len(data.Index) > 0 {
+						indexData := byteslice.Slice(data.Index)
+						b.blitter3D.bufferIndex.ensureCapacity(false, r.ctx, driver.BufferBindingIndices, len(indexData))
+						b.blitter3D.bufferIndex.buffer.Upload(indexData)
+						b.blitter3D.bufferIndexLen = len(data.Index)
+					}
 				} else {
 					r.ctx.BindPipeline(p.pipeline) // 绑定着色器
 					p.UploadUniforms(b.ctx)        // 更新摄像机数据
@@ -1401,6 +1407,7 @@ func (r *renderer) drawOps(isFBO bool, opOff, viewport image.Point, ops []imageO
 				}
 			case materialTexture: // 设置材质
 				b.blitter3D.tex = m.tex
+				m.tex = nil
 			case material3DPosition: // 设置相机位置
 				b.blitter3D.Position = (f32.Vec3)(m.data.handle.(paint.Paint3DPosition))
 				b.blitter3D.Update() // 更新摄像机

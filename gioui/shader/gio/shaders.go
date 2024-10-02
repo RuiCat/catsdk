@@ -169,7 +169,7 @@ var (
 	zcover_vert_0_dxbc string
 	Shader_input_vert  = shader.Sources{
 		Name:   "input.vert",
-		Inputs: []shader.InputLocation{{Name: "inPos", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 3}, {Name: "inColor", Location: 1, Semantic: "TEXCOORD", SemanticIndex: 1, Type: 0x0, Size: 3}, {Name: "inUV", Location: 2, Semantic: "TEXCOORD", SemanticIndex: 2, Type: 0x0, Size: 2}},
+		Inputs: []shader.InputLocation{{Name: "inPos", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 3}, {Name: "inColor", Location: 1, Semantic: "TEXCOORD", SemanticIndex: 1, Type: 0x0, Size: 3}, {Name: "inUV", Location: 2, Semantic: "TEXCOORD", SemanticIndex: 2, Type: 0x0, Size: 2}, {Name: "innormal", Location: 3, Semantic: "TEXCOORD", SemanticIndex: 3, Type: 0x0, Size: 3}},
 	}
 	//go:embed zinput.vert.0.spirv
 	zinput_vert_0_spirv string
@@ -243,7 +243,7 @@ var (
 	zmaterial_vert_0_dxbc string
 	Shader_simple_frag    = shader.Sources{
 		Name:     "simple.frag",
-		Inputs:   []shader.InputLocation{{Name: "vUV", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 2}, {Name: "vertexColor", Location: 1, Semantic: "TEXCOORD", SemanticIndex: 1, Type: 0x0, Size: 4}},
+		Inputs:   []shader.InputLocation{{Name: "vUV", Location: 0, Semantic: "TEXCOORD", SemanticIndex: 0, Type: 0x0, Size: 2}, {Name: "vertexColor", Location: 1, Semantic: "TEXCOORD", SemanticIndex: 1, Type: 0x0, Size: 3}, {Name: "vNormal", Location: 2, Semantic: "TEXCOORD", SemanticIndex: 2, Type: 0x0, Size: 3}},
 		Textures: []shader.TextureBinding{{Name: "vTexture", Binding: 0}},
 	}
 	//go:embed zsimple.frag.0.spirv

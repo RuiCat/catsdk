@@ -226,12 +226,9 @@ func (d Paint3DTexture) Add(o *op.Ops) {
 	data[0] = byte(ops.Type3DTexture)
 }
 
-type Paint3DOp struct {
-	Vertex []float32
-	Index  []uint16
-}
+type Paint3DOp struct{}
 
 func (d Paint3DOp) Add(o *op.Ops) {
-	data := ops.Write1(&o.Internal, ops.Type3DLen, d)
+	data := ops.Write(&o.Internal, ops.Type3DLen)
 	data[0] = byte(ops.Type3DOp)
 }
