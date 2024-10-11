@@ -16,13 +16,19 @@ type OpsFace interface {
 
 // LayoutFace 布局接口用于绘制组件
 type LayoutFace interface {
-	OpsFace                                       // 继承上下文
-	Update()                                      // 状态更新
-	Layout(gtx layout.Context) *layout.Dimensions // 组件布局
-	GetPoint() *image.Point                       // 组件绘制位置
-	GetDimensions() *layout.Dimensions            // 组件大小
-	SetDisable(disable bool)                      // 组件禁用
-	GetDisable() bool                             // 组件禁用
+	OpsFace                                      // 继承上下文
+	Update()                                     // 状态更新
+	Layout(gtx layout.Context) layout.Dimensions // 组件布局
+	GetPoint() *image.Point                      // 组件绘制位置
+	GetDimensions() *layout.Dimensions           // 组件大小
+	SetDisable(disable bool)                     // 组件禁用
+	GetDisable() bool                            // 组件禁用
+}
+
+// UILayoutFace 布局接口用于绘制组件
+type UILayoutFace interface {
+	LayoutFace
+	GetUILayout() *UILayout
 }
 
 // UILayout 组件实现
@@ -46,4 +52,4 @@ func (ui *UILayout) Update() {
 		ui.LayoutFace.Update()
 	}
 }
-func (ui *UILayout) Layout(gtx layout.Context) *layout.Dimensions { return ui.Dimensions }
+func (ui *UILayout) Layout(gtx layout.Context) layout.Dimensions { return *ui.Dimensions }

@@ -16,7 +16,7 @@ func NewUIPosition(face LayoutFace) *UIPosition {
 }
 
 // Layout 绘制
-func (ui *UIPosition) Layout(gtx layout.Context) *layout.Dimensions {
+func (ui *UIPosition) Layout(gtx layout.Context) layout.Dimensions {
 	defer op.Offset(*ui.GetPoint()).Push(ui.GetOps()).Pop()
 	return ui.LayoutFace.Layout(gtx)
 }

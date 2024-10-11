@@ -53,7 +53,7 @@ func (ui *UIScroll) Update() {
 }
 
 // Layout 绘制
-func (ui *UIScroll) Layout(gtx layout.Context) *layout.Dimensions {
+func (ui *UIScroll) Layout(gtx layout.Context) layout.Dimensions {
 	if ui.Use && !ui.GetDisable() {
 		dim := ui.GetDimensions()
 		gtx.Ops = ui.GetOps()

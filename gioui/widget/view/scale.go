@@ -38,7 +38,7 @@ func (ui *UIScale) GetScale() float32 {
 }
 
 // Layout 绘制
-func (ui *UIScale) Layout(gtx layout.Context) *layout.Dimensions {
+func (ui *UIScale) Layout(gtx layout.Context) layout.Dimensions {
 	op.Affine(ui.Affine2D).Push(ui.GetOps())
 	return ui.LayoutFace.Layout(gtx)
 }

@@ -81,7 +81,7 @@ func (ui *UIGrid) Update() {
 }
 
 // Layout 绘制
-func (ui *UIGrid) Layout(gtx layout.Context) *layout.Dimensions {
+func (ui *UIGrid) Layout(gtx layout.Context) layout.Dimensions {
 	defer ui.clipRect.Push(gtx.Ops).Pop()
 	if ui.Use && !ui.GetDisable() {
 		ops := ui.GetOps()

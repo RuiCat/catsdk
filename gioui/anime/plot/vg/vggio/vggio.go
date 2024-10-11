@@ -25,8 +25,8 @@ import (
 	"gioui/op/paint"
 	"gioui/widget/layout"
 	"gioui/widget/material"
+	"gioui/widget/stroke"
 	"gioui/widget/text"
-	"gioui/x/stroke"
 
 	"sdk/x/image/draw"
 	"sdk/x/image/font/sfnt"

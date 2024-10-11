@@ -4,12 +4,10 @@
 package stroke
 
 import (
-	"math"
-
 	"gioui/op"
 	"gioui/op/clip"
 	"mat/mat/spatial/f32"
-
+	"math"
 	"sdk/stroke"
 )
 

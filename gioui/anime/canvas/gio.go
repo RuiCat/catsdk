@@ -10,6 +10,24 @@ import (
 	"mat/mat/spatial/f32"
 )
 
+type OpsGio struct{ op.MacroOp }
+
+func (gio *OpsGio) Gio(size image.Point) *Context {
+	gioGtx := layout.Context{Ops: new(op.Ops)}
+	gioGtx.Constraints.Max = size
+	gio.MacroOp = op.Record(gioGtx.Ops)
+	return NewContext(&Gio{
+		ops:    gioGtx.Ops,
+		width:  float64(size.X),
+		height: float64(size.Y),
+		xScale: 1.0,
+		yScale: 1.0,
+	})
+}
+func (gio *OpsGio) Add(o *op.Ops) {
+	gio.MacroOp.Stop().Add(o)
+}
+
 type Gio struct {
 	ops            *op.Ops
 	width, height  float64

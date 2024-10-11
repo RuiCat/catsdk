@@ -8,7 +8,7 @@ import (
 	"image"
 	"unsafe"
 
-	"gioui/gpu/internal/driver"
+	"gioui/gpu/driver"
 	"gioui/shader"
 )
 

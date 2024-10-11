@@ -36,7 +36,7 @@ const (
 )
 
 // Layout 绘制
-func (ui *UIDrag) Layout(gtx layout.Context) (dim *layout.Dimensions) {
+func (ui *UIDrag) Layout(gtx layout.Context) (dim layout.Dimensions) {
 	event.Op(gtx.Ops, ui)
 	if ev, ok := gtx.Source.Event(pointer.Filter{
 		Target: ui,

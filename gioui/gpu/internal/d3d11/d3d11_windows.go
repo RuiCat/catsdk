@@ -12,7 +12,7 @@ import (
 
 	"sdk/x/sys/windows"
 
-	"gioui/gpu/internal/driver"
+	"gioui/gpu/driver"
 	"gioui/internal/d3d11"
 	"gioui/shader"
 )

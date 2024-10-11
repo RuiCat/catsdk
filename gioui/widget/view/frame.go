@@ -36,7 +36,7 @@ func (ui *UIFrame) Update() {
 }
 
 // Layout 绘制
-func (ui *UIFrame) Layout(gtx layout.Context) *layout.Dimensions {
+func (ui *UIFrame) Layout(gtx layout.Context) layout.Dimensions {
 	theme := ui.GetTheme()
 	paint.FillShape(ui.GetOps(), theme.Fg, ui.op)
 	return ui.LayoutFace.Layout(gtx)
