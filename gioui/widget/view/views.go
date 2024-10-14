@@ -1,7 +1,9 @@
 package view
 
 import (
+	"gioui/anime/canvas"
 	"gioui/io/event"
+	"gioui/io/key"
 	"gioui/io/pointer"
 	"gioui/op"
 	"gioui/op/clip"
@@ -40,24 +42,24 @@ func ViewsNew(th *material.Theme, X, Y, Width, Height int, Size image.Point) *Vi
 
 // Views 视图控件
 type Views struct {
-	*material.Theme                       // 主题
-	Size                image.Point       // 组件内画板大小
-	Position            image.Point       // 组件位置
-	Dimensions          layout.Dimensions // 组件大小
-	IsSizeCalculation   bool              // 计算大小
-	UseGrid             bool              // 启用网格
-	GridDistance        int               // 网格大小
-	ComponentList       []LayoutFace      // 布局组件
-	componentListIndex  []int             // 组件索引
-	componentListUpdate bool              // 组件需要更新
-	Scrollbar           [2]struct {
+	*material.Theme                      // 主题
+	Size               image.Point       // 组件内画板大小
+	Position           image.Point       // 组件位置
+	Dimensions         layout.Dimensions // 组件大小
+	IsSizeCalculation  bool              // 计算大小
+	UseGrid            bool              // 启用网格
+	GridDistance       int               // 网格大小
+	ComponentList      []LayoutFace      // 布局组件
+	componentListIndex []int             // 组件索引
+	Scrollbar          [2]struct {
 		Use                     bool    // 滚动条生效
 		Distance                float32 // 滚动条滚动距离
 		widget.Scrollbar                // 滚动条对象
 		material.ScrollbarStyle         // 滚动条对象风格
 	}
-	stroke   [5]clip.Op // 组件背景网格与边框
-	clipRect clip.Op    // 用于组件剪裁
+	// stroke   [5]clip.Op // 组件背景网格与边框
+	stroke   op.CallOp // 组件背景网格与边框
+	clipRect clip.Op   // 用于组件剪裁
 	moves    struct {
 		Use      bool      // 背景移动状态标记
 		Position f32.Point // 背景移动位置记录
@@ -110,86 +112,85 @@ func (v *Views) Layout(gtx layout.Context) layout.Dimensions {
 	}
 	// 处理事件
 	event.Op(gtx.Ops, v)
-	if ev, ok := gtx.Source.Event(pointer.Filter{
-		Target: v,
-		Kinds:  pointer.Cancel | pointer.Press | pointer.Release | pointer.Move | pointer.Drag | pointer.Enter | pointer.Leave | pointer.Scroll,
-	}); ok {
-		event := ev.(pointer.Event)
-		pos := event.Position.Sub(f32.Point{X: float32(v.Position.X), Y: float32(v.Position.Y)})
-		if pos.X > 0 && pos.Y > 0 && pos.X < float32(v.Dimensions.Size.X)-10 && pos.Y < float32(v.Dimensions.Size.Y)-10 || v.moves.Use {
-			// 背景移动实现
-			if event.Buttons == pointer.ButtonTertiary {
-				switch event.Kind {
-				case pointer.Press:
-					if !v.moves.Use {
-						v.moves.Position = pos.Add(offest)
-					}
-					v.moves.Use = true
-					v.componentListUpdate = true
-				case pointer.Drag:
-					if v.moves.Use {
-						pos := pos.Sub(v.moves.Position)
-						v.Scrollbar[0].Distance = -pos.X / float32(v.Size.X)
-						v.Scrollbar[1].Distance = -pos.Y / float32(v.Size.Y)
+	gtx.Execute(key.FocusCmd{Tag: v})
+	for {
+		if ev, ok := gtx.Event(
+			pointer.Filter{
+				Target: v,
+				Kinds:  pointer.Cancel | pointer.Press | pointer.Release | pointer.Move | pointer.Drag | pointer.Enter | pointer.Leave | pointer.Scroll,
+			},
+			key.FocusFilter{Target: v},                  // 接收按键
+			key.Filter{Focus: v, Optional: key.ModCtrl}, // Ctrl 按下
+		); ok {
+			switch event := ev.(type) {
+			case pointer.Event:
+				pos := event.Position.Sub(f32.Point{X: float32(v.Position.X), Y: float32(v.Position.Y)})
+				if pos.X > 0 && pos.Y > 0 && pos.X < float32(v.Dimensions.Size.X)-10 && pos.Y < float32(v.Dimensions.Size.Y)-10 || v.moves.Use {
+					// 背景移动实现
+					if event.Buttons == pointer.ButtonTertiary {
+						switch event.Kind {
+						case pointer.Press:
+							if !v.moves.Use {
+								v.moves.Position = pos.Add(offest)
+							}
+							v.moves.Use = true
+						case pointer.Drag:
+							if v.moves.Use {
+								pos := pos.Sub(v.moves.Position)
+								v.Scrollbar[0].Distance = -pos.X / float32(v.Size.X)
+								v.Scrollbar[1].Distance = -pos.Y / float32(v.Size.Y)
+							}
+						}
+					} else {
+						v.moves.Use = false
 					}
 				}
-			} else {
-				v.moves.Use = false
+			case key.Event: // 键盘事件
 			}
+		} else {
+			break
 		}
 	}
 	// 更新显示组件
-	if v.componentListUpdate {
-		v.componentListIndex = v.componentListIndex[:0]
-		// 计算内容
-		for i, cl := range v.ComponentList {
-			// 计算显示矩阵
-			size := cl.GetDimensions().Size
-			position := cl.GetPoint()
-			if position.X <= int(offest.X)+v.Dimensions.Size.X &&
-				position.X+size.X >= int(offest.X) &&
-				position.Y <= int(offest.Y)+v.Dimensions.Size.Y &&
-				position.Y+size.Y >= int(offest.Y) {
-				v.componentListIndex = append(v.componentListIndex, i)
-			}
+	v.componentListIndex = v.componentListIndex[:0]
+	// 计算内容
+	for i, cl := range v.ComponentList {
+		// 计算显示矩阵
+		size := cl.GetDimensions().Size
+		position := cl.GetPoint()
+		if position.X <= int(offest.X)+v.Dimensions.Size.X &&
+			position.X+size.X >= int(offest.X) &&
+			position.Y <= int(offest.Y)+v.Dimensions.Size.Y &&
+			position.Y+size.Y >= int(offest.Y) {
+			v.componentListIndex = append(v.componentListIndex, i)
 		}
 	}
 	// 计算滚动条位置
 	if !v.moves.Use {
 		v.Scrollbar[1].Distance += v.Scrollbar[1].Scrollbar.ScrollDistance()
 		v.Scrollbar[0].Distance += v.Scrollbar[0].Scrollbar.ScrollDistance()
-	} else {
-		if v.Scrollbar[0].Distance < 0 {
-			v.Scrollbar[0].Distance = 0
-		}
-		if v.Scrollbar[1].Distance < 0 {
-			v.Scrollbar[1].Distance = 0
-		}
-		if v.Scrollbar[0].Distance >= 1 {
-			v.Scrollbar[0].Distance = 1
-		}
-		if v.Scrollbar[1].Distance >= 1 {
-			v.Scrollbar[1].Distance = 1
-		}
+	}
+	v.Scrollbar[0].Distance = mix(0, v.Scrollbar[0].Distance, 1)
+	v.Scrollbar[1].Distance = mix(0, v.Scrollbar[1].Distance, 1)
+	// 绘制边框
+	if v.UseGrid {
+		paint.FillShape(gtx.Ops, v.Fg, clip.Stroke{Path: clip.RRect{
+			Rect: image.Rectangle{
+				Max: v.Dimensions.Size,
+			},
+		}.Path(&op.Ops{}), Width: 1.5}.Op())
+		offest := op.Offset(image.Point{
+			X: -int(v.Scrollbar[0].Distance*float32(v.Size.X)) % v.GridDistance,
+			Y: -int(v.Scrollbar[1].Distance*float32(v.Size.Y)) % v.GridDistance,
+		}).Push(gtx.Ops)
+		v.stroke.Add(gtx.Ops)
+		offest.Pop()
 	}
 	// 绘制控件
 	defer op.Offset(v.Position).Push(gtx.Ops).Pop()         // 移动画布
 	defer v.clipRect.Push(gtx.Ops).Pop()                    // 剪裁组件位置
 	AffinePop := op.Affine(v.affine.Affine2D).Push(gtx.Ops) // 缩放剩余对象
-	// 绘制边框
-	paint.FillShape(gtx.Ops, v.Fg, v.stroke[4])
-	// 绘制背景网格
-	if v.UseGrid {
-		offest := op.Offset(image.Point{X: -int(v.Scrollbar[0].Distance*float32(v.Size.X)) % v.GridDistance}).Push(gtx.Ops)
-		paint.FillShape(gtx.Ops, v.Fg, v.stroke[0])         // 背景线
-		paint.FillShape(gtx.Ops, v.ContrastBg, v.stroke[1]) // 背景线
-		offest.Pop()
-		offest = op.Offset(image.Point{Y: -int(v.Scrollbar[1].Distance*float32(v.Size.Y)) % v.GridDistance}).Push(gtx.Ops)
-		paint.FillShape(gtx.Ops, v.Fg, v.stroke[2])         // 背景线
-		paint.FillShape(gtx.Ops, v.ContrastBg, v.stroke[3]) // 背景线
-		offest.Pop()
-	}
-	// 更新并且绘制组件
+	// 绘制组件
 	OffsetPop := op.Offset(image.Point{
 		X: -int(offest.X),
 		Y: -int(offest.Y)},
@@ -201,7 +202,6 @@ func (v *Views) Layout(gtx layout.Context) layout.Dimensions {
 		cl.Layout(gtx)
 		offsetRect.Pop()
 		offset.Pop()
-
 	}
 	OffsetPop.Pop() // 还原组件偏移移动
 	AffinePop.Pop() // 还原组件缩放
@@ -223,47 +223,57 @@ func (v *Views) Layout(gtx layout.Context) layout.Dimensions {
 // Background 更新背景
 func (v *Views) Background() {
 	if v.UseGrid {
-		x := v.Dimensions.Size.X/v.GridDistance + 2
-		y := v.Dimensions.Size.Y/v.GridDistance + 2
+		x, X := v.Dimensions.Size.X/v.GridDistance+2, v.Dimensions.Size.X+v.GridDistance
+		y, Y := v.Dimensions.Size.Y/v.GridDistance+2, v.Dimensions.Size.Y+v.GridDistance
+		gioGtx := &canvas.OpsGio{}
+		ctx := gioGtx.Gio(image.Point{X, Y})
+		ctx.ReflectY()
+		ctx.Translate(0, -float64(Y))
+		defer func() {
+			ctx.FillStroke()
+			v.stroke = gioGtx.MacroOp.Stop()
+		}()
+		ctx.SetFillColor(canvas.Transparent)
 		// 绘制背景网格
-		var gridsX clip.Path
-		gridsX.Begin(&op.Ops{})
-		var gridsXZ clip.Path
-		gridsXZ.Begin(&op.Ops{})
+		gridsX, gridsXZ := &canvas.Path{}, &canvas.Path{}
 		for i := 0; i < x; i++ {
-			ix := float32(i * v.GridDistance)
-			gridsX.MoveTo(f32.Pt(ix, 0))
-			gridsX.LineTo(f32.Pt(ix, float32(v.Dimensions.Size.Y)))
-			iz := float32((i + 1) * v.GridDistance)
+			ix := float64(i * v.GridDistance)
+			gridsX.MoveTo(ix, 0)
+			gridsX.LineTo(ix, float64(Y))
+			iz := float64((i + 1) * v.GridDistance)
 			for ; ix < iz; ix += 10 {
-				gridsXZ.MoveTo(f32.Pt(ix, 0))
-				gridsXZ.LineTo(f32.Pt(ix, float32(v.Dimensions.Size.Y)))
+				gridsXZ.MoveTo(ix, 0)
+				gridsXZ.LineTo(ix, float64(Y))
 			}
 		}
-		var gridsY clip.Path
-		gridsY.Begin(&op.Ops{})
-		var gridsYZ clip.Path
-		gridsYZ.Begin(&op.Ops{})
+		gridsY, gridsYZ := &canvas.Path{}, &canvas.Path{}
 		for i := 0; i < y; i++ {
-			iy := float32(i * v.GridDistance)
-			gridsY.MoveTo(f32.Pt(0, iy))
-			gridsY.LineTo(f32.Pt(float32(v.Dimensions.Size.X), iy))
-			iz := float32((i + 1) * v.GridDistance)
+			iy := float64(i * v.GridDistance)
+			gridsY.MoveTo(0, iy)
+			gridsY.LineTo(float64(X), iy)
+			iz := float64((i + 1) * v.GridDistance)
 			for ; iy < iz; iy += 10 {
-				gridsY.MoveTo(f32.Pt(0, iy))
-				gridsY.LineTo(f32.Pt(float32(v.Dimensions.Size.X), iy))
+				gridsYZ.MoveTo(0, iy)
+				gridsYZ.LineTo(float64(X), iy)
 			}
 		}
-		v.stroke[0] = clip.Stroke{Path: gridsX.End(), Width: 1.5}.Op()
-		v.stroke[1] = clip.Stroke{Path: gridsXZ.End(), Width: 0.5}.Op()
-		v.stroke[2] = clip.Stroke{Path: gridsY.End(), Width: 0.5}.Op()
-		v.stroke[3] = clip.Stroke{Path: gridsYZ.End(), Width: 1}.Op()
+		// 开始绘制
+		ctx.SetStrokeColor(v.Fg)
+		ctx.SetStrokeWidth(1.5)
+		ctx.DrawPath(0, 0, gridsX)
+		ctx.DrawPath(0, 0, gridsY)
+		ctx.SetStrokeColor(v.ContrastBg)
+		ctx.SetStrokeWidth(0.5)
+		ctx.DrawPath(0, 0, gridsXZ)
+		ctx.DrawPath(0, 0, gridsYZ)
 	}
-	// 绘制组件边框
-	v.stroke[4] = clip.Stroke{Path: clip.RRect{
-		Rect: image.Rectangle{
-			Max: v.Dimensions.Size,
-		},
-	}.Path(&op.Ops{}), Width: 1.5}.Op()
-	v.componentListUpdate = true
+}
+
+func mix(a0, x, a1 float32) float32 {
+	if x <= a0 {
+		return a0
+	} else if x >= a1 {
+		return a1
+	}
+	return x
 }
