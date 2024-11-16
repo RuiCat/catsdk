@@ -1,10 +1,13 @@
 package webui
 
 import (
+	"device/logs"
+	"device/uuid"
 	"device/websocket"
 	_ "embed"
 	"encoding/json"
 	"net/http"
+	"net/url"
 	"strconv"
 	"sync"
 )
@@ -20,6 +23,11 @@ type EventFn func(arg any)
 // Event 事件接口
 type Event interface {
 	Close()
+	IsClose() bool
+	Key() string
+	GetConn() *websocket.Conn
+	GetRequest() *http.Request
+	SetEval(eval string)
 	CallFunc(name string, value any)
 	SetValue(name string, value any)
 	GetValue(name string) (value any)
@@ -35,14 +43,29 @@ type value struct {
 	Value any    `json:"value"`
 }
 type event struct {
+	key       string
+	request   *http.Request
 	conn      *websocket.Conn
 	isClose   bool
 	funclist  sync.Map
 	valueList sync.Map
 }
 
+func (eve *event) GetConn() *websocket.Conn {
+	return eve.conn
+}
+func (eve *event) GetRequest() *http.Request {
+	return eve.request
+}
+
+func (eve *event) Key() string {
+	return eve.key
+}
 func (eve *event) Close() {
 	eve.isClose = false
+}
+func (eve *event) IsClose() bool {
+	return !eve.isClose
 }
 func (eve *event) CallFunc(name string, val any) {
 	eve.conn.WriteJSON(&value{
@@ -57,6 +80,12 @@ func (eve *event) SetValue(name string, val any) {
 		Type:  "SetValue",
 		Name:  name,
 		Value: val,
+	})
+}
+func (eve *event) SetEval(eval string) {
+	eve.conn.WriteJSON(&value{
+		Type:  "$",
+		Value: eval,
 	})
 }
 func (eve *event) GetValue(name string) (val any) {
@@ -87,25 +116,38 @@ func (eve *event) DeleteFunc(name string) {
 	})
 }
 
-// PetUI 创建UI框架
-func PetUI(pattern string, fn func(r *http.Request, event Event)) *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
+// PteUI UI框架
+type PteUI struct {
+	*http.ServeMux
+	Pattern string
+}
+
+// AddUI 添加UI组件
+func (ui *PteUI) AddUI(pattern string, fn func(event Event)) {
+	// 界面通信过程
+	path, err := url.JoinPath(ui.Pattern, pattern)
+	logs.Panicf("函数 PetUI.AddUI 路径定义错误: %v", err != nil, err)
+	ui.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+		// 错误拦截到日志
+		logs.Recover()
 		// 升级协议
-		conn, _ := upgrader.Upgrade(w, r, nil)
+		conn, err := upgrader.Upgrade(w, r, nil)
+		logs.Panicf("函数 PetUI.AddUI->Upgrade[IP:%v] 协议升级失败: %v", err != nil, r.RemoteAddr, err)
 		defer conn.Close()
 		// 事件结构体
-		eve := &event{conn: conn, isClose: true}
-		fn(r, eve)
+		key, _ := r.Cookie("Key")
+		eve := &event{request: r, conn: conn, isClose: true, key: key.Value}
+		fn(eve)
 		val := &value{}
 		val.Type = "onopen"
 		eve.conn.WriteJSON(val)
 		for eve.isClose {
-			messageType, message, _ := conn.ReadMessage()
+			messageType, message, err := conn.ReadMessage()
 			if messageType == -1 {
 				eve.isClose = false
 				return
 			}
+			logs.Panicf("函数 PetUI.AddUI->ReadMessage[IP:%v] 读取数据失败: %v", err != nil, r.RemoteAddr, err)
 			json.Unmarshal(message, val)
 			// 处理事件
 			switch val.Type {
@@ -120,14 +162,37 @@ func PetUI(pattern string, fn func(r *http.Request, event Event)) *http.ServeMux
 					(fn.(EventFn))(val.Value)
 				}
 			default:
+				logs.Printf("函数 PetUI.AddUI 异常的访问: %v", true, r.RemoteAddr)
 			}
 		}
 	})
+}
+
+// NewPetUI 添加新界面
+func NewPetUI(mux *http.ServeMux, pattern string, fn func(event Event)) *PteUI {
+	petui := &PteUI{ServeMux: mux, Pattern: pattern}
+	// 界面初始化
+	petui.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
+		// ID设置
+		key, _ := r.Cookie("Key")
+		if key == nil {
+			id, _ := uuid.NewV4()
+			http.SetCookie(w, &http.Cookie{
+				Name:  "Key",
+				Value: id.String(),
+			})
+		}
+		w.Write([]byte(`<!DOCTYPE html><html><head><meta charset="utf-8">
+		<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport"><script src="` + pattern + `.js"></script>
+		<script>window.onload = ()=>{PetUIExpand.Bind({},{ url: PetUIExpand.URL+"ws" });};</script></head><body></body></html>`))
+	})
 	// 打包JS库
-	mux.HandleFunc(pattern+".js", func(w http.ResponseWriter, r *http.Request) {
+	petui.HandleFunc(pattern+".js", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/javascript;charset=utf-8")
 		w.Header().Set("Content-Length", webPetuiLength)
 		w.Write(webPetui)
 	})
-	return mux
+	// 默认通信
+	petui.AddUI("ws", fn)
+	return petui
 }

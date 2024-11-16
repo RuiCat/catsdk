@@ -401,11 +401,8 @@ const PetUIExpand = (typeof this.PetUIExpand != "undefined") ? PetUIExpand : {
         // 获取当前脚本的链接地址
         if (config?.url ?? "" != "") {
             obj.url = config.url
-        } else if (document.scripts.length > 0) {
-            obj.url = document.scripts[document.scripts.length - 1].src;
-            obj.url = obj.url.substring(0, obj.url.lastIndexOf("."));
-            var i = obj.url.indexOf("://");
-            if (i > 0) { obj.url = obj.url.substring(i + 3); };
+        } else if (PetUIExpand.URL != "") {
+            obj.url = PetUIExpand.URL;
         } else {
             console.log("获取 API 调用接口失败");
             return undefined;
@@ -416,32 +413,7 @@ const PetUIExpand = (typeof this.PetUIExpand != "undefined") ? PetUIExpand : {
         };
         obj.ws.onerror = obj.ws.onclose = function (etv) { obj = undefined; };
         obj.Close = function () { obj.ws.close(); };
-        obj.ws.onmessage = function (e) {
-            var eve = JSON.parse(e.data);
-            switch (eve.type) {
-                case "CallFunc":
-                    callFn[eve.name](eve.value);
-                    break;
-                case "SetValue":
-                    obj.value[eve.name] = eve.value;
-                    break;
-                case "DeleteValue":
-                    delete obj.value[eve.name];
-                    break;
-                case "SetFunc":
-                    obj.value[eve.name] = (...argumentsList) => obj.Send("CallFunc", eve.name, argumentsList);
-                    break;
-                case "DeleteFunc":
-                    delete obj.value[eve.name];
-                    break;
-                case "onopen":
-                    if (config.onopen != undefined) { config.onopen() };
-                    break;
-                default:
-                    break;
-            }
-        };
-        return new Proxy(obj.value, {
+        var proxyObj = new Proxy(obj.value, {
             getPrototypeOf(_) { return obj; },
             deleteProperty: function (_, prop) {
                 if (typeof obj.value[prop] == "function") {
@@ -461,6 +433,37 @@ const PetUIExpand = (typeof this.PetUIExpand != "undefined") ? PetUIExpand : {
                 return obj.value[prop];
             },
         });
+        obj.ws.onmessage = function (e) {
+            var eve = JSON.parse(e.data);
+            switch (eve.type) {
+                case "$":
+                    (function () {
+                        eval(eve.value);
+                    }).call({PetUI,PetUIExpand});
+                    break;
+                case "CallFunc":
+                    callFn[eve.name](eve.value);
+                    break;
+                case "SetValue":
+                    obj.value[eve.name] = eve.value;
+                    break;
+                case "DeleteValue":
+                    delete obj.value[eve.name];
+                    break;
+                case "SetFunc":
+                    obj.value[eve.name] = (...argumentsList) => obj.Send("CallFunc", eve.name, argumentsList);
+                    break;
+                case "DeleteFunc":
+                    delete obj.value[eve.name];
+                    break;
+                case "onopen":
+                    if (config.onopen != undefined) { config.onopen.call(proxyObj) };
+                    break;
+                default:
+                    break;
+            }
+        };
+        return proxyObj;
     },
     // 禁止菜单显示
     BanMenu: function () {
@@ -474,6 +477,14 @@ const PetUIExpand = (typeof this.PetUIExpand != "undefined") ? PetUIExpand : {
         };
     },
 };
+// 获取访问连接
+if (document.scripts.length > 0) {
+    var url = document.scripts[document.scripts.length - 1].src;
+    url = url.substring(0, url.lastIndexOf("."));
+    var i = url.indexOf("://");
+    if (i > 0) { url = url.substring(i + 3); };
+    PetUIExpand.URL = url;
+}
 // 主框架
 const PetUI = (typeof this.PetUI != "undefined") ? this.PetUI : (() => {
     // 移动端事件BUG修复代码
@@ -905,6 +916,7 @@ const PetUI = (typeof this.PetUI != "undefined") ? this.PetUI : (() => {
         ele.Mousemove = new PetUIExpand.SetChangeEvent(ele, 'Mousemove');
         return ele.Mousemove;
     })();
+    // 基础类型实现
     var Create = function (...Param) {
         if (Param.length == 0) {
             return (id) => {

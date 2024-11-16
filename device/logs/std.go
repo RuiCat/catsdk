@@ -42,7 +42,8 @@ func Exit() {
 		return true
 	})
 	if len(confing) != 0 {
-		Panicf("储存日志失败:%s ", SetConfing("LogConfing", &confing))
+		err := SetConfing("LogConfing", &confing)
+		Panicf("储存日志失败:%s ", err != nil, err)
 	}
 	// 结束程序
 	os.Exit(0)
@@ -57,7 +58,7 @@ func init() {
 	// os.Stdout 转发
 	go func() {
 		r, w, err := os.Pipe()
-		Panicf("日志 Pipe 创建失败: %s", err)
+		Panicf("日志 Pipe 创建失败: %s", err != nil, err)
 		os.Stdout = w
 		for err != io.EOF {
 			_, err = io.Copy(CodePrint.Info(), r)
@@ -66,7 +67,7 @@ func init() {
 	// os.Stderr 转发
 	go func() {
 		r, w, err := os.Pipe()
-		Panicf("日志 Pipe 创建失败: %s", err)
+		Panicf("日志 Pipe 创建失败: %s", err != nil, err)
 		os.Stderr = w
 		for err != io.EOF {
 			_, err = io.Copy(CodeError.Info(), r)

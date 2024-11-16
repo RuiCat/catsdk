@@ -45,9 +45,7 @@ func (confing ConfingLog) New() {
 		// 将日志写入文件
 		if info.IsFile {
 			f, err := os.OpenFile(info.FileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-			if err != nil {
-				Panicf("无法创建日志文件: %s", err)
-			}
+			Panicf("无法创建日志文件: %s", err != nil, err)
 			lw = append(lw, f)
 		}
 		// 将日志写入远程
@@ -57,7 +55,7 @@ func (confing ConfingLog) New() {
 		// 处理日志转发
 		if len(lw) != 0 {
 			r, w, err := os.Pipe()
-			Panicf("日志 Pipe 创建失败: %s", err)
+			Panicf("日志 Pipe 创建失败: %s", err != nil, err)
 			info.LogWriter = w
 			info.close = func() {
 				w.Close()
@@ -116,7 +114,8 @@ func init() {
 		{Name: "FatalLevel", IsConfingDB: true, Level: FatalLevel, FileName: "Fatal.log"},
 		{Name: "UnknownLevel", IsConfingDB: true, Level: UnknownLevel, FileName: "Unknown.log"},
 	}
-	Panicf("默认日志初始化失败:%s ", GetConfing("LogConfing", &confing))
+	err := GetConfing("LogConfing", &confing)
+	Panicf("默认日志初始化失败:%s ", err != nil, err)
 	// 创建日志
 	for _, cfg := range confing {
 		cfg.New()
@@ -240,57 +239,37 @@ exit:
 // IfPrint 输出错误/日志信息
 func IfPrint(is bool, err error) {
 	if is && err != nil {
-		switch v := err.(type) {
-		case LogDetails:
-			v.Code.Error(v)
-		case *LogDetails:
-			v.Code.Error(v)
-		default:
-			CodePrint.Print(v)
-		}
+		CodePrint.Print(err)
 	}
 }
 
 // Print 输出错误/日志信息
 func Print(err any) {
 	if err != nil {
-		switch v := err.(type) {
-		case LogDetails:
-			v.Code.Error(v)
-		case *LogDetails:
-			v.Code.Error(v)
-		default:
-			CodePrint.Print(v)
-		}
+		CodePrint.Print(err)
+	}
+}
+
+// Printf 输出错误/日志信息
+func Printf(format string, is bool, v ...any) {
+	if is {
+		CodePrint.Print(fmt.Sprintf(format, v...))
 	}
 }
 
 // Panic 输出错误/日志信息
+// 遇到无法修复错误退出程序执行
 func Panic(err any) {
 	if err != nil {
-		switch v := err.(type) {
-		case LogDetails:
-			v.Code.Error(v)
-		case *LogDetails:
-			v.Code.Error(v)
-		default:
-			panic(v)
-		}
+		panic(err)
 	}
 }
 
 // Panicf 输出错误/日志信息
-func Panicf(format string, err any) {
-	if err != nil {
-		a := fmt.Sprintf(format, err)
-		switch v := err.(type) {
-		case LogDetails:
-			v.Code.Print(a)
-		case *LogDetails:
-			v.Code.Print(a)
-		default:
-			panic(a)
-		}
+// 遇到无法修复错误退出程序执行
+func Panicf(format string, is bool, v ...any) {
+	if is {
+		panic(fmt.Errorf(format, v...))
 	}
 }
 
