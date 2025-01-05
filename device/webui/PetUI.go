@@ -14,8 +14,11 @@ import (
 
 //go:embed PetUI.js
 var webPetui []byte
-var webPetuiLength string = strconv.FormatInt(int64(len(webPetui)), 10)
-var upgrader = websocket.Upgrader{}
+
+var (
+	webPetuiLength string = strconv.FormatInt(int64(len(webPetui)), 10)
+	upgrader              = websocket.Upgrader{}
+)
 
 // EventFn 函数接口
 type EventFn func(arg any)
@@ -30,6 +33,7 @@ type Event interface {
 	SetEval(eval string)
 	CallFunc(name string, value any)
 	SetValue(name string, value any)
+	SetValueMap(value map[string]any)
 	GetValue(name string) (value any)
 	DeleteValue(name string)
 	SetFunc(name string, fn EventFn)
@@ -54,6 +58,7 @@ type event struct {
 func (eve *event) GetConn() *websocket.Conn {
 	return eve.conn
 }
+
 func (eve *event) GetRequest() *http.Request {
 	return eve.request
 }
@@ -61,12 +66,15 @@ func (eve *event) GetRequest() *http.Request {
 func (eve *event) Key() string {
 	return eve.key
 }
+
 func (eve *event) Close() {
 	eve.isClose = false
 }
+
 func (eve *event) IsClose() bool {
 	return !eve.isClose
 }
+
 func (eve *event) CallFunc(name string, val any) {
 	eve.conn.WriteJSON(&value{
 		Type:  "CallFunc",
@@ -74,6 +82,7 @@ func (eve *event) CallFunc(name string, val any) {
 		Value: val,
 	})
 }
+
 func (eve *event) SetValue(name string, val any) {
 	eve.valueList.Store(name, val)
 	eve.conn.WriteJSON(&value{
@@ -82,18 +91,26 @@ func (eve *event) SetValue(name string, val any) {
 		Value: val,
 	})
 }
+func (eve *event) SetValueMap(value map[string]any) {
+	for key, value := range value {
+		eve.SetValue(key, value)
+	}
+}
+
 func (eve *event) SetEval(eval string) {
 	eve.conn.WriteJSON(&value{
 		Type:  "$",
 		Value: eval,
 	})
 }
+
 func (eve *event) GetValue(name string) (val any) {
 	if v, ok := eve.valueList.Load(name); ok {
 		return v
 	}
 	return nil
 }
+
 func (eve *event) DeleteValue(name string) {
 	eve.valueList.Delete(name)
 	eve.conn.WriteJSON(&value{
@@ -101,6 +118,7 @@ func (eve *event) DeleteValue(name string) {
 		Name: name,
 	})
 }
+
 func (eve *event) SetFunc(name string, fn EventFn) {
 	eve.funclist.Store(name, fn)
 	eve.conn.WriteJSON(&value{
@@ -108,6 +126,7 @@ func (eve *event) SetFunc(name string, fn EventFn) {
 		Name: name,
 	})
 }
+
 func (eve *event) DeleteFunc(name string) {
 	eve.funclist.Delete(name)
 	eve.conn.WriteJSON(&value{
@@ -119,15 +138,42 @@ func (eve *event) DeleteFunc(name string) {
 // PteUI UI框架
 type PteUI struct {
 	*http.ServeMux
-	Pattern string
+	Pattern  string
+	CallList map[string]func(petui Event, value any)
 }
 
-// AddUI 添加UI组件
-func (ui *PteUI) AddUI(pattern string, fn func(event Event)) {
+func (pteUI *PteUI) Bing(name string, fn func(petui Event, value any)) {
+	pteUI.CallList[name] = fn
+}
+
+// NewPetUI 添加新界面
+func NewPetUI(mux *http.ServeMux, pattern string, initFn func(event Event)) *PteUI {
+	path, err := url.JoinPath(pattern)
+	logs.Panicf("函数 PetUI.NewPetUI 路径定义错误: %v", err != nil, err)
+	petui := &PteUI{ServeMux: mux, Pattern: path, CallList: map[string]func(petui Event, value any){}}
+	// 界面初始化
+	petui.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+		// ID设置
+		key, _ := r.Cookie("Key")
+		if key == nil {
+			id, _ := uuid.NewV4()
+			http.SetCookie(w, &http.Cookie{
+				Name:  "Key",
+				Value: id.String(),
+			})
+		}
+		w.Write([]byte(`<!DOCTYPE html><html><head><meta charset="utf-8">
+		<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport"><script src="` + path + `.js"></script>
+		<script>window.onload = ()=>{$=PetUIExpand.Bind({},{ url: PetUIExpand.URL+"ws" });};</script></head><body></body></html>`))
+	})
+	// 打包JS库
+	petui.HandleFunc(path+".js", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/javascript;charset=utf-8")
+		w.Header().Set("Content-Length", webPetuiLength)
+		w.Write(webPetui)
+	})
 	// 界面通信过程
-	path, err := url.JoinPath(ui.Pattern, pattern)
-	logs.Panicf("函数 PetUI.AddUI 路径定义错误: %v", err != nil, err)
-	ui.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+	petui.HandleFunc(path+"ws", func(w http.ResponseWriter, r *http.Request) {
 		// 错误拦截到日志
 		logs.Recover()
 		// 升级协议
@@ -137,9 +183,12 @@ func (ui *PteUI) AddUI(pattern string, fn func(event Event)) {
 		// 事件结构体
 		key, _ := r.Cookie("Key")
 		eve := &event{request: r, conn: conn, isClose: true, key: key.Value}
-		fn(eve)
+		initFn(eve)
 		val := &value{}
 		val.Type = "onopen"
+		for name := range petui.CallList {
+			eve.SetValue(name, nil)
+		}
 		eve.conn.WriteJSON(val)
 		for eve.isClose {
 			messageType, message, err := conn.ReadMessage()
@@ -153,6 +202,10 @@ func (ui *PteUI) AddUI(pattern string, fn func(event Event)) {
 			switch val.Type {
 			case "SetValue":
 				eve.valueList.Store(val.Name, val.Value)
+				// 拦截前端的数据修改
+				if fn, ok := petui.CallList[val.Name]; ok {
+					fn(eve, val.Value)
+				}
 			case "DeleteFunc":
 				eve.funclist.Delete(val.Name)
 			case "DeleteValue":
@@ -166,33 +219,5 @@ func (ui *PteUI) AddUI(pattern string, fn func(event Event)) {
 			}
 		}
 	})
-}
-
-// NewPetUI 添加新界面
-func NewPetUI(mux *http.ServeMux, pattern string, fn func(event Event)) *PteUI {
-	petui := &PteUI{ServeMux: mux, Pattern: pattern}
-	// 界面初始化
-	petui.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
-		// ID设置
-		key, _ := r.Cookie("Key")
-		if key == nil {
-			id, _ := uuid.NewV4()
-			http.SetCookie(w, &http.Cookie{
-				Name:  "Key",
-				Value: id.String(),
-			})
-		}
-		w.Write([]byte(`<!DOCTYPE html><html><head><meta charset="utf-8">
-		<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport"><script src="` + pattern + `.js"></script>
-		<script>window.onload = ()=>{PetUIExpand.Bind({},{ url: PetUIExpand.URL+"ws" });};</script></head><body></body></html>`))
-	})
-	// 打包JS库
-	petui.HandleFunc(pattern+".js", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/javascript;charset=utf-8")
-		w.Header().Set("Content-Length", webPetuiLength)
-		w.Write(webPetui)
-	})
-	// 默认通信
-	petui.AddUI("ws", fn)
 	return petui
 }

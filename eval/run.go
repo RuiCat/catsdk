@@ -1,7 +1,5 @@
 package eval
 
-//go:generate go run ../internal/cmd/genop/genop.go
-
 import (
 	"errors"
 	"fmt"
@@ -987,7 +985,20 @@ func genFunctionWrapper(n *node) func(*frame) reflect.Value {
 	}
 	funcType := n.typ.TypeOf()
 
+	value := genValue(n)
+	isDefer := false
+	if n.anc != nil && n.anc.anc != nil && n.anc.anc.kind == deferStmt {
+		isDefer = true
+	}
+
 	return func(f *frame) reflect.Value {
+		v := value(f)
+		if !isDefer && v.Kind() == reflect.Func {
+			// fixes #1634, if v is already a func, then don't re-wrap
+			// because original wrapping cloned the frame but this doesn't
+			return v
+		}
+
 		return reflect.MakeFunc(funcType, func(in []reflect.Value) []reflect.Value {
 			// Allocate and init local frame. All values to be settable and addressable.
 			fr := newFrame(f, len(def.types), f.runid())
@@ -1399,6 +1410,13 @@ func call(n *node) {
 			return tnext
 		}
 		runCfg(def.child[3].start, nf, def, n)
+
+		// Set return values
+		for i, v := range rvalues {
+			if v != nil {
+				v(f).Set(nf.data[i])
+			}
+		}
 
 		// Handle branching according to boolean result
 		if fnext != nil && !nf.data[0].Bool() {
@@ -2873,6 +2891,72 @@ func _range(n *node) {
 	}
 }
 
+func rangeInt(n *node) {
+	fmt.Println("???")
+	ixn := n.child[0]
+	index0 := ixn.findex // array index location in frame
+	index2 := index0 - 1 // max
+	fnext := getExec(n.fnext)
+	tnext := getExec(n.tnext)
+
+	var value func(*frame) reflect.Value
+	mxn := n.child[1]
+	value = genValue(mxn)
+	n.exec = func(f *frame) bltn {
+		rv := f.data[index0]
+		rv.SetInt(rv.Int() + 1)
+		if int(rv.Int()) >= int(f.data[index2].Int()) {
+			return fnext
+		}
+		return tnext
+	}
+
+	// Init sequence
+	next := n.exec
+	index := index0
+	ixn.exec = func(f *frame) bltn {
+		f.data[index2] = value(f) // set max
+		f.data[index].SetInt(-1)  // assing index value
+		return next
+	}
+}
+
+func loopVarKey(n *node) {
+	ixn := n.anc.anc.child[0]
+	next := getExec(n.tnext)
+	n.exec = func(f *frame) bltn {
+		rv := f.data[ixn.findex]
+		nv := reflect.New(rv.Type()).Elem()
+		nv.Set(rv)
+		f.data[n.findex] = nv
+		return next
+	}
+}
+
+func loopVarVal(n *node) {
+	vln := n.anc.anc.child[1]
+	next := getExec(n.tnext)
+	n.exec = func(f *frame) bltn {
+		rv := f.data[vln.findex]
+		nv := reflect.New(rv.Type()).Elem()
+		nv.Set(rv)
+		f.data[n.findex] = nv
+		return next
+	}
+}
+
+func loopVarFor(n *node) {
+	ixn := n.anc.anc.child[0].child[0]
+	next := getExec(n.tnext)
+	n.exec = func(f *frame) bltn {
+		fv := f.data[ixn.findex]
+		nv := reflect.New(fv.Type()).Elem()
+		nv.Set(fv)
+		f.data[n.findex] = nv
+		return next
+	}
+}
+
 func rangeChan(n *node) {
 	i := n.child[0].findex        // element index location in frame
 	value := genValue(n.child[1]) // chan
@@ -2901,11 +2985,10 @@ func rangeMap(n *node) {
 	index2 := index0 - 1        // iterator for range, always just behind index0
 	fnext := getExec(n.fnext)
 	tnext := getExec(n.tnext)
+	value := genValue(n.child[len(n.child)-2]) // map value
 
-	var value func(*frame) reflect.Value
-	if len(n.child) == 4 {
-		index1 := n.child[1].findex  // map value location in frame
-		value = genValue(n.child[2]) // map
+	if len(n.child) == 4 && n.child[1].ident != "_" {
+		index1 := n.child[1].findex // map value location in frame
 		n.exec = func(f *frame) bltn {
 			iter := f.data[index2].Interface().(*reflect.MapIter)
 			if !iter.Next() {
@@ -2916,7 +2999,6 @@ func rangeMap(n *node) {
 			return tnext
 		}
 	} else {
-		value = genValue(n.child[1]) // map
 		n.exec = func(f *frame) bltn {
 			iter := f.data[index2].Interface().(*reflect.MapIter)
 			if !iter.Next() {
@@ -2932,6 +3014,55 @@ func rangeMap(n *node) {
 	n.child[0].exec = func(f *frame) bltn {
 		f.data[index2].Set(reflect.ValueOf(value(f).MapRange()))
 		return next
+	}
+}
+
+func rangeFunT(n *node) {
+	// 获取循环变量
+	var k, v *node
+	if len(n.child) == 4 {
+		k = n.child[0]
+		v = n.child[1]
+		if k.ident == "_" {
+			k = nil
+		}
+	} else {
+		v = n.child[0]
+	}
+	// 函数变量
+	valueof := n.child[len(n.child)-2]
+	value := genValue(valueof)
+	// 核心实现
+	tnext := n.tnext
+	fnext := getExec(n.fnext)
+	var breakOk bool
+	n.exec = func(f *frame) bltn {
+		breakOk = true
+		return nil
+	}
+	n.child[0].exec = func(f *frame) bltn {
+		// 函数调用
+		i := int64(0)
+		value(f).Call([]reflect.Value{
+			reflect.MakeFunc(valueof.typ.arg[0].rtype, func(args []reflect.Value) (results []reflect.Value) {
+				// 传递参数
+				f.data[v.findex].Set(args[0])
+				if k != nil {
+					f.data[k.findex].SetInt(i)
+					i++
+				}
+				// 执行块代码
+				breakOk = false
+				runCfg(tnext, f, n, n)
+				//  返回执行结果
+				results = append(results, reflect.ValueOf(breakOk))
+				return results
+			}),
+		})
+		if breakOk {
+			return fnext
+		}
+		return nil
 	}
 }
 

@@ -397,7 +397,18 @@ const PetUIExpand = (typeof this.PetUIExpand != "undefined") ? PetUIExpand : {
      * @returns         构建的后端结构体
      */
     Bind: function (callFn = {}, config = { onopen: undefined, url: "" }) {
-        var obj = { url: "", value: {} };
+        var obj = {
+            url: "",
+            value: {},
+            valueCall: {},
+        };
+        obj.value.Bind = function (name, fun) {
+            if (obj.valueCall[name]) {
+                obj.valueCall[name].push(fun)
+            } else {
+                obj.valueCall[name] = [fun]
+            }
+        }
         // 获取当前脚本的链接地址
         if (config?.url ?? "" != "") {
             obj.url = config.url
@@ -413,6 +424,7 @@ const PetUIExpand = (typeof this.PetUIExpand != "undefined") ? PetUIExpand : {
         };
         obj.ws.onerror = obj.ws.onclose = function (etv) { obj = undefined; };
         obj.Close = function () { obj.ws.close(); };
+        // 拦截对对象元素的操作并将操作转发到后端
         var proxyObj = new Proxy(obj.value, {
             getPrototypeOf(_) { return obj; },
             deleteProperty: function (_, prop) {
@@ -422,10 +434,12 @@ const PetUIExpand = (typeof this.PetUIExpand != "undefined") ? PetUIExpand : {
                     obj.Send("DeleteValue", prop);
                 }
                 delete obj.value[prop];
+                delete obj.valueCall[prop];
             },
             set: function (_, prop, value) {
                 if (typeof obj.value[prop] != "function") {
                     obj.value[prop] = value;
+                    obj.value[prop]
                     obj.Send("SetValue", prop, value);
                 }
             },
@@ -433,19 +447,23 @@ const PetUIExpand = (typeof this.PetUIExpand != "undefined") ? PetUIExpand : {
                 return obj.value[prop];
             },
         });
+        // 处理后端传递的指令
         obj.ws.onmessage = function (e) {
             var eve = JSON.parse(e.data);
             switch (eve.type) {
                 case "$":
                     (function () {
                         eval(eve.value);
-                    }).call({PetUI,PetUIExpand});
+                    }).call({ PetUI, PetUIExpand, Vlaue: proxyObj });
                     break;
                 case "CallFunc":
                     callFn[eve.name](eve.value);
                     break;
                 case "SetValue":
                     obj.value[eve.name] = eve.value;
+                    obj.valueCall[eve.name]?.forEach((fun) => {
+                        fun(eve.name, eve.value)
+                    })
                     break;
                 case "DeleteValue":
                     delete obj.value[eve.name];
@@ -562,19 +580,23 @@ const PetUI = (typeof this.PetUI != "undefined") ? this.PetUI : (() => {
         },
         // style 设置函数
         CSS: function (style) {
-            var typ = typeof style;
-            if (typ == "object") {
-                var css = "";
-                if (this.style) {
-                    for (var x in style) {
-                        css += ";" + x + ":" + style[x];
+            switch (typeof style) {
+                case "object":
+                    var css = "";
+                    if (this.style) {
+                        for (var x in style) {
+                            css += ";" + x + ":" + style[x];
+                        }
                     }
-                }
-                if (css != "") {
-                    this.style.cssText += css;
-                }
-            } else if (typ == "string") {
-                this.style = this.cssText + ";" + style;
+                    if (css != "") {
+                        this.style.cssText += css;
+                    }
+                    break;
+                case "string":
+                    this.style = this.cssText + ";" + style;
+                    break;
+                default:
+                    break;
             }
             return this;
         },
@@ -611,6 +633,7 @@ const PetUI = (typeof this.PetUI != "undefined") ? this.PetUI : (() => {
                     this.classList.toggle(style[i], state);
                 }
             }
+            return this;
         },
         // 事件注册
         AddHandler: function (type, handler, ...use) {
@@ -764,7 +787,13 @@ const PetUI = (typeof this.PetUI != "undefined") ? this.PetUI : (() => {
                 $ele = document.getElementById(elementId);
             } else {
                 if (typeof elementId == "string") {
-                    $ele = document.createElement(elementId);
+                    try {
+                        $ele = document.createElement(elementId);
+                    } catch (error) {
+                        var div = document.createElement("div");
+                        div.innerHTML = elementId;
+                        $ele = div.firstChild;
+                    }
                 } else {
                     if (typeof elementId.Create != "undefined") {
                         return elementId;
@@ -830,6 +859,7 @@ const PetUI = (typeof this.PetUI != "undefined") ? this.PetUI : (() => {
                     ele.AddHandler("mousemove", undefined);
                 };
             };
+            // 构建对象
             return ele;
         },
     };
@@ -918,65 +948,40 @@ const PetUI = (typeof this.PetUI != "undefined") ? this.PetUI : (() => {
     })();
     // 基础类型实现
     var Create = function (...Param) {
-        if (Param.length == 0) {
-            return (id) => {
-                switch (typeof Param[0]) {
-                    case "string":
-                        if (Param[0][0] == "#") {
-                            return $.Create(Param[0].slice(1, Param[0].length), true);
-                        } else {
-                            return $.Create(Param[0]);
-                        }
-                    case "object":
-                        return Create.call(this, id);
-                    default:
-                        return undefined;
-                }
-            }
-        }
+        // 得到父对象
         var ele = this.Child ? this : undefined;
-        var $ele = ele;
+        if (ele == undefined && Param.length > 1) {
+            if (Param[0].Create == undefined) {
+                ele = PetUI(Param[0]);
+            } else {
+                ele = Param[0];
+            }
+            Param = Param.slice(1, Param.length)
+        };
+        var $ele = ele; // 记录父对象 ele是父对象 $ele 是当前对象
+        // 处理连续创建
         Param.forEach(element => {
             if (typeof element == "string") {
-                if (element[0] == "#") {
-                    $ele = $.Create(element.slice(1, element.length), true);
-                } else {
-                    $ele = $.Create(element);
-                };
+                switch (element[0]) {
+                    case "#":
+                        if (element.length > 1) {
+                            $ele = $.Create(element.slice(1, element.length), true);
+                        }
+                        break;
+                    default:
+                        $ele = $.Create(element);
+                        break;
+                }
                 ele = ele ? ele.Child($ele) : ele = $ele;
             } else if (typeof element.nodeName != "undefined") {
                 $ele = $.Create(element);
                 ele = ele ? ele.Child($ele) : ele = $ele;
             } else if (element instanceof Array) {
-                if ($ele == undefined) {
-                    $ele = {
-                        Create: (param) => {
-                            ele = Create(param);
-                            return ele;
-                        }
-                    };
-                };
-                var node = $ele;
-                var $node = undefined;
-                element.forEach(element => {
-                    if (element instanceof Object) {
-                        $node = Create.call($node, element);
-                        node = $node;
-                        return;
-                    } else {
-                        $node = Create(element);
-                    }
-                    if (ele == undefined) {
-                        ele = $node;
-                    } else {
-                        node.Child($node)
-                    }
-                    node = $node;
-                });
+                $ele = PetUI($ele, ...element);
             } else if (element instanceof Object) {
                 $ele = $ele ? $ele : ele;
                 for (let k in element) {
-                    if (element instanceof Function) {
+                    if ($ele[k] instanceof Function) {
                         $ele[k](...element[k]);
                     } else {
                         $ele[k] = element[k];
@@ -984,10 +989,29 @@ const PetUI = (typeof this.PetUI != "undefined") ? this.PetUI : (() => {
                 }
             }
         });
+        // 返回构建
         if (ele == undefined) {
             return this;
         }
         ele.Create = Create;
+        // 数据绑定
+        let fn = (e) = {};
+        fn = (e) => {
+            for (let index = 0; index < e.length; index++) {
+                let q = e[index]
+                if (q.outerText?.indexOf("$") == -1) {
+                    return;
+                }
+                if (q.childNodes?.length == 0) {
+                    let value = q.nodeValue.split("$");
+                    q.nodeValue = value[0]
+                    q.nodeValue += this.$[value[1]]
+                } else {
+                    fn(q.childNodes);
+                }
+            };
+        };
+        fn(ele.childNodes);
         return ele;
     };
     // 主框架实现

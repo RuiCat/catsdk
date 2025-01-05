@@ -418,8 +418,9 @@ func (interp *Interpreter) gtaRetry(nodes []*node, importPath, pkgName string) e
 			if err, ok := n.meta.(error); ok {
 				return err
 			}
+		default:
+			return n.cfgErrorf("constant definition loop")
 		}
-		return n.cfgErrorf("constant definition loop")
 	}
 	return nil
 }
