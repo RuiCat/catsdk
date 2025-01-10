@@ -2,15 +2,24 @@ package itabs
 
 import (
 	"reflect"
+	"runtime"
 	"unsafe"
 )
 
-//go:linkname iteraiite_itabs runtime.iterate_itabs
-func iteraiite_itabs(fn func(unsafe.Pointer))
+var FtabMap = map[string]*runtime.Func{}
 
-// IterateItabs 获取系统导出表
-func IterateItabs(fn func(reflect.Type)) {
-	iteraiite_itabs(func(p unsafe.Pointer) {
-		fn(reflect.TypeOf(*(*any)(p)))
-	})
+func init() {
+	pc := make([]uintptr, 255)
+	frames := runtime.CallersFrames([]uintptr{pc[runtime.Callers(0, pc)-1]})
+	frame, ok := frames.Next()
+	if !ok {
+		funcInfo := reflect.ValueOf(frame).FieldByName("funcInfo")
+		datap := funcInfo.FieldByName("datap")
+		ftab := datap.Elem().FieldByName("ftab")
+		pclntable := datap.Elem().FieldByName("pclntable").Pointer()
+		for i := range ftab.Len() {
+			funcPtr := (*runtime.Func)(unsafe.Pointer(pclntable + uintptr(ftab.Index(i).FieldByName("funcoff").Uint())))
+			FtabMap[funcPtr.Name()] = funcPtr
+		}
+	}
 }
