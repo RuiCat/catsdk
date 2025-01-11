@@ -39,18 +39,19 @@ func operator(n *node) {
 	next := getExec(n.tnext)
 	typ := n.typ.concrete().TypeOf()
 	dest := genValueOutput(n, typ)
+	va := genValue(n.child[0])
 	vb := genValue(n.child[1])
 	fn := &node{}
 	fn.child = []*node{n.child[0], n.child[0].typ.getMethod(actionsOperator[n.action])}
 	fn.typ = n.child[1].typ
 	fn.recv = n.child[1].recv
-	fn.val = n.child[0]
+	fn.val = nil
 	fn.gen = nop
 	fn.action = aGetSym
 	if err := matchSelectorMethod(n.scope, fn); err == nil {
 		vfn := genFunctionWrapper(fn)
 		(*n).exec = func(f *frame) bltn {
-			dest(f).Set(vfn(f).Call([]reflect.Value{vb(f)})[0])
+			dest(f).Set(vfn(f).Call([]reflect.Value{va(f), vb(f)})[0])
 			return next
 		}
 	} else {

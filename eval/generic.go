@@ -85,7 +85,7 @@ func genAST(sc *scope, root *node, types []*itype) (*node, bool, error) {
 
 			// Node is the receiver of a generic method.
 			if root.kind == funcDecl && n.anc == root && childPos(n) == 0 && len(n.child) > 0 {
-				rtn := n.child[0].child[1]
+				rtn := n.child[0].child[0]
 				// Method receiver is a generic type if it takes some type parameters.
 				if rtn.kind == indexExpr || rtn.kind == indexListExpr || (rtn.kind == starExpr && (rtn.child[0].kind == indexExpr || rtn.child[0].kind == indexListExpr)) {
 					if rtn.kind == starExpr {
@@ -167,7 +167,7 @@ func genAST(sc *scope, root *node, types []*itype) (*node, bool, error) {
 	}
 	if rtname != "" {
 		// Replace method receiver type by synthetized ident.
-		nod := r.child[0].child[0].child[1]
+		nod := r.child[0].child[0].child[0]
 		if recvrPtr {
 			nod = nod.child[0]
 		}
