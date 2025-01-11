@@ -7,8 +7,9 @@ import (
 )
 
 var FtabMap = map[string]*runtime.Func{}
-var RtypeMap = map[string]reflect.Type{}
+var RtypeMap = map[any]reflect.Type{}
 
+// -ldflags="-s"
 func init() {
 	pc := make([]uintptr, 255)
 	frames := runtime.CallersFrames([]uintptr{pc[runtime.Callers(0, pc)-1]})
@@ -28,8 +29,8 @@ func init() {
 		types := uintptr(datap.FieldByName("types").Uint())
 		typelinks := datap.FieldByName("typelinks")
 		for i := range typelinks.Len() {
-			typeAt := reflect.NewAt(rtype, unsafe.Pointer(types+uintptr(typelinks.Index(i).Int()))).Type()
-			RtypeMap[typeAt.Name()] = typeAt
+			typeAt := reflect.NewAt(rtype, unsafe.Pointer(types+uintptr(typelinks.Index(i).Int())))
+			RtypeMap[typeAt.Interface()] = typeAt.Type()
 		}
 	}
 }
