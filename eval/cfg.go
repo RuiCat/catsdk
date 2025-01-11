@@ -225,25 +225,14 @@ func (interp *Interpreter) cfg(root *node, sc *scope, importPath, pkgName string
 							}
 						}
 						if !ok {
-							err = c.cfgErrorf("函数类型不符号语法: %s", o.typ)
+							err = c.cfgErrorf("函数类型不符合语法: %s", o.typ)
 							return false
 						}
-						// 处理变量
-						//@ 原始处理不知道怎么处理的只能这样实现了
 						if v != nil {
-							vtyp = sc.getType("int")
-							vindex := sc.add(vtyp)
-							k.typ = vtyp
-							k.findex = vindex
-							sc.sym[k.ident] = &symbol{index: vindex, kind: varSym, typ: vtyp}
-						} else {
-							v = n.anc.child[0]
+							err = c.cfgErrorf("函数类型不符合语法 %s 变量不应该存在此语法操作", k.ident)
+							return false
 						}
-						kindex := sc.add(nodeType)
-						sc.sym[v.ident] = &symbol{index: kindex, kind: varSym, typ: nodeType}
-						v.typ = nodeType
-						v.findex = kindex
-						return true
+						ktyp = nodeType
 					}
 					kindex := sc.add(ktyp)
 					sc.sym[k.ident] = &symbol{index: kindex, kind: varSym, typ: ktyp}

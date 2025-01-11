@@ -3019,16 +3019,7 @@ func rangeMap(n *node) {
 
 func rangeFunT(n *node) {
 	// 获取循环变量
-	var k, v *node
-	if len(n.child) == 4 {
-		k = n.child[0]
-		v = n.child[1]
-		if k.ident == "_" {
-			k = nil
-		}
-	} else {
-		v = n.child[0]
-	}
+	var v *node = n.child[0]
 	// 函数变量
 	valueof := n.child[len(n.child)-2]
 	value := genValue(valueof)
@@ -3041,16 +3032,10 @@ func rangeFunT(n *node) {
 		return nil
 	}
 	n.child[0].exec = func(f *frame) bltn {
-		// 函数调用
-		i := int64(0)
 		value(f).Call([]reflect.Value{
 			reflect.MakeFunc(valueof.typ.arg[0].rtype, func(args []reflect.Value) (results []reflect.Value) {
 				// 传递参数
 				f.data[v.findex].Set(args[0])
-				if k != nil {
-					f.data[k.findex].SetInt(i)
-					i++
-				}
 				// 执行块代码
 				breakOk = false
 				runCfg(tnext, f, n, n)
