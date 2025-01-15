@@ -37,32 +37,31 @@ void syscall15(struct syscall15Args *args) {
 */
 import "C"
 
-// LibHandle represents an open handle to a library (.so)
+// GetHandle tries to get a handle to a library (.so), attempting to access it
+// by the names specified in libs and returning the first that is successfully
+// opened. Callers are responsible for closing the handler. If no library can
+// be successfully opened, an error is returned.
+func GetHandle(name string) (Handle, error) {
+	name, _ = filepath.Abs(name)
+	libname := C.CString(name)
+	defer C.free(unsafe.Pointer(libname))
+	handle := C.dlopen(libname, C.RTLD_LAZY|C.RTLD_GLOBAL)
+	if handle != nil {
+		h := &libHandle{
+			Handle:  handle,
+			Libname: name,
+		}
+		return h, nil
+	}
+	return nil, errors.New(C.GoString(C.dlerror()))
+}
+
+// LibHandle represents an open handle to a library (.so/dll)
 type libHandle struct {
 	Handle  unsafe.Pointer
 	Libname string
 }
 
-// GetHandle tries to get a handle to a library (.so), attempting to access it
-// by the names specified in libs and returning the first that is successfully
-// opened. Callers are responsible for closing the handler. If no library can
-// be successfully opened, an error is returned.
-func GetHandle(libs ...string) (Handle, error) {
-	for _, name := range libs {
-		name, _ = filepath.Abs(name)
-		libname := C.CString(name)
-		defer C.free(unsafe.Pointer(libname))
-		handle := C.dlopen(libname, C.RTLD_LAZY|C.RTLD_GLOBAL)
-		if handle != nil {
-			h := &libHandle{
-				Handle:  handle,
-				Libname: name,
-			}
-			return h, nil
-		}
-	}
-	return nil, errors.New(C.GoString(C.dlerror()))
-}
 func (l *libHandle) GetHandle() unsafe.Pointer {
 	return l.Handle
 }

@@ -9,7 +9,7 @@ import (
 var FtabMap = map[string]*runtime.Func{}
 var RtypeMap = map[any]reflect.Type{}
 
-// -ldflags="-s"
+// 编译参数: -ldflags="-s -n"
 func init() {
 	pc := make([]uintptr, 255)
 	frames := runtime.CallersFrames([]uintptr{pc[runtime.Callers(0, pc)-1]})
