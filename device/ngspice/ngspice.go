@@ -29,8 +29,19 @@ func (symbol *symbol[T]) GetPointer(handle dlopen.Handle) {
 }
 
 type NgspiceValue struct {
+	SendChar        func(string, int, *NgspiceValue) int
+	SendStat        func(string, int, *NgspiceValue) int
+	ControlledExit  func(int, bool, bool, int, *NgspiceValue) int
+	SendData        func(*VecValuesAll, int, int, *NgspiceValue) int
+	SendInitData    func(*VecInfoAll, int, *NgspiceValue) int
+	BGThreadRunning func(bool, int, *NgspiceValue) int
+	GetVSRCData     func(*float64, float64, string, int, *NgspiceValue) int
+	GetISRCData     func(*float64, float64, string, int, *NgspiceValue) int
+	GetSyncData     func(float64, *float64, float64, int, int, int, *NgspiceValue) int
 }
+
 type Ngspice struct {
+	*NgspiceValue
 	id           int
 	handle       dlopen.Handle
 	ngGetVecInfo *symbol[ngGet_Vec_Info]
@@ -43,7 +54,6 @@ type Ngspice struct {
 	ngAllVecs    *symbol[ngSpice_AllVecs]
 	ngrunning    *symbol[ngSpice_running]
 	ngSetBkpt    *symbol[ngSpice_SetBkpt]
-	value        *NgspiceValue
 }
 
 func NewNgspice() *Ngspice {
@@ -58,7 +68,7 @@ func NewNgspice() *Ngspice {
 		ngAllVecs:    &symbol[ngSpice_AllVecs]{name: "ngSpice_AllVecs"},
 		ngrunning:    &symbol[ngSpice_running]{name: "ngSpice_running"},
 		ngSetBkpt:    &symbol[ngSpice_SetBkpt]{name: "ngSpice_SetBkpt"},
-		value:        &NgspiceValue{},
+		NgspiceValue: &NgspiceValue{},
 	}
 	var err error
 	ng.handle, err = dlopen.GetHandle("/lib/libngspice.so")

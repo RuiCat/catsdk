@@ -1,18 +1,27 @@
 package ngspice
 
-import "unsafe"
+import (
+	"unsafe"
+)
 import "C"
 
 /* Dvec flags. */
 const (
-	vf_real      = (1 << 0) /* The data is real. */
-	vf_complex   = (1 << 1) /* The data is complex. */
-	vf_accum     = (1 << 2) /* writedata should save this vector. */
-	vf_plot      = (1 << 3) /* writedata should incrementally plot it. */
-	vf_print     = (1 << 4) /* writedata should print this vector. */
-	vf_mingiven  = (1 << 5) /* The v_minsignal value is valid. */
-	vf_maxgiven  = (1 << 6) /* The v_maxsignal value is valid. */
-	vf_permanent = (1 << 7) /* Don't garbage collect this vector. */
+	Vf_real      int16 = 1 << iota /* The data is real. */
+	Vf_complex                     /* The data is complex. */
+	Vf_accum                       /* writedata should save this vector. */
+	Vf_plot                        /* writedata should incrementally plot it. */
+	Vf_print                       /* writedata should print this vector. */
+	Vf_mingiven                    /* The v_minsignal value is valid. */
+	Vf_maxgiven                    /* The v_maxsignal value is valid. */
+	Vf_permanent                   /* Don't garbage collect this vector. */
+)
+
+/* Plot types. */
+const (
+	Plot_lin   = 1
+	Plot_comb  = 2
+	Plot_point = 3
 )
 
 type VectorInfo struct {
@@ -31,10 +40,10 @@ func (vecInfo *VectorInfo) storeVectorInfo(pvectori pvector_info) {
 		vecInfo.VType = int(pvectori.v_type)
 		vecInfo.VFlags = int16(pvectori.v_flags)
 		vecInfo.VLength = int(pvectori.v_length)
-		if vecInfo.VFlags&vf_real != 0 {
+		if vecInfo.VFlags&Vf_real != 0 {
 			vecInfo.VRealData = unsafe.Slice((*float64)(pvectori.v_realdata), vecInfo.VLength)
 		}
-		if vecInfo.VFlags&vf_complex != 0 {
+		if vecInfo.VFlags&Vf_complex != 0 {
 			vecInfo.VCompData = make([]complex128, vecInfo.VLength)
 			for i, v := range unsafe.Slice(pvectori.v_compdata, vecInfo.VLength) {
 				vecInfo.VCompData[i] = complex(v.cx_real, v.cx_imag)

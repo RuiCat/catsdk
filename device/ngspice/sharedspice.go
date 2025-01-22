@@ -15,7 +15,6 @@ extern int eGetSyncData(double, double*, double, int, int, int, void*);
 */
 import "C"
 import (
-	"fmt"
 	"unsafe"
 )
 
@@ -63,65 +62,110 @@ var callGetSyncData = (*getSyncData)(C.eGetSyncData)
 
 //export eSendChar
 func eSendChar(outputreturn *C.char, ident C.int, userdata unsafe.Pointer) C.int {
-	fmt.Println("SendChar", C.GoString(outputreturn), ident, userdata)
+	value := (*Ngspice)(userdata).NgspiceValue
+	if value.SendChar != nil {
+		return C.int(value.SendChar(C.GoString(outputreturn), int(ident), value))
+	}
 	return -1
 }
 
 //export eSendStat
 func eSendStat(outputreturn *C.char, ident C.int, userdata unsafe.Pointer) C.int {
-	fmt.Println("SendStat", C.GoString(outputreturn), ident, userdata)
+	value := (*Ngspice)(userdata).NgspiceValue
+	if value.SendChar != nil {
+		return C.int(value.SendStat(C.GoString(outputreturn), int(ident), value))
+	}
 	return -1
 }
 
 //export eControlledExit
 func eControlledExit(exitstatus C.int, immediate C._Bool, quitexit C._Bool, ident C.int, userdata unsafe.Pointer) C.int {
-	fmt.Println("ControlledExit", exitstatus, immediate, quitexit, ident, userdata)
+	value := (*Ngspice)(userdata).NgspiceValue
+	if value.SendChar != nil {
+		return C.int(value.ControlledExit(int(exitstatus), bool(immediate), bool(quitexit), int(ident), value))
+	}
 	return -1
 }
 
 //export eSendData
 func eSendData(vdata pvecvaluesall, numvecs C.int, ident C.int, userdata unsafe.Pointer) C.int {
-	a := &VecValuesAll{}
-	a.VecCount = int(vdata.veccount)
-	a.VecIndex = int(vdata.vecindex)
-	a.VecsA = unsafe.Slice((**VecValues)(unsafe.Pointer(vdata.vecsa)), a.VecCount)
-	fmt.Printf("SendData: %#v %d %d %d\n", *a, numvecs, ident, userdata)
+	value := (*Ngspice)(userdata).NgspiceValue
+	if value.SendChar != nil {
+		val := &VecValuesAll{}
+		val.VecCount = int(vdata.veccount)
+		val.VecIndex = int(vdata.vecindex)
+		val.VecsA = make([]*VecValues, val.VecCount)
+		for i, v := range unsafe.Slice(vdata.vecsa, val.VecCount) {
+			val.VecsA[i] = &VecValues{
+				Name:      C.GoString(v.name),
+				CReal:     float64(v.creal),
+				CImag:     float64(v.cimag),
+				IsScale:   bool(v.is_scale),
+				IsComplex: bool(v.is_complex),
+			}
+		}
+		return C.int(value.SendData(val, int(numvecs), int(ident), value))
+	}
 	return -1
 }
 
 //export eSendInitData
 func eSendInitData(intdata pvecinfoall, ident C.int, userdata unsafe.Pointer) C.int {
-	a := &VecInfoAll{}
-	a.Name = C.GoString(intdata.name)
-	a.Title = C.GoString(intdata.title)
-	a.Date = C.GoString(intdata.date)
-	a.Type = C.GoString(intdata._type)
-	a.VecCount = int(intdata.veccount)
-	a.Vecs = unsafe.Slice((**VecInfo)(unsafe.Pointer(intdata.vecs)), a.VecCount)
-	fmt.Printf("SendInitData: %#v %d %d\n", *a, ident, userdata)
+	value := (*Ngspice)(userdata).NgspiceValue
+	if value.SendChar != nil {
+		val := &VecInfoAll{}
+		val.Name = C.GoString(intdata.name)
+		val.Title = C.GoString(intdata.title)
+		val.Date = C.GoString(intdata.date)
+		val.Type = C.GoString(intdata._type)
+		val.VecCount = int(intdata.veccount)
+		val.Vecs = make([]*VecInfo, val.VecCount)
+		for i, v := range unsafe.Slice(intdata.vecs, val.VecCount) {
+			val.Vecs[i] = &VecInfo{
+				Number:     int(v.number),
+				VecName:    C.GoString(v.vecname),
+				IsReal:     bool(v.is_real),
+				PDVec:      v.pdvec,
+				PDVecScale: v.pdvecscale,
+			}
+		}
+		return C.int(value.SendInitData(val, int(ident), value))
+	}
 	return -1
 }
 
 //export eBGThreadRunning
 func eBGThreadRunning(noruns C._Bool, ident C.int, userdata unsafe.Pointer) C.int {
-	fmt.Println("BGThreadRunning", noruns, ident, userdata)
+	value := (*Ngspice)(userdata).NgspiceValue
+	if value.SendChar != nil {
+		return C.int(value.BGThreadRunning(bool(noruns), int(ident), value))
+	}
 	return -1
 }
 
 //export eGetVSRCData
 func eGetVSRCData(retvoltval *C.double, acttime C.double, nodename *C.char, ident C.int, userdata unsafe.Pointer) C.int {
-	fmt.Println("GetVSRCData", retvoltval, acttime, nodename, ident, userdata)
+	value := (*Ngspice)(userdata).NgspiceValue
+	if value.SendChar != nil {
+		return C.int(value.GetVSRCData((*float64)(retvoltval), float64(acttime), C.GoString(nodename), int(ident), value))
+	}
 	return -1
 }
 
 //export eGetISRCData
 func eGetISRCData(retcurrval *C.double, acttime C.double, nodename *C.char, ident C.int, userdata unsafe.Pointer) C.int {
-	fmt.Println("GetISRCData", retcurrval, acttime, nodename, ident, userdata)
+	value := (*Ngspice)(userdata).NgspiceValue
+	if value.SendChar != nil {
+		return C.int(value.GetISRCData((*float64)(retcurrval), float64(acttime), C.GoString(nodename), int(ident), value))
+	}
 	return -1
 }
 
 //export eGetSyncData
 func eGetSyncData(acttime C.double, deltatime *C.double, olddeltatime C.double, redostep C.int, ident C.int, location C.int, userdata unsafe.Pointer) C.int {
-	fmt.Println("GetSyncData", acttime, *deltatime, olddeltatime, redostep, ident, location, userdata)
+	value := (*Ngspice)(userdata).NgspiceValue
+	if value.SendChar != nil {
+		return C.int(value.GetSyncData(float64(acttime), (*float64)(deltatime), float64(olddeltatime), int(redostep), int(ident), int(location), value))
+	}
 	return 0
 }
