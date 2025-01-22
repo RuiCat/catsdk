@@ -72,7 +72,7 @@ func eSendChar(outputreturn *C.char, ident C.int, userdata unsafe.Pointer) C.int
 //export eSendStat
 func eSendStat(outputreturn *C.char, ident C.int, userdata unsafe.Pointer) C.int {
 	value := (*Ngspice)(userdata).NgspiceValue
-	if value.SendChar != nil {
+	if value.SendStat != nil {
 		return C.int(value.SendStat(C.GoString(outputreturn), int(ident), value))
 	}
 	return -1
@@ -81,7 +81,7 @@ func eSendStat(outputreturn *C.char, ident C.int, userdata unsafe.Pointer) C.int
 //export eControlledExit
 func eControlledExit(exitstatus C.int, immediate C._Bool, quitexit C._Bool, ident C.int, userdata unsafe.Pointer) C.int {
 	value := (*Ngspice)(userdata).NgspiceValue
-	if value.SendChar != nil {
+	if value.ControlledExit != nil {
 		return C.int(value.ControlledExit(int(exitstatus), bool(immediate), bool(quitexit), int(ident), value))
 	}
 	return -1
@@ -90,7 +90,7 @@ func eControlledExit(exitstatus C.int, immediate C._Bool, quitexit C._Bool, iden
 //export eSendData
 func eSendData(vdata pvecvaluesall, numvecs C.int, ident C.int, userdata unsafe.Pointer) C.int {
 	value := (*Ngspice)(userdata).NgspiceValue
-	if value.SendChar != nil {
+	if value.SendData != nil {
 		val := &VecValuesAll{}
 		val.VecCount = int(vdata.veccount)
 		val.VecIndex = int(vdata.vecindex)
@@ -112,7 +112,7 @@ func eSendData(vdata pvecvaluesall, numvecs C.int, ident C.int, userdata unsafe.
 //export eSendInitData
 func eSendInitData(intdata pvecinfoall, ident C.int, userdata unsafe.Pointer) C.int {
 	value := (*Ngspice)(userdata).NgspiceValue
-	if value.SendChar != nil {
+	if value.SendInitData != nil {
 		val := &VecInfoAll{}
 		val.Name = C.GoString(intdata.name)
 		val.Title = C.GoString(intdata.title)
@@ -137,7 +137,7 @@ func eSendInitData(intdata pvecinfoall, ident C.int, userdata unsafe.Pointer) C.
 //export eBGThreadRunning
 func eBGThreadRunning(noruns C._Bool, ident C.int, userdata unsafe.Pointer) C.int {
 	value := (*Ngspice)(userdata).NgspiceValue
-	if value.SendChar != nil {
+	if value.BGThreadRunning != nil {
 		return C.int(value.BGThreadRunning(bool(noruns), int(ident), value))
 	}
 	return -1
@@ -146,7 +146,7 @@ func eBGThreadRunning(noruns C._Bool, ident C.int, userdata unsafe.Pointer) C.in
 //export eGetVSRCData
 func eGetVSRCData(retvoltval *C.double, acttime C.double, nodename *C.char, ident C.int, userdata unsafe.Pointer) C.int {
 	value := (*Ngspice)(userdata).NgspiceValue
-	if value.SendChar != nil {
+	if value.GetVSRCData != nil {
 		return C.int(value.GetVSRCData((*float64)(retvoltval), float64(acttime), C.GoString(nodename), int(ident), value))
 	}
 	return -1
@@ -155,7 +155,7 @@ func eGetVSRCData(retvoltval *C.double, acttime C.double, nodename *C.char, iden
 //export eGetISRCData
 func eGetISRCData(retcurrval *C.double, acttime C.double, nodename *C.char, ident C.int, userdata unsafe.Pointer) C.int {
 	value := (*Ngspice)(userdata).NgspiceValue
-	if value.SendChar != nil {
+	if value.GetISRCData != nil {
 		return C.int(value.GetISRCData((*float64)(retcurrval), float64(acttime), C.GoString(nodename), int(ident), value))
 	}
 	return -1
@@ -164,7 +164,7 @@ func eGetISRCData(retcurrval *C.double, acttime C.double, nodename *C.char, iden
 //export eGetSyncData
 func eGetSyncData(acttime C.double, deltatime *C.double, olddeltatime C.double, redostep C.int, ident C.int, location C.int, userdata unsafe.Pointer) C.int {
 	value := (*Ngspice)(userdata).NgspiceValue
-	if value.SendChar != nil {
+	if value.GetSyncData != nil {
 		return C.int(value.GetSyncData(float64(acttime), (*float64)(deltatime), float64(olddeltatime), int(redostep), int(ident), int(location), value))
 	}
 	return 0
