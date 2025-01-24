@@ -2,6 +2,7 @@ package ngspice
 
 import (
 	"device/gousb/dlopen"
+	"sync"
 	"unsafe"
 )
 
@@ -38,6 +39,11 @@ type NgspiceValue struct {
 	GetVSRCData     func(*float64, float64, string, int, *NgspiceValue) int
 	GetISRCData     func(*float64, float64, string, int, *NgspiceValue) int
 	GetSyncData     func(float64, *float64, float64, int, int, int, *NgspiceValue) int
+	Value           []complex128
+	ValueMap        map[string]int
+	ValueMutex      sync.Mutex
+	VecInfoAll      *VecInfoAll
+	VecValuesAll    *VecValuesAll
 }
 
 type Ngspice struct {
@@ -56,8 +62,9 @@ type Ngspice struct {
 	ngSetBkpt    *symbol[ngSpice_SetBkpt]
 }
 
-func NewNgspice() *Ngspice {
+func NewNgspice(id int) *Ngspice {
 	ng := &Ngspice{
+		id:           id,
 		ngGetVecInfo: &symbol[ngGet_Vec_Info]{name: "ngGet_Vec_Info"},
 		ngInit:       &symbol[ngSpice_Init]{name: "ngSpice_Init"},
 		ngInitSync:   &symbol[ngSpice_Init_Sync]{name: "ngSpice_Init_Sync"},
@@ -68,7 +75,10 @@ func NewNgspice() *Ngspice {
 		ngAllVecs:    &symbol[ngSpice_AllVecs]{name: "ngSpice_AllVecs"},
 		ngrunning:    &symbol[ngSpice_running]{name: "ngSpice_running"},
 		ngSetBkpt:    &symbol[ngSpice_SetBkpt]{name: "ngSpice_SetBkpt"},
-		NgspiceValue: &NgspiceValue{},
+		NgspiceValue: &NgspiceValue{
+			Value:    []complex128{},
+			ValueMap: map[string]int{},
+		},
 	}
 	var err error
 	ng.handle, err = dlopen.GetHandle("/lib/libngspice.so")

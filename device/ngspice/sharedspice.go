@@ -2,6 +2,7 @@ package ngspice
 
 /*
 #include <stdbool.h>
+#include <stdlib.h>
 #include "sharedspice.h"
 extern int eSendChar(char*, int, void*);
 extern int eSendStat(char*, int, void*);
@@ -20,11 +21,11 @@ import (
 
 // 结构体
 type ngcomplex_t = C.ngcomplex_t
-type pvector_info = C.pvector_info
-type pvecvalues = C.pvecvalues
-type pvecvaluesall = C.pvecvaluesall
-type pvecinfo = C.pvecinfo
-type pvecinfoall = C.pvecinfoall
+type pvector_info = *C.vector_info
+type pvecvalues = *C.vecvalues
+type pvecvaluesall = *C.vecvaluesall
+type pvecinfo = *C.vecinfo
+type pvecinfoall = *C.vecinfoall
 
 // 回调函数类型
 type sendChar = func(*C.char, C.int, unsafe.Pointer) C.int
@@ -90,20 +91,26 @@ func eControlledExit(exitstatus C.int, immediate C._Bool, quitexit C._Bool, iden
 //export eSendData
 func eSendData(vdata pvecvaluesall, numvecs C.int, ident C.int, userdata unsafe.Pointer) C.int {
 	value := (*Ngspice)(userdata).NgspiceValue
+	value.ValueMutex.Lock()
+	defer value.ValueMutex.Unlock()
+	val := value.VecValuesAll
+	val.VecCount = int(vdata.veccount)
+	val.VecIndex = int(vdata.vecindex)
+	vecsa := unsafe.Slice(vdata.vecsa, val.VecCount)
+	for k, v := range value.ValueMap {
+		vecs := val.VecsA[v]
+		vecs.Name = k
+		vecs.CReal = float64(vecsa[v].creal)
+		vecs.CImag = float64(vecsa[v].cimag)
+		vecs.IsScale = bool(vecsa[v].is_scale)
+		vecs.IsComplex = bool(vecsa[v].is_complex)
+
+	}
+	for i := range len(value.ValueMap) {
+		vecs := val.VecsA[i]
+		value.Value = append(value.Value, complex(vecs.CReal, vecs.CImag))
+	}
 	if value.SendData != nil {
-		val := &VecValuesAll{}
-		val.VecCount = int(vdata.veccount)
-		val.VecIndex = int(vdata.vecindex)
-		val.VecsA = make([]*VecValues, val.VecCount)
-		for i, v := range unsafe.Slice(vdata.vecsa, val.VecCount) {
-			val.VecsA[i] = &VecValues{
-				Name:      C.GoString(v.name),
-				CReal:     float64(v.creal),
-				CImag:     float64(v.cimag),
-				IsScale:   bool(v.is_scale),
-				IsComplex: bool(v.is_complex),
-			}
-		}
 		return C.int(value.SendData(val, int(numvecs), int(ident), value))
 	}
 	return -1
@@ -113,13 +120,17 @@ func eSendData(vdata pvecvaluesall, numvecs C.int, ident C.int, userdata unsafe.
 func eSendInitData(intdata pvecinfoall, ident C.int, userdata unsafe.Pointer) C.int {
 	value := (*Ngspice)(userdata).NgspiceValue
 	if value.SendInitData != nil {
+		value.ValueMutex.Lock()
+		defer value.ValueMutex.Unlock()
 		val := &VecInfoAll{}
+		// 初始化参数
 		val.Name = C.GoString(intdata.name)
 		val.Title = C.GoString(intdata.title)
 		val.Date = C.GoString(intdata.date)
 		val.Type = C.GoString(intdata._type)
 		val.VecCount = int(intdata.veccount)
 		val.Vecs = make([]*VecInfo, val.VecCount)
+		// 获取全局连接信息
 		for i, v := range unsafe.Slice(intdata.vecs, val.VecCount) {
 			val.Vecs[i] = &VecInfo{
 				Number:     int(v.number),
@@ -128,6 +139,15 @@ func eSendInitData(intdata pvecinfoall, ident C.int, userdata unsafe.Pointer) C.
 				PDVec:      v.pdvec,
 				PDVecScale: v.pdvecscale,
 			}
+			// 记录值索引
+			value.ValueMap[val.Vecs[i].VecName] = i
+		}
+		value.VecInfoAll = val
+		value.VecValuesAll = &VecValuesAll{
+			VecsA: make([]*VecValues, len(value.ValueMap)),
+		}
+		for i := range value.VecValuesAll.VecsA {
+			value.VecValuesAll.VecsA[i] = &VecValues{}
 		}
 		return C.int(value.SendInitData(val, int(ident), value))
 	}
