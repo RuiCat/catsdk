@@ -14,16 +14,9 @@ import (
 
 const _size = 1024 // 默认缓冲区大小
 
-// Buffer 数据缓冲
+// Buffer 数据
 type Buffer struct {
 	*bytes.Buffer
-	pool Pool
-}
-
-// Free 释放
-func (b *Buffer) Free() {
-	b.Reset()     // 重置
-	b.pool.put(b) // 释放
 }
 
 // WriteType 写入基础类型
@@ -264,6 +257,18 @@ func (b *Buffer) ReadHex() string {
 	return hex.EncodeToString(b.Bytes())
 }
 
+// BufferPoll  数据缓存封装
+type BufferPoll struct {
+	Buffer
+	pool Pool
+}
+
+// Free 释放
+func (b *BufferPoll) Free() {
+	b.Reset()     // 重置
+	b.pool.put(b) // 释放
+}
+
 // Pool 缓冲池封装
 type Pool struct {
 	pool *sync.Pool
@@ -276,19 +281,19 @@ func NewPool(size int) Pool {
 	}
 	return Pool{pool: &sync.Pool{
 		New: func() any {
-			return &Buffer{Buffer: bytes.NewBuffer(make([]byte, 0, _size))}
+			return &BufferPoll{Buffer: Buffer{Buffer: bytes.NewBuffer(make([]byte, 0, _size))}}
 		},
 	}}
 }
 
 // Get 得到对象
-func (p Pool) Get() *Buffer {
-	buf := p.pool.Get().(*Buffer)
+func (p Pool) Get() *BufferPoll {
+	buf := p.pool.Get().(*BufferPoll)
 	buf.Reset()
 	buf.pool = p
 	return buf
 }
 
-func (p Pool) put(buf *Buffer) {
+func (p Pool) put(buf *BufferPoll) {
 	p.pool.Put(buf)
 }
